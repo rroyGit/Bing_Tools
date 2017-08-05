@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <android.support.v7.widget.CardView
+        android:layout_margin="@dimen/cardview_default_elevation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="66dp"
+                        android:layout_height="37dp"
+                        android:src="@drawable/monday"/>
+                    <TextView
+                        android:id="@+id/mealTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Breakfast"
+                        android:background="@color/lightBlue"
+                        android:padding="6dp"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline" />
+                    <com.ms.square.android.expandabletextview.ExpandableTextView
+                        android:background="@color/hmm"
+                        xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/expand_text_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        expandableTextView:maxCollapsedLines="2"
+                        expandableTextView:animDuration="200">
+                        <TextView
+                            android:id="@id/expandable_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/slight_white" />
+                        <ImageButton
+                            android:tint="@color/slight_white"
+                            android:id="@id/expand_collapse"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:layout_gravity="right|bottom"
+                            android:background="@android:color/transparent"/>
+                    </com.ms.square.android.expandabletextview.ExpandableTextView>
+                    <TextView
+                        android:id="@+id/mealTime2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lunch"
+                        android:background="@color/lightBlue"
+                        android:padding="6dp"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline" />
+                    <com.ms.square.android.expandabletextview.ExpandableTextView
+                        android:background="@color/hmm"
+                        xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/expand_text_view2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        expandableTextView:maxCollapsedLines="2"
+                        expandableTextView:animDuration="200">
+                        <TextView
+                            android:id="@id/expandable_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/slight_white"  />
+                        <ImageButton
+                            android:id="@id/expand_collapse"
+                            android:tint="@color/slight_white"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:layout_gravity="right|bottom"
+                            android:background="@android:color/transparent"/>
+                    </com.ms.square.android.expandabletextview.ExpandableTextView>
+                    <TextView
+                        android:id="@+id/mealTime3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dinner"
+                        android:background="@color/lightBlue"
+                        android:padding="6dp"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline" />
+                    <com.ms.square.android.expandabletextview.ExpandableTextView
+                        android:background="@color/hmm"
+                        xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/expand_text_view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        expandableTextView:maxCollapsedLines="2"
+                        expandableTextView:animDuration="200">
+                        <TextView
+                            android:id="@id/expandable_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/slight_white"  />
+                        <ImageButton
+                            android:id="@id/expand_collapse"
+                            android:tint="@color/slight_white"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:layout_gravity="right|bottom"
+                            android:background="@android:color/transparent"/>
+                    </com.ms.square.android.expandabletextview.ExpandableTextView>
+            </LinearLayout>
+        </ScrollView>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

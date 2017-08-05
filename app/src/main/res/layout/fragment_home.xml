@@ -1,0 +1,112 @@
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:background="@color/gray"
+    android:orientation="vertical"
+    android:id="@+id/frag_home"
+    tools:context="com.example.roy.navapp.HomeFragment">
+
+
+    <EditText
+        android:id="@+id/num1"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+
+        android:hint="@string/zero"
+        android:backgroundTint="@color/lightBlue"
+        android:inputType="numberDecimal"
+        android:textColor="@color/white"
+        android:textColorHint="@color/red"
+        android:textSize="25sp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="46dp"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/num2"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+
+        android:backgroundTint="@color/lightBlue"
+        android:hint="@string/zero"
+        android:inputType="numberDecimal"
+        android:textColor="@color/white"
+        android:textColorHint="@color/red"
+        android:textSize="25sp"
+        android:layout_alignBaseline="@+id/num1"
+        android:layout_alignBottom="@+id/num1"
+        android:layout_toEndOf="@+id/minusB" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/slight_white"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:id="@+id/linearLayout">
+
+        <TextView
+            android:id="@+id/resultB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+            android:hint="@string/Result"
+            android:textColorHint="@color/red"
+            android:textColor="?android:attr/textColorHint"
+            android:textSize="40sp" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/addB"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignStart="@+id/num1"
+        android:layout_below="@+id/num1"
+        android:layout_marginTop="44dp"
+        android:text="@string/add"
+        android:textAllCaps="false"
+        android:textSize="35sp" />
+
+    <Button
+        android:id="@+id/minusB"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignBaseline="@+id/addB"
+        android:layout_alignBottom="@+id/addB"
+        android:layout_toEndOf="@+id/addB"
+        android:text="@string/sub"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textSize="35sp" />
+
+    <Button
+        android:id="@+id/clear"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignBaseline="@+id/minusB"
+        android:layout_alignBottom="@+id/minusB"
+        android:layout_toEndOf="@+id/minusB"
+        android:text="c"
+        android:textAllCaps="false"
+        android:textSize="35sp" />
+
+
+
+
+
+
+</android.widget.RelativeLayout>

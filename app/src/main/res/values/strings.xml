@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">My Bing Tools</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="Result">0.00</string>
+    <string name="zero">0</string>
+    <string name="add">+</string>
+    <string name="sub">-</string>
+    <string name="mul">mul</string>
+    <string name="div">div</string>
+    <string name="error">Error</string>
+    <string name="error2">Undefined</string>
+    <string name="error3">Too large </string>
+    <string name="ether">Press to see price!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

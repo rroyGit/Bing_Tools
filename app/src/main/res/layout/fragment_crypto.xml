@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.roy.navapp.CryptoFragment"
+    android:background="@color/gray">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/slight_white"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:id="@+id/linearLayout">
+
+        <TextView
+            android:id="@+id/etherText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:gravity="center"
+            android:hint="$0.00"
+            android:textColor="?android:attr/textColorHint"
+            android:textColorHint="@color/red"
+            android:textSize="40sp" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editT"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/zero"
+        android:backgroundTint="@color/lightBlue"
+        android:textColorHint="@color/red"
+        android:textSize="25sp"
+        android:inputType="numberDecimal"
+        android:textColor="@color/white"
+
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="66dp" />
+    <Button
+        android:id="@+id/etherButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ether"
+        android:textAllCaps="false"
+        android:textColor="?android:attr/textColorHintInverse"
+        android:textSize="20sp"
+        android:layout_alignBottom="@+id/editT"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="21dp" />
+
+
+</RelativeLayout>

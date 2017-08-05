@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/menu_top"
+        android:checkableBehavior="single">
+        <item android:id="@+id/Home"
+            android:icon="@mipmap/ic_home_black_24dp"
+            android:title="Home">
+        </item>
+
+        <item android:id="@+id/Crypto"
+            android:icon="@mipmap/ic_attach_money_black_24dp"
+            android:title="Crypto">
+        </item>
+
+        <item android:id="@+id/Bing_Dining"
+            android:icon="@mipmap/ic_local_dining_black_24dp"
+            android:title="Bing Dining">
+        </item>
+
+    </group>
+
+    <group android:id="@+id/menu_bot"
+        android:checkableBehavior="single">
+
+        <item android:id="@+id/About"
+            android:icon="@mipmap/ic_info_black_24dp"
+            android:title="About">
+        </item>
+    </group>
+</menu>
