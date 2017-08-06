@@ -48,7 +48,7 @@ public class CryptoFragment extends Fragment {
         etherB = (Button) getActivity().findViewById(R.id.etherButton);
         editT = (EditText) getActivity().findViewById(R.id.editT);
         etherText.setMaxLines(2);
-        editT.setTextIsSelectable(true);
+        etherText.setTextIsSelectable(true);
 
         new getEther().execute();
         etherB.setOnClickListener(new View.OnClickListener(){
