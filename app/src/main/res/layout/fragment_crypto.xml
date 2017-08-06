@@ -22,8 +22,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:gravity="center"
+            android:gravity="end"
             android:hint="$0.00"
+            android:textAlignment="viewEnd"
             android:textColor="?android:attr/textColorHint"
             android:textColorHint="@color/red"
             android:textSize="40sp" />
@@ -34,17 +35,20 @@
         android:id="@+id/editT"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:hint="@string/zero"
-        android:backgroundTint="@color/lightBlue"
-        android:textColorHint="@color/red"
-        android:textSize="25sp"
-        android:inputType="numberDecimal"
-        android:textColor="@color/white"
+        android:layout_alignParentStart="true"
 
         android:layout_below="@+id/linearLayout"
-        android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="66dp" />
+        android:layout_marginTop="66dp"
+        android:background="@drawable/custom_edit_text"
+        android:textCursorDrawable="@drawable/edit_text_pipe_color"
+
+        android:hint="@string/zero"
+        android:inputType="numberDecimal"
+        android:textAlignment="viewStart"
+        android:textColor="@color/white"
+        android:textColorHint="@color/red"
+        android:textSize="25sp" />
     <Button
         android:id="@+id/etherButton"
         style="?android:attr/borderlessButtonStyle"

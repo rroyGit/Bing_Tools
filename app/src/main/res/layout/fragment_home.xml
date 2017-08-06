@@ -11,27 +11,31 @@
 
     <EditText
         android:id="@+id/num1"
-        android:layout_width="180dp"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
 
+        android:background="@drawable/custom_edit_text"
+        android:textCursorDrawable="@drawable/edit_text_pipe_color"
         android:hint="@string/zero"
-        android:backgroundTint="@color/lightBlue"
+
         android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/red"
         android:textSize="25sp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="6dp"
         android:layout_marginTop="46dp"
         android:layout_below="@+id/linearLayout"
         android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/num2"
-        android:layout_width="180dp"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
 
-        android:backgroundTint="@color/lightBlue"
+        android:background="@drawable/custom_edit_text"
+        android:textCursorDrawable="@drawable/edit_text_pipe_color"
         android:hint="@string/zero"
+
         android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/red"
@@ -70,12 +74,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_alignStart="@+id/num1"
-        android:layout_below="@+id/num1"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="32dp"
         android:text="@string/add"
         android:textAllCaps="false"
-        android:textSize="35sp" />
+        android:textSize="35sp"
+        android:layout_below="@+id/num1"
+        android:layout_alignStart="@+id/num1" />
 
     <Button
         android:id="@+id/minusB"
@@ -104,9 +108,28 @@
         android:textAllCaps="false"
         android:textSize="35sp" />
 
+    <Button
+        android:id="@+id/mulB"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
+        android:text="@string/mul"
+        android:textAllCaps="false"
+        android:textSize="35sp"
+        android:layout_below="@+id/addB"
+        android:layout_alignStart="@+id/addB" />
 
+    <Button
+        android:id="@+id/divB"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
-
+        android:text="@string/div"
+        android:textAllCaps="false"
+        android:textSize="35sp"
+        android:layout_below="@+id/minusB"
+        android:layout_toEndOf="@+id/mulB" />
 
 </android.widget.RelativeLayout>

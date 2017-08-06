@@ -2,6 +2,7 @@ package com.example.roy.navapp;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,10 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 
@@ -26,9 +30,11 @@ public class HomeFragment extends Fragment {
 
     TextView result;
     EditText num1, num2;
-    Button aB, mB, cB;
+    Button aB, mB, mulB,divB, cB;
 
     double res_num, n1, n2;
+
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -40,18 +46,89 @@ public class HomeFragment extends Fragment {
         getActivity().setTitle("Home");
 
         result = (TextView) getActivity().findViewById(R.id.resultB);
+        result.setTextIsSelectable(true);
         num1 = (EditText) getActivity().findViewById(R.id.num1);
         num2 = (EditText) getActivity().findViewById(R.id.num2);
         aB = (Button) getActivity().findViewById(R.id.addB);
         mB = (Button) getActivity().findViewById(R.id.minusB);
         cB = (Button) getActivity().findViewById(R.id.clear);
-
+        mulB = (Button) getActivity().findViewById(R.id.mulB);
+        divB = (Button) getActivity().findViewById(R.id.divB);
 
         cB.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
                 result.setText("");
+                num1.getText().clear();
+                num2.getText().clear();
+            }
+        });
+
+        mulB.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                if(num1.getText().toString().trim().isEmpty() ||
+                        num2.getText().toString().trim().isEmpty()) {
+                    result.setText(getString(R.string.error));
+                    hideKeyboard();
+                    return;
+                }
+
+                double a  = Double.parseDouble(num1.getText().toString());
+                double b  = Double.parseDouble(num2.getText().toString());
+                if(a > Integer.MAX_VALUE || b > Integer.MAX_VALUE){
+                    result.setText(R.string.error3);
+                    hideKeyboard();
+                    return;
+                }
+
+                n1 = Double.parseDouble(num1.getText().toString());
+                n2 = Double.parseDouble(num2.getText().toString());
+                double res = n1 * n2;
+
+                if(res < 0 || res > Integer.MAX_VALUE) {
+                    result.setText(R.string.error3);
+                    hideKeyboard();
+                    return;
+                }
+
+                res_num = n1 * n2;
+                result.setText(NumberFormat.getInstance().format(res_num));
+                hideKeyboard();
+            }
+        });
+
+        divB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(num1.getText().toString().trim().isEmpty() ||
+                        num2.getText().toString().trim().isEmpty()) {
+                    result.setText(getString(R.string.error));
+                    hideKeyboard();
+                    return;
+                }
+
+                double a  = Double.parseDouble(num1.getText().toString());
+                double b  = Double.parseDouble(num2.getText().toString());
+                if(a > Integer.MAX_VALUE || b > Integer.MAX_VALUE){
+                    result.setText(R.string.error3);
+                    hideKeyboard();
+                    return;
+
+                }
+
+                n1 = Double.parseDouble(num1.getText().toString());
+                n2 = Double.parseDouble(num2.getText().toString());
+                if(n2 == 0) {
+                    result.setText(getString(R.string.error2));
+                    hideKeyboard();
+                    return;
+                }
+                res_num = n1 / n2;
+                result.setText(NumberFormat.getInstance().format(res_num));
+                hideKeyboard();
             }
         });
 
@@ -119,7 +196,6 @@ public class HomeFragment extends Fragment {
     }
 
     public void hideKeyboard(){
-
         View view = this.getView();
         if(view != null) {
             InputMethodManager imm;

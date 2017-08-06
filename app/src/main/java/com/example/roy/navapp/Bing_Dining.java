@@ -47,6 +47,7 @@ public class Bing_Dining extends Fragment {
 
         pD = new ProgressDialog(getActivity());
         pD.setMessage("Loading, please wait...");
+        pD.setCancelable(false);
         pD.show();
 
         getBingDiningData bing = new getBingDiningData();

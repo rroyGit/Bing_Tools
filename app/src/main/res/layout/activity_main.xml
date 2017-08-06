@@ -15,10 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
     <android.support.design.widget.NavigationView
         android:layout_width="260dp"
         android:layout_height="match_parent"
-        android:id="@+id/nav_men"
+        android:id="@+id/nav_menu_view"
         android:background="@color/black"
         app:menu="@menu/nav_menu"
         android:layout_gravity="start"

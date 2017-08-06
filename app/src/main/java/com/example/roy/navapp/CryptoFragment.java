@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 
@@ -46,16 +47,14 @@ public class CryptoFragment extends Fragment {
         etherText = (TextView) getActivity().findViewById(R.id.etherText);
         etherB = (Button) getActivity().findViewById(R.id.etherButton);
         editT = (EditText) getActivity().findViewById(R.id.editT);
+        etherText.setMaxLines(2);
+        editT.setTextIsSelectable(true);
 
         new getEther().execute();
         etherB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                editT.getText().clear();
-                if(etherVal != 0.00){
-                    String result = '$'+ String.valueOf(etherVal);
-                    etherText.setText(result);
-                }else new getEther().execute();
+                 new getEther().execute();
             }
         });
 
@@ -79,6 +78,7 @@ public class CryptoFragment extends Fragment {
                     res = res * etherVal;
                     String result = '$'+NumberFormat.getInstance().format(res);
                     etherText.setText(result);
+                    etherText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
                 }else{
                     String result = '$'+ String.valueOf(etherVal);
                     etherText.setText(result);
@@ -123,8 +123,12 @@ public class CryptoFragment extends Fragment {
 
     protected void changeTextView() {
         if(etherText.length() > 17){
+            etherText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
             etherText.setTextSize(30);
-        }else etherText.setTextSize(40);
+        }else {
+            etherText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            etherText.setTextSize(40);
+        }
     }
 
 }

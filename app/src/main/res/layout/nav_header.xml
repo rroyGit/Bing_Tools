@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
-    android:background="@android:color/holo_blue_dark"
-    android:padding="10dp"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentStart="true">
+    android:layout_height="147dp"
+    android:background="@color/gray"
+    tools:context="com.example.roy.navapp.MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/DailyImage"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:text="Menu"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="31dp" />
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
 
 

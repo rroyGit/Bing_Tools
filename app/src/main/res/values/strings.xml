@@ -6,8 +6,8 @@
     <string name="zero">0</string>
     <string name="add">+</string>
     <string name="sub">-</string>
-    <string name="mul">mul</string>
-    <string name="div">div</string>
+    <string name="mul">x</string>
+    <string name="div">/</string>
     <string name="error">Error</string>
     <string name="error2">Undefined</string>
     <string name="error3">Too large </string>

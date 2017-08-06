@@ -54,6 +54,10 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
                             android:layout_gravity="right|bottom"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
                             android:background="@android:color/transparent"/>
                     </com.ms.square.android.expandabletextview.ExpandableTextView>
                     <TextView
@@ -88,6 +92,10 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
                             android:layout_gravity="right|bottom"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
                             android:background="@android:color/transparent"/>
                     </com.ms.square.android.expandabletextview.ExpandableTextView>
                     <TextView
@@ -100,6 +108,7 @@
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline" />
                     <com.ms.square.android.expandabletextview.ExpandableTextView
                         android:background="@color/hmm"
+
                         xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/expand_text_view3"
                         android:layout_width="match_parent"
@@ -107,6 +116,7 @@
                         android:orientation="vertical"
                         expandableTextView:maxCollapsedLines="2"
                         expandableTextView:animDuration="200">
+
                         <TextView
                             android:id="@id/expandable_text"
                             android:layout_width="match_parent"
@@ -122,7 +132,13 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
                             android:layout_gravity="right|bottom"
-                            android:background="@android:color/transparent"/>
+                            android:layout_weight="1"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:background="@android:color/transparent"
+                            />
                     </com.ms.square.android.expandabletextview.ExpandableTextView>
             </LinearLayout>
         </ScrollView>
