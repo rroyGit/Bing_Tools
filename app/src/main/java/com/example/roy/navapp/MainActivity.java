@@ -2,6 +2,7 @@ package com.example.roy.navapp;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,6 +41,7 @@ import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
 import org.json.*;
+import org.jsoup.select.Evaluator;
 
 import static android.content.ContentValues.TAG;
 
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        clearCryptoData();
 
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -236,5 +239,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+
+    private void clearCryptoData(){
+        SharedPreferences sP = this.getSharedPreferences("Crypto", MODE_PRIVATE);
+        sP.edit().remove("Crypto").clear().apply();
     }
 }

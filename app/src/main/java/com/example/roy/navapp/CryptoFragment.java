@@ -1,6 +1,8 @@
 package com.example.roy.navapp;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,13 +22,16 @@ import android.widget.TextView;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CryptoFragment extends Fragment {
-
     private TextView etherText;
     private Button etherB;
     private EditText editT;
@@ -50,7 +55,15 @@ public class CryptoFragment extends Fragment {
         etherText.setMaxLines(2);
         etherText.setTextIsSelectable(true);
 
-        new getEther().execute();
+
+        if(getSavedEther() == 0.00){
+            new getEther().execute();
+        }else{
+            etherVal = getSavedEther();
+            etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f",etherVal)));
+        }
+
+
         etherB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -76,12 +89,13 @@ public class CryptoFragment extends Fragment {
                     }
                     else res = Double.parseDouble(editT.getText().toString());
                     res = res * etherVal;
-                    String result = '$'+NumberFormat.getInstance().format(res);
+                    NumberFormat.getInstance().format(res);
+
+                    String result = String.format("%s%s", '$', String.format(Locale.US, "%.2f",res));
                     etherText.setText(result);
                     etherText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
                 }else{
-                    String result = '$'+ String.valueOf(etherVal);
-                    etherText.setText(result);
+                    etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f",etherVal)));
                 }
                 changeTextView();
             }
@@ -116,8 +130,9 @@ public class CryptoFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            etherText.setText(words);
             etherVal = Double.parseDouble(words.substring(1,words.length()));
+            etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f",etherVal)));
+            saveCryptoData();
         }
     }
 
@@ -129,6 +144,19 @@ public class CryptoFragment extends Fragment {
             etherText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             etherText.setTextSize(40);
         }
+    }
+
+    private void saveCryptoData(){
+        SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
+        SharedPreferences.Editor sEditor = sP.edit();
+
+        sEditor.putString("Ether", String.valueOf(etherVal));
+        sEditor.apply();
+    }
+
+    private double getSavedEther(){
+        SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
+        return Double.parseDouble(sP.getString("Ether", "0.00"));
     }
 
 }

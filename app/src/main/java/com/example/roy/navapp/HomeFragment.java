@@ -45,6 +45,7 @@ public class HomeFragment extends Fragment {
 
         getActivity().setTitle("Home");
 
+
         result = (TextView) getActivity().findViewById(R.id.resultB);
         result.setTextIsSelectable(true);
         num1 = (EditText) getActivity().findViewById(R.id.num1);
@@ -54,6 +55,7 @@ public class HomeFragment extends Fragment {
         cB = (Button) getActivity().findViewById(R.id.clear);
         mulB = (Button) getActivity().findViewById(R.id.mulB);
         divB = (Button) getActivity().findViewById(R.id.divB);
+
 
         cB.setOnClickListener(new View.OnClickListener(){
 
@@ -209,8 +211,6 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
-
-
     }
 
 }

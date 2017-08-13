@@ -6,6 +6,7 @@
     android:background="@color/gray"
     android:orientation="vertical"
     android:id="@+id/frag_home"
+    android:focusableInTouchMode="true"
     tools:context="com.example.roy.navapp.HomeFragment">
 
 
@@ -17,6 +18,7 @@
         android:background="@drawable/custom_edit_text"
         android:textCursorDrawable="@drawable/edit_text_pipe_color"
         android:hint="@string/zero"
+
 
         android:inputType="numberDecimal"
         android:textColor="@color/white"
@@ -47,7 +49,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/slight_white"
+        android:background="@drawable/round_layout"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
         android:paddingTop="16dp"
