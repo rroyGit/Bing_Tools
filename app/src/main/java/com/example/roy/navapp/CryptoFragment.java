@@ -48,7 +48,6 @@ public class CryptoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Crypto");
 
-
         etherText = (TextView) getActivity().findViewById(R.id.etherText);
         etherB = (Button) getActivity().findViewById(R.id.etherButton);
         editT = (EditText) getActivity().findViewById(R.id.editT);

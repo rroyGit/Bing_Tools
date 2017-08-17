@@ -1,10 +1,14 @@
 package com.example.roy.navapp;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
@@ -36,6 +40,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.mealB.setText(listItem.getMealB());
         holder.mealL.setText(listItem.getMealL());
         holder.mealD.setText(listItem.getMealD());
+
+        holder.weekdayImage.setImageResource(listItem.getresInt());
     }
 
     @Override
@@ -47,6 +53,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         ExpandableTextView mealB;
         ExpandableTextView mealL;
         ExpandableTextView mealD;
+
+        ImageView weekdayImage;
+
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -60,6 +69,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             });
             mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
             mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
+
+            weekdayImage = (ImageView) itemView.findViewById(R.id.dayImage);
         }
     }
 }

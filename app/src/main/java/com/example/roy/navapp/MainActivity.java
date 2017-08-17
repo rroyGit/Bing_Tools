@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
@@ -41,7 +42,7 @@ import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
 import org.json.*;
-import org.jsoup.select.Evaluator;
+
 
 import static android.content.ContentValues.TAG;
 
@@ -62,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         clearCryptoData();
+        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+
 
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -69,9 +74,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkGray2));
 
         NavigationView nView = (NavigationView) findViewById(R.id.nav_menu_view);
+        nView.getLayoutParams().width = (int)(width/1.75);
+
         View headerView = nView.getHeaderView(0);
+        headerView.getLayoutParams().height = height/5;
 
         bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
+        getPic();
+
 
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
         setSupportActionBar(toolBar);
@@ -95,14 +105,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         nView.setNavigationItemSelectedListener(this);
 
-
-
+        //set the initial homepage to Home
         Fragment home = new HomeFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_main, home).commit();
         nView.getMenu().findItem(R.id.Home).setChecked(true);
-
-        getPic();
 
     }
 
@@ -210,10 +217,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     JSONObject urlObj = array.getJSONObject(0);
                      retVal = "https://www.bing.com/"+ urlObj.getString("url");
                     if(bingImage == null) {
-                        Log.d(TAG, "image is null");
+                        //Log.d(TAG, "image is null");
                     }else {
-                        Log.d(TAG, "image"+retVal);
-                        Picasso.with(getApplicationContext()).load(retVal).into(bingImage);
+                        //Log.d(TAG, "image"+retVal);
+                        Picasso.with(getApplicationContext()).load(retVal).fit().into(bingImage);
                     }
 
                 } catch (JSONException e) {

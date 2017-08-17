@@ -19,7 +19,6 @@
         android:textCursorDrawable="@drawable/edit_text_pipe_color"
         android:hint="@string/zero"
 
-
         android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/red"

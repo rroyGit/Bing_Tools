@@ -1,17 +1,22 @@
 package com.example.roy.navapp;
 
 
+import android.widget.ImageView;
+
 public class ListItem {
 
     private String mealB;
     private String mealL;
     private String mealD;
 
+    private int resInt;
 
-    public ListItem(String mealB, String mealL, String mealD) {
+
+    public ListItem(String mealB, String mealL, String mealD,int resInt ) {
         this.mealB = mealB;
         this.mealL = mealL;
         this.mealD = mealD;
+        this.resInt = resInt;
     }
 
     public String getMealB() {
@@ -26,6 +31,7 @@ public class ListItem {
         return mealD;
     }
 
+    public int getresInt() {return resInt;}
 
 
 }
