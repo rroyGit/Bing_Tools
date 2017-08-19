@@ -20,8 +20,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.MODE_PRIVATE;
@@ -43,7 +47,9 @@ public class Bing_Dining extends Fragment {
     @Override
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
-        getActivity().setTitle("Bing Dining");
+        getActivity().setTitle("Bing Dining (Hinman)");
+
+        String month, date, year;
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
@@ -53,16 +59,63 @@ public class Bing_Dining extends Fragment {
         pD = new ProgressDialog(getActivity());
         pD.setMessage("Loading, please wait...");
         pD.setCancelable(false);
-        pD.show();
+
+        Date dateNow = new Date();
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.UK);
+
+        StringTokenizer sT = new StringTokenizer(dateFormatter.format(dateNow), "-");
+        month = sT.nextToken();
+        date = sT.nextToken();
+        year = sT.nextToken();
+
+        Log.d(TAG, month + " "+ date + " "+ year);
 
         getBingDiningData bing = new getBingDiningData();
 
-        if(getSavedBingData("Breakmonday").equals("error")){
-            bing.execute();
-        }else{
-            loadData();
+        while(true) {
+            if (getSavedBingData("Breakmonday").equals("error")) {
+                pD.show();
+                bing.execute();
+                break;
+            } else {
+                sT = new StringTokenizer(getWeekDate(), " ");
+                String firstDate = sT.nextToken();
+                sT.nextToken();
+                String secDate = sT.nextToken();
+
+                sT = new StringTokenizer(firstDate, "/");
+                String month1 = sT.nextToken();
+                String date1 = sT.nextToken();
+                String year1 = sT.nextToken();
+
+                Log.d(TAG, month1 + " "+ date1 + " "+ year1);
+
+                sT = new StringTokenizer(secDate, "/");
+                String month2 = sT.nextToken();
+                String date2 = sT.nextToken();
+                String year2 = sT.nextToken();
+
+                Log.d(TAG, month2 + " "+ date2 + " "+ year2);
+
+                if (Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
+                    pD.show();
+                    bing.execute();
+                    break;
+                } else if (Integer.parseInt(date) < Integer.parseInt(date1) || Integer.parseInt(date) > Integer.parseInt(date2)) {
+                    pD.show();
+                    bing.execute();
+                    break;
+                } else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
+                    pD.show();
+                    bing.execute();
+                    break;
+                } else {
+                    getActivity().setTitle("Hinman " + getWeekDate());
+                    loadData();
+                    break;
+                }
+            }
         }
-        
         //set empty adapter due to waiting for data
         adapter = new MyAdapter(listItems,getContext());
         recyclerView.setAdapter(adapter);
@@ -86,7 +139,7 @@ public class Bing_Dining extends Fragment {
 
         private String urlStrings[] = new String[2];
         private String weekStrings[] = new String[2];
-        private String days[] ={"monday", "tuesday", "wednesday"};
+        private String days[] ={"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
         int i,j = 0;
 
         final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
@@ -105,9 +158,10 @@ public class Bing_Dining extends Fragment {
                     }
                 }
 
+
                 String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
                 Document doc2 = Jsoup.connect(firstUrl).get();
-                for(int i = 0; i < 3; i++) {
+                for(int i = 0; i < 7; i++) {
                     Elements B = doc2.getElementById(days[i]).select("tr.brk").select("span.ul");
                     Elements L = doc2.getElementById(days[i]).select("tr.lun").select("span.ul");
                     Elements D = doc2.getElementById(days[i]).select("tr.din").select("span.ul");
@@ -138,8 +192,10 @@ public class Bing_Dining extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            getActivity().setTitle("Hinman "+ weekStrings[0]);
             String res[],  res2[],  res3[];
-            int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday};
+            int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
+                            R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
             res = new String[7];
             res2 = new String[7];
             res3 = new String[7];
@@ -148,10 +204,11 @@ public class Bing_Dining extends Fragment {
             formatString(lunch, res2);
             formatString(dinner, res3);
 
-            for(int i = 0; i < 3; i++) {
+            for(int i = 0; i < 7; i++) {
                 ListItem listItem = new ListItem(res[i], res2[i], res3[i], resImg[i]);
                 listItems.add(listItem);
 
+                saveBingWeekData(weekStrings[0]);
                 saveBingData(days[i],res[i], res2[i], res3[i]);
             }
 
@@ -160,7 +217,18 @@ public class Bing_Dining extends Fragment {
             pD.dismiss();
         }
     }
+    private void saveBingWeekData(String date){
+        SharedPreferences sP = getContext().getSharedPreferences("BingDining", MODE_PRIVATE);
+        SharedPreferences.Editor sEditor = sP.edit();
 
+        sEditor.putString("weekDate", date);
+        sEditor.apply();
+    }
+
+    private String getWeekDate(){
+        SharedPreferences sP = getContext().getSharedPreferences("BingDining", MODE_PRIVATE);
+        return sP.getString("weekDate", "noDate");
+    }
     private void formatString(List<List<String>> listStr, String[]a){
         String res = "";
         for(int j = 0; j < listStr.size(); j++) {
@@ -179,9 +247,9 @@ public class Bing_Dining extends Fragment {
         SharedPreferences sP = getContext().getSharedPreferences("BingDining", MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
 
-        sEditor.putString("Break"+day, String.valueOf(breakF));
-        sEditor.putString("Lunch"+day, String.valueOf(lunch));
-        sEditor.putString("Dinner"+day, String.valueOf(dinner));
+        sEditor.putString("Break"+day, breakF);
+        sEditor.putString("Lunch"+day, lunch);
+        sEditor.putString("Dinner"+day,dinner);
 
         sEditor.apply();
     }
@@ -192,11 +260,12 @@ public class Bing_Dining extends Fragment {
     }
 
     private void loadData(){
-        int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday};
-        final String days[] ={"monday", "tuesday", "wednesday"};
+        int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
+                R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
+        final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
         listItems = new ArrayList<>();
 
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 7; i++) {
             String res, res2, res3;
 
             res = getSavedBingData("Break"+days[i]);
@@ -206,10 +275,7 @@ public class Bing_Dining extends Fragment {
             ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
             listItems.add(listItem);
         }
-
         adapter = new MyAdapter(listItems, getContext());
         recyclerView.setAdapter(adapter);
-        pD.setMessage("Loaded form mem");
-        pD.dismiss();
     }
 }

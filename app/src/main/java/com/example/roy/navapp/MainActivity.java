@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         headerView.getLayoutParams().height = height/5;
 
         bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
-        getPic();
+        new getPic().execute();
 
 
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
@@ -203,40 +203,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void getPic () {
+    private class getPic extends AsyncTask<Void, Void, Void> {
+
+        StringRequest sR;
         final String URL_DATA = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US";
 
-        StringRequest sR = new StringRequest(Request.Method.GET,
-                URL_DATA, new Response.Listener<String>() {
+        @Override
+        protected Void doInBackground(Void... params) {
+            sR = new StringRequest(Request.Method.GET,
+                    URL_DATA, new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray array = jsonObject.getJSONArray("images");
-                    JSONObject urlObj = array.getJSONObject(0);
-                     retVal = "https://www.bing.com/"+ urlObj.getString("url");
-                    if(bingImage == null) {
-                        //Log.d(TAG, "image is null");
-                    }else {
-                        //Log.d(TAG, "image"+retVal);
-                        Picasso.with(getApplicationContext()).load(retVal).fit().into(bingImage);
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray array = jsonObject.getJSONArray("images");
+                        JSONObject urlObj = array.getJSONObject(0);
+                        retVal = "https://www.bing.com/"+ urlObj.getString("url");
+                        if(bingImage == null) {
+                            //Log.d(TAG, "image is null");
+                        }else {
+                            //Log.d(TAG, "image"+retVal);
+                            Picasso.with(getApplicationContext()).load(retVal).fit().into(bingImage);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+            return null;
+        }
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        RequestQueue rQ = Volley.newRequestQueue(this);
-        rQ.add(sR);
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            RequestQueue rQ = Volley.newRequestQueue(getApplicationContext());
+            rQ.add(sR);
+        }
     }
 
     public void hideKeyboard(){
