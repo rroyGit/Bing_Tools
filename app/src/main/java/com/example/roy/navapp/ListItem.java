@@ -1,7 +1,6 @@
 package com.example.roy.navapp;
 
 
-import android.widget.ImageView;
 
 public class ListItem {
 

@@ -1,6 +1,7 @@
 package com.example.roy.navapp;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -74,7 +75,7 @@ public class HomeFragment extends Fragment {
                 if(num1.getText().toString().trim().isEmpty() ||
                         num2.getText().toString().trim().isEmpty()) {
                     result.setText(getString(R.string.error));
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());;
                     return;
                 }
 
@@ -82,7 +83,7 @@ public class HomeFragment extends Fragment {
                 double b  = Double.parseDouble(num2.getText().toString());
                 if(a > Integer.MAX_VALUE || b > Integer.MAX_VALUE){
                     result.setText(R.string.error3);
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
 
@@ -92,13 +93,13 @@ public class HomeFragment extends Fragment {
 
                 if(res < 0 || res > Integer.MAX_VALUE) {
                     result.setText(R.string.error3);
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
 
                 res_num = n1 * n2;
                 result.setText(NumberFormat.getInstance().format(res_num));
-                hideKeyboard();
+                hideKeyboard(getActivity(),getView());
             }
         });
 
@@ -108,7 +109,7 @@ public class HomeFragment extends Fragment {
                 if(num1.getText().toString().trim().isEmpty() ||
                         num2.getText().toString().trim().isEmpty()) {
                     result.setText(getString(R.string.error));
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
 
@@ -116,7 +117,7 @@ public class HomeFragment extends Fragment {
                 double b  = Double.parseDouble(num2.getText().toString());
                 if(a > Integer.MAX_VALUE || b > Integer.MAX_VALUE){
                     result.setText(R.string.error3);
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
 
                 }
@@ -125,12 +126,12 @@ public class HomeFragment extends Fragment {
                 n2 = Double.parseDouble(num2.getText().toString());
                 if(n2 == 0) {
                     result.setText(getString(R.string.error2));
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
                 res_num = n1 / n2;
                 result.setText(NumberFormat.getInstance().format(res_num));
-                hideKeyboard();
+                hideKeyboard(getActivity(),getView());
             }
         });
 
@@ -140,27 +141,27 @@ public class HomeFragment extends Fragment {
                 if(num1.getText().toString().trim().isEmpty() ||
                         num2.getText().toString().trim().isEmpty()) {
                     result.setText(getString(R.string.error));
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
                 double a  = Double.parseDouble(num1.getText().toString());
                 double b  = Double.parseDouble(num2.getText().toString());
                 if(a > Integer.MAX_VALUE || b > Integer.MAX_VALUE){
                     result.setText(R.string.error3);
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
                 n1 = Double.parseDouble(num1.getText().toString());
                 n2 = Double.parseDouble(num2.getText().toString());
                 if(n1 > Double.MAX_VALUE - n2){
                     result.setText(getString(R.string.error3));
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
                 res_num = n1 + n2;
                 result.setText(NumberFormat.getInstance().format(res_num));
 
-                hideKeyboard();
+                hideKeyboard(getActivity(),getView());
 
             }
 
@@ -172,36 +173,35 @@ public class HomeFragment extends Fragment {
                 if(num1.getText().toString().trim().isEmpty() ||
                         num2.getText().toString().trim().isEmpty()) {
                     result.setText(getString(R.string.error));
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
                 double a  = Double.parseDouble(num1.getText().toString());
                 double b  = Double.parseDouble(num2.getText().toString());
                 if(a > Integer.MAX_VALUE || b > Integer.MAX_VALUE){
                     result.setText(R.string.error3);
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
                 if(n1 > Double.MAX_VALUE - n2){
                     result.setText(getString(R.string.error3));
-                    hideKeyboard();
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
                 n1 = Double.parseDouble(num1.getText().toString());
                 n2 = Double.parseDouble(num2.getText().toString());
                 res_num = n1 - n2;
                 result.setText(NumberFormat.getInstance().format(res_num));
-                hideKeyboard();
+                hideKeyboard(getActivity(),getView());
             }
         });
 
     }
 
-    public void hideKeyboard(){
-        View view = this.getView();
+    public static void hideKeyboard(Activity thisActivity, View view){
         if(view != null) {
             InputMethodManager imm;
-            imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }

@@ -1,5 +1,6 @@
 package com.example.roy.navapp;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -45,6 +46,7 @@ import org.json.*;
 
 
 import static android.content.ContentValues.TAG;
+import static com.example.roy.navapp.HomeFragment.hideKeyboard;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,12 +57,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String retVal;
 
     ImageView bingImage;
-
+    Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        activity = this;
 
         clearCryptoData();
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
@@ -92,11 +96,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-
             }
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                if(dLayout.isDrawerOpen(GravityCompat.START))hideKeyboard();
+                if(dLayout.isDrawerOpen(GravityCompat.START)) {
+                    hideKeyboard(activity,dLayout);
+                }
             }
         };
 
@@ -248,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             rQ.add(sR);
         }
     }
-
+/*
     public void hideKeyboard(){
         View view = findViewById(R.id.nav_drawer_main);
         if(view != null) {
@@ -257,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
-
+*/
 
     private void clearCryptoData(){
         SharedPreferences sP = this.getSharedPreferences("Crypto", MODE_PRIVATE);

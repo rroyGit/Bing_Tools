@@ -1,6 +1,7 @@
 package com.example.roy.navapp;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -27,16 +29,19 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.roy.navapp.Bing_Dining.getDate;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CryptoFragment extends Fragment {
-    private TextView etherText;
+    private TextView etherText, timeText;
     private Button etherB;
     private EditText editT;
-
+    private String[] retTime;
     private double etherVal = 0.00;
+
+    private ProgressBar progressBar, progressBar2;
 
     public CryptoFragment() {
         // Required empty public constructor
@@ -48,6 +53,9 @@ public class CryptoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Crypto");
 
+        progressBar = (ProgressBar) getActivity().findViewById(R.id.proBar);
+        progressBar2 = (ProgressBar) getActivity().findViewById(R.id.proBar2);
+        timeText = (TextView) getActivity().findViewById(R.id.timeText);
         etherText = (TextView) getActivity().findViewById(R.id.etherText);
         etherB = (Button) getActivity().findViewById(R.id.etherButton);
         editT = (EditText) getActivity().findViewById(R.id.editT);
@@ -58,15 +66,22 @@ public class CryptoFragment extends Fragment {
         if(getSavedEther() == 0.00){
             new getEther().execute();
         }else{
+            progressBar.setVisibility(View.GONE);
+            progressBar2.setVisibility(View.GONE);
             etherVal = getSavedEther();
             etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f",etherVal)));
+            String ret = "Last updated: " + getSavedDate();
+            timeText.setText(ret);
         }
 
 
         etherB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                 new getEther().execute();
+                timeText.setText("Last updated: ");
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar2.setVisibility(View.VISIBLE);
+                new getEther().execute();
             }
         });
 
@@ -116,6 +131,8 @@ public class CryptoFragment extends Fragment {
 
     private class getEther extends AsyncTask<Void, Void, Void> {
         String words;
+
+
         @Override
         protected Void doInBackground(Void... params) {
             try {
@@ -128,10 +145,22 @@ public class CryptoFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(Void aVoid) {
+
             super.onPostExecute(aVoid);
             etherVal = Double.parseDouble(words.substring(1,words.length()));
             etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f",etherVal)));
             saveCryptoData();
+
+            retTime = new String[3];
+            getDate(retTime);
+
+            StringBuilder retString = new StringBuilder();
+            retString.append("Last updated: ");
+            retString.append(retTime[0]).append(':').append(retTime[1]).append(':').append(retTime[2]);
+
+            timeText.setText(retString);
+            progressBar.setVisibility(View.GONE);
+            progressBar2.setVisibility(View.GONE);
         }
     }
 
@@ -148,7 +177,11 @@ public class CryptoFragment extends Fragment {
     private void saveCryptoData(){
         SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
+        retTime = new String[3];
+        getDate(retTime);
+        String date =  retTime[0]+':'+retTime[1]+':'+retTime[2];
 
+        sEditor.putString("Date",date);
         sEditor.putString("Ether", String.valueOf(etherVal));
         sEditor.apply();
     }
@@ -156,6 +189,11 @@ public class CryptoFragment extends Fragment {
     private double getSavedEther(){
         SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
         return Double.parseDouble(sP.getString("Ether", "0.00"));
+    }
+
+    private String getSavedDate(){
+        SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
+        return sP.getString("Date", "0.00");
     }
 
 }

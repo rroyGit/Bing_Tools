@@ -38,7 +38,9 @@ public class Bing_Dining extends Fragment {
     private RecyclerView.Adapter adapter;
 
     private List<ListItem> listItems;
-
+    private String month, date, year;
+    private String[] ret;
+    private StringTokenizer sT;
 
     public Bing_Dining() {
         // Required empty public constructor
@@ -49,8 +51,7 @@ public class Bing_Dining extends Fragment {
         super.onViewCreated(view,savedInstanceState);
         getActivity().setTitle("Bing Dining (Hinman)");
 
-        String month, date, year;
-
+        ret = new String[3];
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -60,15 +61,11 @@ public class Bing_Dining extends Fragment {
         pD.setMessage("Loading, please wait...");
         pD.setCancelable(false);
 
-        Date dateNow = new Date();
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.UK);
 
-        StringTokenizer sT = new StringTokenizer(dateFormatter.format(dateNow), "-");
-        month = sT.nextToken();
-        date = sT.nextToken();
-        year = sT.nextToken();
-
-        Log.d(TAG, month + " "+ date + " "+ year);
+        getDate(ret);
+        month = ret[0];
+        date = ret[1];
+        year = ret[2];
 
         getBingDiningData bing = new getBingDiningData();
 
@@ -205,6 +202,10 @@ public class Bing_Dining extends Fragment {
             formatString(dinner, res3);
 
             for(int i = 0; i < 7; i++) {
+                if((res[i].equals(""))) res[i] = "Nothing to show, folks";
+                if((res2[i].equals(""))) res2[i] = "Nothing to show, folks";
+                if((res3[i].equals(""))) res3[i] = "Nothing to show, folks";
+
                 ListItem listItem = new ListItem(res[i], res2[i], res3[i], resImg[i]);
                 listItems.add(listItem);
 
@@ -250,7 +251,6 @@ public class Bing_Dining extends Fragment {
         sEditor.putString("Break"+day, breakF);
         sEditor.putString("Lunch"+day, lunch);
         sEditor.putString("Dinner"+day,dinner);
-
         sEditor.apply();
     }
 
@@ -277,5 +277,16 @@ public class Bing_Dining extends Fragment {
         }
         adapter = new MyAdapter(listItems, getContext());
         recyclerView.setAdapter(adapter);
+    }
+
+    public static void getDate(String[] ret){
+        Date dateNow = new Date();
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.US);
+
+        StringTokenizer sT = new StringTokenizer(dateFormatter.format(dateNow), "-");
+        ret[0] = sT.nextToken();
+        ret[1] = sT.nextToken();
+        ret[2] = sT.nextToken();
+        //Log.d(TAG, month + " "+ date + " "+ year);
     }
 }
