@@ -78,7 +78,6 @@ public class Bing_Dining extends Fragment {
 
         while(true) {
             if (getSavedBingData("Breakmonday").equals("error")) {
-                pD.show();
                 bing.execute();
                 break;
             } else {
@@ -102,20 +101,17 @@ public class Bing_Dining extends Fragment {
                 //Log.d(TAG, month2 + " "+ date2 + " "+ year2);
                 //Log.d(TAG, month + " "+ date + " "+ year);
 
-
                 if (Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
-                    pD.show();
+
                     //Log.d(TAG, "month!");
                     bing.execute();
                     break;
                 } else if (((date.equals(date1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
                         ((date.equals(date2)) && (Integer.parseInt(date) > Integer.parseInt(date2)))) {
-                    pD.show();
                     //Log.d(TAG, "date!");
                     bing.execute();
                     break;
                 } else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
-                    pD.show();
                     //Log.d(TAG, "year!");
                     bing.execute();
                     break;
@@ -155,6 +151,15 @@ public class Bing_Dining extends Fragment {
         final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
 
         @Override
+        protected void onPreExecute() {
+
+            pD = new ProgressDialog(context);
+            pD.setCancelable(false);
+            pD.setMessage("Loading, please wait...");
+            pD.show();
+        }
+
+        @Override
         protected Void doInBackground(Void... params) {
             try {
                 Document doc = Jsoup.connect(hinmanUrl).get();
@@ -167,7 +172,6 @@ public class Bing_Dining extends Fragment {
                         weekStrings[j++] = a.text();
                     }
                 }
-
 
                 String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
                 Document doc2 = Jsoup.connect(firstUrl).get();
