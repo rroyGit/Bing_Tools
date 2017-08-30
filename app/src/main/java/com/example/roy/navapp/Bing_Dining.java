@@ -208,7 +208,7 @@ public class Bing_Dining extends Fragment {
             super.onPostExecute(aVoid);
 
             if(weekStrings[0] == null){
-                Toast.makeText(context, "Could not connect to the Internet.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
                 pD.dismiss();
             }else {
 

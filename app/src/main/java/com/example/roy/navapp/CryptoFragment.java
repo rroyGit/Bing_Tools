@@ -167,7 +167,7 @@ public class CryptoFragment extends Fragment {
                 progressBar2.setVisibility(View.GONE);
 
             }else{
-                Toast.makeText(context, "Could not connect to the Internet.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
                 progressBar2.setVisibility(View.GONE);
             }
