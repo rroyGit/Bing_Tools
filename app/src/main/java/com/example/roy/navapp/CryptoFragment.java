@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,6 +41,7 @@ public class CryptoFragment extends Fragment {
     private EditText editT;
     private String[] retTime;
     private double etherVal = 0.00;
+    private Context context;
 
     private ProgressBar progressBar, progressBar2;
 
@@ -53,6 +55,7 @@ public class CryptoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Crypto");
 
+        context = this.getContext();
         progressBar = (ProgressBar) getActivity().findViewById(R.id.proBar);
         progressBar2 = (ProgressBar) getActivity().findViewById(R.id.proBar2);
         timeText = (TextView) getActivity().findViewById(R.id.timeText);
@@ -146,21 +149,28 @@ public class CryptoFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
 
-            super.onPostExecute(aVoid);
-            etherVal = Double.parseDouble(words.substring(1,words.length()));
-            etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f",etherVal)));
-            saveCryptoData();
+            if(words != null) {
+                super.onPostExecute(aVoid);
+                etherVal = Double.parseDouble(words.substring(1, words.length()));
+                etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", etherVal)));
+                saveCryptoData();
 
-            retTime = new String[3];
-            getDate(retTime);
+                retTime = new String[3];
+                getDate(retTime);
 
-            StringBuilder retString = new StringBuilder();
-            retString.append("Last updated: ");
-            retString.append(retTime[0]).append(':').append(retTime[1]).append(':').append(retTime[2]);
+                StringBuilder retString = new StringBuilder();
+                retString.append("Last updated: ");
+                retString.append(retTime[0]).append(':').append(retTime[1]).append(':').append(retTime[2]);
 
-            timeText.setText(retString);
-            progressBar.setVisibility(View.GONE);
-            progressBar2.setVisibility(View.GONE);
+                timeText.setText(retString);
+                progressBar.setVisibility(View.GONE);
+                progressBar2.setVisibility(View.GONE);
+
+            }else{
+                Toast.makeText(context, "Could not connect to the Internet.", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                progressBar2.setVisibility(View.GONE);
+            }
         }
     }
 

@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Could not connect to the Internet", Toast.LENGTH_LONG).show();
                 }
             });
             return null;
