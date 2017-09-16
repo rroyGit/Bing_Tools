@@ -3,6 +3,7 @@ package com.example.roy.navapp;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -46,6 +47,7 @@ import org.json.*;
 
 
 import static android.content.ContentValues.TAG;
+import static com.example.roy.navapp.Bing_Dining.getDeviceInternetStatus;
 import static com.example.roy.navapp.HomeFragment.hideKeyboard;
 
 
@@ -66,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         activity = this;
 
+        //clears saved data for ether crypto
         clearCryptoData();
+
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
@@ -77,18 +81,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkGray2));
 
+
         NavigationView nView = (NavigationView) findViewById(R.id.nav_menu_view);
-        nView.getLayoutParams().width = (int)(width/1.75);
+        nView.getLayoutParams().width = (int)(width/1.45);
 
         View headerView = nView.getHeaderView(0);
-        headerView.getLayoutParams().height = height/5;
+        headerView.getLayoutParams().height = (int)(height/3.2);
 
         bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
-        new getPic().execute();
+
+        if(getDeviceInternetStatus(getApplicationContext()) == null){
+            Toast.makeText(getApplicationContext(), "Could not get Bing Daily Image", Toast.LENGTH_SHORT).show();
+        }else new getPic().execute();
 
 
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
         setSupportActionBar(toolBar);
+
 
         final DrawerLayout dLayout;
         dLayout = (DrawerLayout) findViewById(R.id.nav_drawer_main);
@@ -115,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_main, home).commit();
         nView.getMenu().findItem(R.id.Home).setChecked(true);
-
     }
 
     @Override
@@ -126,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.setTaskDescription(taskDesc);
 
     }
-
 
     @Override
     public void onBackPressed() {
@@ -153,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(MainActivity.this, Settings.class);
+            startActivity(settingsIntent);
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -208,8 +218,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private class getPic extends AsyncTask<Void, Void, Void> {
 
+    private class getPic extends AsyncTask<Void, Void, Void> {
         StringRequest sR;
         final String URL_DATA = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US";
 
@@ -253,16 +263,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             rQ.add(sR);
         }
     }
-/*
-    public void hideKeyboard(){
-        View view = findViewById(R.id.nav_drawer_main);
-        if(view != null) {
-            InputMethodManager imm;
-            imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-*/
 
     private void clearCryptoData(){
         SharedPreferences sP = this.getSharedPreferences("Crypto", MODE_PRIVATE);

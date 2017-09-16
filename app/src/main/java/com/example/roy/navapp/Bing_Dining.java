@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.Image;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -44,7 +46,7 @@ public class Bing_Dining extends Fragment {
 
     private List<ListItem> listItems;
     private String month, date, year;
-    private String[] ret;
+    private String[] savedDate;
     private StringTokenizer sT;
 
     public Bing_Dining() {
@@ -57,7 +59,8 @@ public class Bing_Dining extends Fragment {
         getActivity().setTitle("Bing Dining (Hinman)");
 
         context = this.getContext();
-        ret = new String[3];
+
+        savedDate = new String[3];
         toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
@@ -65,19 +68,27 @@ public class Bing_Dining extends Fragment {
         listItems = new ArrayList<>();
 
         pD = new ProgressDialog(getActivity());
-        pD.setMessage("Loading, please wait...");
-        pD.setCancelable(false);
 
         //gets current date
-        getDate(ret);
-        month = ret[0];
-        date = ret[1];
-        year = ret[2];
+        getDate(savedDate);
+        //break date into three parts
+        month = savedDate[0];
+        date = savedDate[1];
+        year = savedDate[2];
 
+        //Async Task for getting bing dining data from the web
         getBingDiningData bing = new getBingDiningData();
 
+
+
+        //determine whether to load data from saved storage or from the web
         while(true) {
             if (getSavedBingData("Breakmonday").equals("error")) {
+
+                if(getDeviceInternetStatus(context) == null){
+                    Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 bing.execute();
                 break;
             } else {
@@ -102,22 +113,31 @@ public class Bing_Dining extends Fragment {
                 //Log.d(TAG, month + " "+ date + " "+ year);
 
                 if (Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
-
-                    //Log.d(TAG, "month!");
                     bing.execute();
                     break;
-                } else if (((date.equals(date1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
-                        ((date.equals(date2)) && (Integer.parseInt(date) > Integer.parseInt(date2)))) {
-                    //Log.d(TAG, "date!");
+                } else if (((month.equals(month1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
+                        ((month.equals(month2)) && (Integer.parseInt(date) > Integer.parseInt(date2)))) {
                     bing.execute();
                     break;
                 } else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
-                    //Log.d(TAG, "year!");
                     bing.execute();
                     break;
                 } else {
                     toolbar.setTitle(getWeekDate());
-                    loadData();
+                    Thread loadDataThread = new Thread(){
+
+                        @Override
+                        public void run() {
+                            super.run();
+                            loadData();
+                        }
+                    };
+                    loadDataThread.start();
+                    try {
+                        loadDataThread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
             }
@@ -152,7 +172,6 @@ public class Bing_Dining extends Fragment {
 
         @Override
         protected void onPreExecute() {
-
             pD = new ProgressDialog(context);
             pD.setCancelable(false);
             pD.setMessage("Loading, please wait...");
@@ -165,6 +184,7 @@ public class Bing_Dining extends Fragment {
                 Document doc = Jsoup.connect(hinmanUrl).get();
                 Elements weekUrl = doc.getElementsByClass("accordionBody");
 
+                //get updated links to Bing dining data
                 for (Element link : weekUrl) {
                     Elements f = link.getElementsByTag("a");
                     for(Element a: f) {
@@ -175,6 +195,7 @@ public class Bing_Dining extends Fragment {
 
                 String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
                 Document doc2 = Jsoup.connect(firstUrl).get();
+
                 for(int i = 0; i < 7; i++) {
                     Elements B = doc2.getElementById(days[i]).select("tr.brk").select("span.ul");
                     Elements L = doc2.getElementById(days[i]).select("tr.lun").select("span.ul");
@@ -291,7 +312,38 @@ public class Bing_Dining extends Fragment {
         final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
         listItems = new ArrayList<>();
 
-        for(int i = 0; i < 7; i++) {
+        int index;
+        Date date =  new Date();
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("E", Locale.US);
+        String dayWeek = dateFormatter.format(date);
+
+        switch(dayWeek){
+            case "Mon":
+                index = 0;
+                break;
+            case "Tue":
+                index = 1;
+                break;
+            case "Wed":
+                index = 2;
+                break;
+            case "Thu":
+                index = 3;
+                break;
+            case "Fri":
+                index = 4;
+                break;
+            case "Sat":
+                index = 5;
+                break;
+            case "Sun":
+                index = 6;
+                break;
+            default:
+                index = 0;
+        }
+
+        for(int i = index ;i < 7; i++) {
             String res, res2, res3;
 
             res = getSavedBingData("Break"+days[i]);
@@ -301,6 +353,17 @@ public class Bing_Dining extends Fragment {
             ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
             listItems.add(listItem);
         }
+        for(int i = 0 ; i < index; i++) {
+            String res, res2, res3;
+
+            res = getSavedBingData("Break"+days[i]);
+            res2 = getSavedBingData("Lunch"+days[i]);
+            res3 = getSavedBingData("Dinner"+days[i]);
+
+            ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
+            listItems.add(listItem);
+        }
+
         adapter = new MyAdapter(listItems, getContext());
         recyclerView.setAdapter(adapter);
     }
@@ -314,5 +377,11 @@ public class Bing_Dining extends Fragment {
         ret[1] = sT.nextToken();
         ret[2] = sT.nextToken();
         //Log.d(TAG, month + " "+ date + " "+ year);
+    }
+
+    public static NetworkInfo getDeviceInternetStatus(Context context){
+        //check if internet enabled
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo();
     }
 }

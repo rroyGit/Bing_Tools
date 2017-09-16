@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Bing_Tools.iml" filepath="$PROJECT_DIR$/Bing_Tools.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NavApp.iml" filepath="$PROJECT_DIR$/NavApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

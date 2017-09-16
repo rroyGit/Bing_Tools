@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:weightSum="1"
     android:background="@color/gray"
     android:orientation="vertical"
@@ -75,9 +76,9 @@
 
     <Button
         android:id="@+id/addB"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@drawable/touch_button"
 
         android:layout_marginTop="32dp"
         android:text="@string/add"
@@ -88,9 +89,9 @@
 
     <Button
         android:id="@+id/minusB"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@drawable/touch_button"
 
         android:layout_alignBaseline="@+id/addB"
         android:layout_alignBottom="@+id/addB"
@@ -102,9 +103,9 @@
 
     <Button
         android:id="@+id/clear"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@drawable/touch_button"
 
         android:layout_alignBaseline="@+id/minusB"
         android:layout_alignBottom="@+id/minusB"
@@ -112,12 +113,12 @@
         android:text="c"
         android:textAllCaps="false"
         android:textSize="35sp" />
-
+        <!--style="?android:attr/borderlessButtonStyle"-->
     <Button
         android:id="@+id/mulB"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@drawable/touch_button"
 
         android:text="@string/mul"
         android:textAllCaps="false"
@@ -127,9 +128,9 @@
 
     <Button
         android:id="@+id/divB"
-        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@drawable/touch_button"
 
         android:text="@string/div"
         android:textAllCaps="false"
