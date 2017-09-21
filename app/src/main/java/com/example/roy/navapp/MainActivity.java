@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -49,6 +50,7 @@ import org.json.*;
 import static android.content.ContentValues.TAG;
 import static com.example.roy.navapp.Bing_Dining.getDeviceInternetStatus;
 import static com.example.roy.navapp.HomeFragment.hideKeyboard;
+
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -268,4 +270,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sP = this.getSharedPreferences("Crypto", MODE_PRIVATE);
         sP.edit().remove("Crypto").clear().apply();
     }
+
 }

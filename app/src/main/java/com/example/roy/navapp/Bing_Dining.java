@@ -4,6 +4,7 @@ package com.example.roy.navapp;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -39,8 +42,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class Bing_Dining extends Fragment {
 
     private ProgressDialog pD;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    public RecyclerView recyclerView;
+    public RecyclerView.Adapter adapter;
     private Context context;
     private Toolbar toolbar;
 
@@ -145,6 +148,7 @@ public class Bing_Dining extends Fragment {
         //set empty adapter due to waiting for data
         adapter = new MyAdapter(listItems,getContext());
         recyclerView.setAdapter(adapter);
+
     }
 
     @Override
@@ -297,7 +301,7 @@ public class Bing_Dining extends Fragment {
 
         sEditor.putString("Break"+day, breakF);
         sEditor.putString("Lunch"+day, lunch);
-        sEditor.putString("Dinner"+day,dinner);
+        sEditor.putString("Dinner"+day, dinner);
         sEditor.apply();
     }
 
@@ -380,8 +384,10 @@ public class Bing_Dining extends Fragment {
     }
 
     public static NetworkInfo getDeviceInternetStatus(Context context){
-        //check if internet enabled
+        //check is if internet enabled
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo();
     }
+
+
 }

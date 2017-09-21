@@ -1,7 +1,11 @@
 package com.example.roy.navapp;
 
+import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
+
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,12 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewManager;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,25 +70,25 @@ public class Settings extends AppCompatActivity{
         radioNames.add("Red");
         radioNames.add("Blue");
 
-        //radioNames2.add("Black");
-        //radioNames2.add("Yellow");
+        radioNames2.add("Black");
+        radioNames2.add("Light Gray");
 
-        titles.add("Bing meal time");
-        //titles.add("Bing food names");
+        titles.add("Bing Header");
+        titles.add("Bing Body");
 
 
         childList.put(titles.get(0), radioNames);
-        //childList.put(titles.get(1), radioNames2);
-
+        childList.put(titles.get(1), radioNames2);
 
         SettingsAdapter settingsAdapter = new SettingsAdapter(childList, titles, getApplicationContext());
         expandableListView.setAdapter(settingsAdapter);
 
-    }
-    public void onRadioButtonClicked(View view) {
+
+
 
 
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
