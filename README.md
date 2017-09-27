@@ -6,7 +6,9 @@ Bing Tools provides the following:
 a) Rudimentary calculator
 
 b) Lastest crypto currency rate in dollars; curently ethereum is implemented, more to be added soon
+
   b1: Easily check how many ethereum you have translate to dollars
+
   b2: Time stamp shown to let you know when last updated
   
   
