@@ -65,6 +65,7 @@ public class Bing_Dining extends Fragment {
 
         savedDate = new String[3];
         toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -126,6 +127,7 @@ public class Bing_Dining extends Fragment {
                     bing.execute();
                     break;
                 } else {
+                    toolbar.setTitleMarginStart(225);
                     toolbar.setTitle(getWeekDate());
                     Thread loadDataThread = new Thread(){
 
