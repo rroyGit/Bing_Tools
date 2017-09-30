@@ -1,10 +1,11 @@
 package com.example.roy.navapp;
 
-import android.app.Fragment;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.support.annotation.Nullable;
+
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewManager;
+
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ExpandableListView;
@@ -30,7 +31,7 @@ import java.util.List;
 public class Settings extends AppCompatActivity{
     private Toolbar toolBar;
     private ExpandableListView expandableListView;
-
+    Context context;
     private List<String> titles;
     private List<String> radioNames;
     private List<String> radioNames2;
@@ -40,6 +41,7 @@ public class Settings extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        context = getApplicationContext();
 
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -113,8 +115,13 @@ public class Settings extends AppCompatActivity{
         if (id == R.id.action_home) {
             Intent homeIntent = new Intent(Settings.this, MainActivity.class);
             startActivity(homeIntent);
+        }
+        if(id == R.id.resetColors){
+            item.setChecked(true);
+            Toast.makeText(context, "Colors Reset", Toast.LENGTH_LONG).show();
+            SharedPreferences colors =  getSharedPreferences("Colors", MODE_PRIVATE);
+            colors.edit().clear().apply();
 
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
