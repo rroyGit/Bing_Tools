@@ -7,9 +7,11 @@ a) Rudimentary calculator
 
 b) Latest crypto currency rate in US dollars; curently ethereum is implemented, more to be added soon
 
-  b1: Easily check how many ethereum you have translate to dollars
+  b1: Easily check how many ethereum you have convert to dollars
 
   b2: Time stamp shown to let you know when last updated
+  
+  b3: Data saved on device while app is running; requires fewer https requests
   
 c) Binghamton campus dining menu
 
@@ -19,9 +21,11 @@ c) Binghamton campus dining menu
   
   c3: Menu data is stored on the device at first launch so https requests require only once per week; less overhead/faster loading.
   
-  c4: Settings page now gives you the ability to change colors of the cards; requires a refresh of the activity. You can change the colors       of the expandable text as well as the meal time bar. More colors to be added soon.
+  c4: Settings page now gives you the ability to change colors of the cards; requires a refresh of the activity. You can change the       colors of the expandable text as well as the meal time bar. More colors to be added soon.
   
-  d) Navigation menu displays a new image everyday thanks to Microsoft Bing.
+  c5: Added the ability to reset to default colors
+  
+d) Navigation menu displays a new image everyday thanks to Microsoft Bing.
   
 To be added:
 a) An about page is in works, crediting the originals owners of the icons, web data, etc.
