@@ -1,5 +1,5 @@
 # Bing_Tools
-An Android Application, Bing Tools, developed using Android Studio.
+Bing Tools is an Android application developed using Android Studio.
 
 Bing Tools provide the following:
 
