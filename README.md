@@ -14,7 +14,7 @@ Bing Tools provide the following:
 ### c) Binghamton campus dining menu
 
 	c1: Present the campus dining menu in an easy to read and use enviornment via recylerview and cards with material design. 
-	    Currently only Hinman dining hall is avaliable, more to follow.
+	    Currently only Hinman dining hall is avaliable, other dinning halls to follow.
 	c2: Sort the cards view in relation to the current day; you have the latest card shown first when opening Bing Dining.
 	    No longer will you need to swipe/scroll down to see what's on menu for today.
 	c3: Menu data is stored on the device at first launch so https requests require only once per week;less overhead/faster loading.
