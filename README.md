@@ -4,15 +4,17 @@
 Bing Tools provide the following:
 
 ### a) Rudimentary calculator
+	a1: Hate using touch pad to enter numbers? Bing tools lets you use the phone's keyboard to enter the numbers
+	a2: Add, substract, multiply, divide any two numbers instantly
+	a3: See the result in a big and clear customized textview
 
 ### b) Crypto currency rate and converter 
-
-	b1: Easily check how much X ethereum convert to dollars; more crypto currency to be added soon
-	b2: Time stamp shown to let you know when last updated
-	b3: Data saved on device while app is running; requires fewer https requests
+	b1: Easily check how much X ethereum convert to dollars
+	b2: Textsize auto-sizes if result is too large to fit the view
+	b3: Time stamp shown to let you know when last updated
+	b4: Data saved on device while app is running; requires fewer https requests
   
 ### c) Binghamton campus dining menu
-
 	c1: View the campus dining menu in an easy to read and use environment via recylerview and cards with material design. 
 	    Currently only Hinman dining hall is avaliable, other dinning halls to follow.
 	c2: Sort the cards view in relation to the current day; you have the latest card shown first when opening Bing Dining.
