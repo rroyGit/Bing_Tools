@@ -16,10 +16,10 @@ Bing Tools provide the following:
 	c1: Present the campus dining menu in an easy to read and use enviornment via recylerview and cards with material design. 
 	    Currently only Hinman dining hall is avaliable, more to follow.
 	c2: Sort the cards view in relation to the current day; you have the latest card shown first when opening Bing Dining.
-			No longer will you need to swipe/scroll down to see what's on menu for today.
+	    No longer will you need to swipe/scroll down to see what's on menu for today.
 	c3: Menu data is stored on the device at first launch so https requests require only once per week;less overhead/faster loading.
 	c4: Settings page now gives you the ability to change colors of the cards; requires a refresh of the activity. 
-			You can change the colors of the expandable text as well as the meal time bar. More colors to be added soon.
+	    You can change the colors of the expandable text as well as the meal time bar. More colors to be added soon.
 	c5: Added the ability to reset to default colors
   
 ### d) Navigation menu displays a new image everyday thanks to Microsoft Bing.
