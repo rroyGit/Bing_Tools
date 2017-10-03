@@ -28,8 +28,11 @@ c) Binghamton campus dining menu
 d) Navigation menu displays a new image everyday thanks to Microsoft Bing.
   
 To be added:
-a) An about page is in works, crediting the originals owners of the icons, web data, etc.
+
+a) An about page is in works, crediting the original owners of the icons, web data, etc.
+
 b) Dynamically change the colors of the cards in Bing Dining.
+
 c) Save the bitmap of the navigation image to device. 
 
 ![Alt text](app/Bing_Tools_1.png "Bing_Tools_1")
