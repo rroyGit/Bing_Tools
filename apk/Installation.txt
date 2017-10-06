@@ -1,0 +1,1 @@
+Simply copy the apk to Android device, loacte the dir where said apk exists, and tap on it to install; ensure you allow installation from unknown sources.
