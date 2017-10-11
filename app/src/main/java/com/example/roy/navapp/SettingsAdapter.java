@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.annotation.ColorInt;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.roy.navapp.MyAdapter.getSavedColors;
 
 
 public class SettingsAdapter extends BaseExpandableListAdapter {
@@ -89,6 +91,7 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+
         @SuppressWarnings("unchecked")
         List<String> radioNames = (List<String>) this.getChild(groupPosition,childPosition);
         if(convertView == null){
@@ -103,6 +106,29 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
         radioButton.setText(radioNames.get(0));
         radioButton1.setText(radioNames.get(1));
 
+        for(int i = 0; i < 2; i++) {
+            String color = getSavedColors("ColorSpace"+i, context);
+
+            if (color != null && !color.equals("error")) {
+                switch (Integer.parseInt(color)) {
+                    case Color.RED:
+                        color = "Red";
+                        break;
+                    case Color.BLACK:
+                        color = "Black";
+                        break;
+                    case Color.BLUE:
+                        color = "Blue";
+                        break;
+                    case Color.LTGRAY:
+                        color = "Light Gray";
+                        break;
+                }
+
+                if (radioButton.getText().equals(color)) radioButton.setChecked(true);
+                else if (radioButton1.getText().equals(color)) radioButton1.setChecked(true);
+            }
+        }
         if(groupPosition == 0) {
             radioButton.setOnClickListener(new View.OnClickListener() {
 
