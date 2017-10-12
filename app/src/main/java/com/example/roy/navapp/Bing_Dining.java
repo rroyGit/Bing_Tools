@@ -53,7 +53,7 @@ public class Bing_Dining extends Fragment {
     private StringTokenizer sT;
 
     public Bing_Dining() {
-        // Required empty public constructor
+        //empty constructor
     }
 
     @Override
@@ -391,6 +391,5 @@ public class Bing_Dining extends Fragment {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo();
     }
-
 
 }

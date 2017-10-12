@@ -5,8 +5,9 @@
 
     <TextView
         android:id="@+id/titleContent"
+        android:layout_marginStart="40dp"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="55dp"
         android:layout_weight="2.19"
         android:text="Title"
         android:textSize="20sp"/>

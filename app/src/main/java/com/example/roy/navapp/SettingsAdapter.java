@@ -136,8 +136,7 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
                 public void onClick(View v) {
                     Toast.makeText(context, "RED, restart to see changes", Toast.LENGTH_SHORT).show();
                     saveColors("ColorSpace"+0, Color.RED);
-
-
+                    saveReset(true);
                 }
             });
 
@@ -147,6 +146,7 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
                 public void onClick(View v) {
                     Toast.makeText(context, "Blue, restart to see changes", Toast.LENGTH_SHORT).show();
                     saveColors("ColorSpace"+0, Color.BLUE);
+                    saveReset(true);
                 }
             });
         }else if(groupPosition == 1){
@@ -156,6 +156,7 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
                 public void onClick(View v) {
                     Toast.makeText(context, "Black, restart to see changes", Toast.LENGTH_SHORT).show();
                     saveColors("ColorSpace"+1, Color.BLACK);
+                    saveReset(true);
 
                 }
             });
@@ -166,6 +167,7 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
                 public void onClick(View v) {
                     Toast.makeText(context, "Light Gray, restart to see changes", Toast.LENGTH_SHORT).show();
                     saveColors("ColorSpace"+1, Color.LTGRAY);
+                    saveReset(true);
                 }
             });
 
@@ -186,5 +188,17 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
     }
 
 
+    /* //add something else
+    protected void resetRadio(){
+        View view = getChildView(0,0, false, null, null);
+        RadioButton radioButton = (RadioButton) view.findViewById(R.id.radioButton);
+        Toast.makeText(context,radioButton.getText(), Toast.LENGTH_LONG).show();
+        radioButton.setChecked(false);
+    }
+    */
+    protected void saveReset(boolean bool){
+        SharedPreferences sP = context.getSharedPreferences("resetState", MODE_PRIVATE);
+        sP.edit().putBoolean("colorReset", bool).apply();
+    }
 
 }
