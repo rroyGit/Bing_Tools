@@ -53,7 +53,7 @@ public class Bing_Dining extends Fragment {
     private StringTokenizer sT;
 
     public Bing_Dining() {
-        // Required empty public constructor
+        //empty constructor
     }
 
     @Override
@@ -242,6 +242,7 @@ public class Bing_Dining extends Fragment {
                 //save the date to device
                 saveBingWeekData(weekStrings[0]);
 
+                toolbar.setTitleMarginStart(225);
                 toolbar.setTitle(getWeekDate());
                 String res[], res2[], res3[];
                 int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
@@ -390,6 +391,5 @@ public class Bing_Dining extends Fragment {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo();
     }
-
 
 }

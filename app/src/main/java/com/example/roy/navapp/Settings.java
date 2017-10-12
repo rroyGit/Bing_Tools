@@ -37,6 +37,7 @@ public class Settings extends AppCompatActivity{
     private List<String> radioNames2;
     private RadioButton radioButton;
     private RadioGroup radioGroup;
+    private SettingsAdapter settingsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,15 +83,10 @@ public class Settings extends AppCompatActivity{
         childList.put(titles.get(0), radioNames);
         childList.put(titles.get(1), radioNames2);
 
-        SettingsAdapter settingsAdapter = new SettingsAdapter(childList, titles, getApplicationContext());
+        settingsAdapter = new SettingsAdapter(childList, titles, getApplicationContext());
         expandableListView.setAdapter(settingsAdapter);
 
-
-
-
-
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -104,6 +100,16 @@ public class Settings extends AppCompatActivity{
         getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //Get color reset state from device, custom color chosen then option is unlocked
+        //if no custom color is chosen, option is locked
+        if(getReset()) menu.getItem(0).setChecked(false);
+        else menu.getItem(0).setChecked(true);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -117,12 +123,20 @@ public class Settings extends AppCompatActivity{
             startActivity(homeIntent);
         }
         if(id == R.id.resetColors){
-            item.setChecked(true);
-            Toast.makeText(context, "Colors Reset", Toast.LENGTH_LONG).show();
-            SharedPreferences colors =  getSharedPreferences("Colors", MODE_PRIVATE);
-            colors.edit().clear().apply();
-
+            if(getReset()) {
+                Toast.makeText(context, "Colors Reset", Toast.LENGTH_SHORT).show();
+                SharedPreferences colors = getSharedPreferences("Colors", MODE_PRIVATE);
+                colors.edit().clear().apply();
+                expandableListView.setAdapter(settingsAdapter);
+                item.setChecked(true);
+                settingsAdapter.saveReset(false);
+            }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean getReset(){
+        SharedPreferences sP = context.getSharedPreferences("resetState", MODE_PRIVATE);
+       return sP.getBoolean("colorReset", false);
     }
 }

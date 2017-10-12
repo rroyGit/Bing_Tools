@@ -48,11 +48,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         holder.weekdayImage.setImageResource(listItem.getresInt());
 
-        String color = getSavedColors("ColorSpace1");
+        String color = getSavedColors("ColorSpace1", context);
         if(!color.equals("error")){
             changeExpandTextColors(holder, Integer.parseInt(color));
         }
-        color =  getSavedColors("ColorSpace0");
+        color =  getSavedColors("ColorSpace0", context);
         if(!color.equals("error")){
             changeHeaderColors(holder, Integer.parseInt(color));
         }
@@ -89,7 +89,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         }
     }
 
-    private String getSavedColors(String key){
+    public static String getSavedColors(String key, Context context){
         SharedPreferences sP = context.getSharedPreferences("Colors", MODE_PRIVATE);
         return sP.getString(key, "error");
     }
