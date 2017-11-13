@@ -2,182 +2,164 @@ package com.example.roy.navapp;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.support.annotation.ColorInt;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
+import com.afollestad.sectionedrecyclerview.SectionedViewHolder;
 
 import java.util.HashMap;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.roy.navapp.MyAdapter.getSavedColors;
 
 
-public class SettingsAdapter extends BaseExpandableListAdapter {
-
+public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapter.MainVH> {
 
     private List<String> titles;
-    private HashMap<String,List<String>> radioButtons;
+    private HashMap<String,List<String>> colorsMap;
     private Context context;
 
-    public SettingsAdapter(HashMap<String,List<String>> radioButtons, List<String> titles, Context context) {
+
+    public SettingsAdapter(HashMap<String,List<String>> colorsMap, List<String> titles, Context context) {
         this.context = context;
-        this.radioButtons = radioButtons;
+        this.colorsMap = colorsMap;
         this.titles = titles;
     }
 
     @Override
-    public int getGroupCount() {
-        return titles.size();
+    public int getSectionCount() {
+        return 2;
     }
 
     @Override
-    public int getChildrenCount(int groupPosition) {
-        return radioButtons.get(titles.get(groupPosition)).size()-1;
+    public int getItemCount(int section) {
+        return 1;
     }
 
     @Override
-    public Object getGroup(int groupPosition) {
-        return titles.get(groupPosition);
-    }
-
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        return radioButtons.get(titles.get(groupPosition));
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        String title = (String) this.getGroup(groupPosition);
-        if(convertView == null){
-            LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.parent_item_s,null);
+    public void onBindHeaderViewHolder(MainVH holder, int section, boolean expanded) {
+        switch (section){
+            case 0:
+                holder.textView.setText(titles.get(0));
+                break;
+            case 1:
+                holder.textView.setText(titles.get(1));
+                break;
         }
 
-        TextView textView = (TextView) convertView.findViewById(R.id.titleContent);
-        textView.setTypeface(null, Typeface.BOLD);
-        textView.setText(title);
-
-        return convertView;
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public void onBindFooterViewHolder(MainVH holder, int section) {
 
-        @SuppressWarnings("unchecked")
-        List<String> radioNames = (List<String>) this.getChild(groupPosition,childPosition);
-        if(convertView == null){
-            LayoutInflater layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.child_item_s,null);
+    }
+
+    @Override
+    public void onBindViewHolder(final MainVH holder, int section, int relativePosition, int absolutePosition) {
+
+       switch (section){
+           case 0:
+               holder.radioButton.setText(colorsMap.get(titles.get(0)).get(0));
+               holder.radioButton2.setText(colorsMap.get(titles.get(0)).get(1));
+
+               holder.radioButton.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       saveColors("ColorSpace0", Color.RED);
+                   }
+               });
+
+               holder.radioButton2.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                       saveColors("ColorSpace1", Color.BLUE);
+                   }
+               });
+               break;
+           case 1:
+               holder.radioButton.setText(colorsMap.get(titles.get(1)).get(0));
+               holder.radioButton2.setText(colorsMap.get(titles.get(1)).get(1));
+               break;
+       }
+
+    }
+    @Override
+    public int getItemViewType(int section, int relativePosition, int absolutePosition) {
+        if (section == 1) {
+            // VIEW_TYPE_FOOTER is -3, VIEW_TYPE_HEADER is -2, VIEW_TYPE_ITEM is -1.
+            // You can return 0 or greater.
+            return 0;
+        }
+        return super.getItemViewType(section, relativePosition, absolutePosition);
+    }
+
+    @Override
+    public MainVH onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        int layout;
+        switch (viewType) {
+            case VIEW_TYPE_HEADER:
+                layout = R.layout.header_list;
+                break;
+            case VIEW_TYPE_ITEM:
+                layout = R.layout.body_list;
+                break;
+            case VIEW_TYPE_FOOTER:
+                layout = R.layout.body_list;
+                break;
+            default:
+                layout = R.layout.body_list;
+                break;
         }
 
-        final RadioGroup radioGroup = (RadioGroup) convertView.findViewById(R.id.radioGroup);
-        final RadioButton radioButton = (RadioButton) convertView.findViewById(R.id.radioButton);
-        final RadioButton radioButton1 = (RadioButton) convertView.findViewById(R.id.radioButton1);
+        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+        return new MainVH(v, this);
+    }
 
-        radioButton.setText(radioNames.get(0));
-        radioButton1.setText(radioNames.get(1));
 
-        for(int i = 0; i < 2; i++) {
-            String color = getSavedColors("ColorSpace"+i, context);
+    public class MainVH extends SectionedViewHolder implements View.OnClickListener{
+        TextView textView;
+        RadioButton radioButton;
+        RadioButton radioButton2;
+        SettingsAdapter adapter;
+        Toast toast;
 
-            if (color != null && !color.equals("error")) {
-                switch (Integer.parseInt(color)) {
-                    case Color.RED:
-                        color = "Red";
-                        break;
-                    case Color.BLACK:
-                        color = "Black";
-                        break;
-                    case Color.BLUE:
-                        color = "Blue";
-                        break;
-                    case Color.LTGRAY:
-                        color = "Light Gray";
-                        break;
+
+        public MainVH(View itemView, SettingsAdapter myAdapter) {
+            super(itemView);
+            textView = (TextView) itemView.findViewById(R.id.Bing_header);
+            radioButton = (RadioButton) itemView.findViewById(R.id.radio);
+            radioButton2 = (RadioButton) itemView.findViewById(R.id.radio2);
+            adapter = myAdapter;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            if (isFooter()){
+                return;
+            }
+            if (isHeader()) {
+                adapter.toggleSectionExpanded(getRelativePosition().section());
+            } else {
+                if (toast != null) {
+                    toast.cancel();
                 }
+                toast = Toast.makeText(v.getContext(), getRelativePosition().toString(), Toast.LENGTH_SHORT);
+                toast.show();
 
-                if (radioButton.getText().equals(color)) radioButton.setChecked(true);
-                else if (radioButton1.getText().equals(color)) radioButton1.setChecked(true);
             }
         }
-        if(groupPosition == 0) {
-            radioButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "RED, restart to see changes", Toast.LENGTH_SHORT).show();
-                    saveColors("ColorSpace"+0, Color.RED);
-                    saveReset(true);
-                }
-            });
-
-            radioButton1.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "Blue, restart to see changes", Toast.LENGTH_SHORT).show();
-                    saveColors("ColorSpace"+0, Color.BLUE);
-                    saveReset(true);
-                }
-            });
-        }else if(groupPosition == 1){
-            radioButton.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "Black, restart to see changes", Toast.LENGTH_SHORT).show();
-                    saveColors("ColorSpace"+1, Color.BLACK);
-                    saveReset(true);
-
-                }
-            });
-
-            radioButton1.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "Light Gray, restart to see changes", Toast.LENGTH_SHORT).show();
-                    saveColors("ColorSpace"+1, Color.LTGRAY);
-                    saveReset(true);
-                }
-            });
-
-        }
-        return convertView;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
     }
 
     private void saveColors(String col, int color){
@@ -200,5 +182,4 @@ public class SettingsAdapter extends BaseExpandableListAdapter {
         SharedPreferences sP = context.getSharedPreferences("resetState", MODE_PRIVATE);
         sP.edit().putBoolean("colorReset", bool).apply();
     }
-
 }

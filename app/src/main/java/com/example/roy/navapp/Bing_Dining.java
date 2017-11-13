@@ -150,7 +150,6 @@ public class Bing_Dining extends Fragment {
         //set empty adapter due to waiting for data
         adapter = new MyAdapter(listItems,getContext());
         recyclerView.setAdapter(adapter);
-
     }
 
     @Override

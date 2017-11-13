@@ -11,7 +11,7 @@ public class ListItem {
     private int resInt;
 
 
-    public ListItem(String mealB, String mealL, String mealD,int resInt ) {
+    public ListItem(String mealB, String mealL, String mealD,int resInt) {
         this.mealB = mealB;
         this.mealL = mealL;
         this.mealD = mealD;

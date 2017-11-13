@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import android.view.View;
 
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -30,13 +33,12 @@ import java.util.List;
 
 public class Settings extends AppCompatActivity{
     private Toolbar toolBar;
-    private ExpandableListView expandableListView;
     Context context;
     private List<String> titles;
-    private List<String> radioNames;
-    private List<String> radioNames2;
-    private RadioButton radioButton;
-    private RadioGroup radioGroup;
+    private List<String> colorsHead;
+    private List<String> colorsBody;
+
+    private RecyclerView recyclerView;
     private SettingsAdapter settingsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,32 +62,38 @@ public class Settings extends AppCompatActivity{
             }
         });
 
-        expandableListView = (ExpandableListView) findViewById(R.id.expandable_List);
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        radioButton = (RadioButton) findViewById(R.id.radioButton);
+        recyclerView = (RecyclerView) findViewById(R.id.recycleView2);
 
         titles = new ArrayList<>();
-        radioNames = new ArrayList<>();
-        radioNames2 = new ArrayList<>();
+        colorsHead = new ArrayList<>();
+        colorsBody = new ArrayList<>();
 
-        HashMap<String,List<String>> childList = new HashMap<>();
+        HashMap<String,List<String>> colorsMap = new HashMap<>();
 
-        radioNames.add("Red");
-        radioNames.add("Blue");
+        colorsHead.add("Red");
+        colorsHead.add("Blue");
+        //colorsHead.add("Light Green");
 
-        radioNames2.add("Black");
-        radioNames2.add("Light Gray");
+        colorsBody.add("Black");
+        colorsBody.add("Light Brown");
+        //colorsBody.add("Light Gray");
 
-        titles.add("Bing Header");
-        titles.add("Bing Body");
+        titles.add("Head");
+        titles.add("Body");
 
 
-        childList.put(titles.get(0), radioNames);
-        childList.put(titles.get(1), radioNames2);
+        colorsMap.put(titles.get(0), colorsHead);
+        colorsMap.put(titles.get(1), colorsBody);
 
-        settingsAdapter = new SettingsAdapter(childList, titles, getApplicationContext());
-        expandableListView.setAdapter(settingsAdapter);
+        settingsAdapter = new SettingsAdapter(colorsMap, titles, context);
+        GridLayoutManager manager = new GridLayoutManager(this, 1);
 
+        recyclerView.setLayoutManager(manager);
+        settingsAdapter.setLayoutManager(manager);
+        settingsAdapter.shouldShowHeadersForEmptySections(false);
+        settingsAdapter.shouldShowFooters(false);
+        settingsAdapter.collapseAllSections();
+        recyclerView.setAdapter(settingsAdapter);
     }
 
     @Override
@@ -127,9 +135,9 @@ public class Settings extends AppCompatActivity{
                 Toast.makeText(context, "Colors Reset", Toast.LENGTH_SHORT).show();
                 SharedPreferences colors = getSharedPreferences("Colors", MODE_PRIVATE);
                 colors.edit().clear().apply();
-                expandableListView.setAdapter(settingsAdapter);
+                recyclerView.setAdapter(settingsAdapter);
                 item.setChecked(true);
-                settingsAdapter.saveReset(false);
+                //settingsAdapter.saveReset(false);
             }
         }
         return super.onOptionsItemSelected(item);
@@ -140,3 +148,5 @@ public class Settings extends AppCompatActivity{
        return sP.getBoolean("colorReset", false);
     }
 }
+
+
