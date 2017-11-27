@@ -75,8 +75,8 @@ public class Settings extends AppCompatActivity{
         //colorsHead.add("Light Green");
 
         colorsBody.add("Black");
-        colorsBody.add("Light Brown");
-        //colorsBody.add("Light Gray");
+        colorsBody.add("Light Gray");
+        //colorsBody.add("Light Brown");
 
         titles.add("Head");
         titles.add("Body");
@@ -137,7 +137,7 @@ public class Settings extends AppCompatActivity{
                 colors.edit().clear().apply();
                 recyclerView.setAdapter(settingsAdapter);
                 item.setChecked(true);
-                //settingsAdapter.saveReset(false);
+                settingsAdapter.saveForReset(false);
             }
         }
         return super.onOptionsItemSelected(item);

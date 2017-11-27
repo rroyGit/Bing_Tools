@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +56,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 holder.textView.setText(titles.get(1));
                 break;
         }
-
+        holder.imageView.setImageResource(expanded ? R.drawable.arrow_up: R.drawable.arrow_down);
     }
 
     @Override
@@ -71,23 +72,17 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                holder.radioButton.setText(colorsMap.get(titles.get(0)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(0)).get(1));
 
-               holder.radioButton.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
-                       saveColors("ColorSpace0", Color.RED);
-                   }
-               });
+               radioListener(holder.radioButton,"ColorSpace0", Color.RED);
+               radioListener(holder.radioButton2,"ColorSpace0", Color.BLUE);
 
-               holder.radioButton2.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
-                       saveColors("ColorSpace1", Color.BLUE);
-                   }
-               });
                break;
            case 1:
                holder.radioButton.setText(colorsMap.get(titles.get(1)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(1)).get(1));
+
+               radioListener(holder.radioButton,"ColorSpace1", Color.BLACK);
+               radioListener(holder.radioButton2,"ColorSpace1", Color.LTGRAY);
+
                break;
        }
 
@@ -113,9 +108,6 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             case VIEW_TYPE_ITEM:
                 layout = R.layout.body_list;
                 break;
-            case VIEW_TYPE_FOOTER:
-                layout = R.layout.body_list;
-                break;
             default:
                 layout = R.layout.body_list;
                 break;
@@ -128,10 +120,12 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
     public class MainVH extends SectionedViewHolder implements View.OnClickListener{
         TextView textView;
+        ImageView imageView;
         RadioButton radioButton;
         RadioButton radioButton2;
         SettingsAdapter adapter;
         Toast toast;
+
 
 
         public MainVH(View itemView, SettingsAdapter myAdapter) {
@@ -140,6 +134,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             radioButton = (RadioButton) itemView.findViewById(R.id.radio);
             radioButton2 = (RadioButton) itemView.findViewById(R.id.radio2);
             adapter = myAdapter;
+            imageView = (ImageView) itemView.findViewById(R.id.arrow);
             itemView.setOnClickListener(this);
         }
 
@@ -178,8 +173,19 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         radioButton.setChecked(false);
     }
     */
-    protected void saveReset(boolean bool){
+    protected void saveForReset(boolean bool){
         SharedPreferences sP = context.getSharedPreferences("resetState", MODE_PRIVATE);
         sP.edit().putBoolean("colorReset", bool).apply();
     }
+
+    private void radioListener(RadioButton radioButton, final String saveLocation, final int color){
+        radioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveColors(saveLocation, color);
+                saveForReset(true);
+            }
+        });
+    }
+
 }
