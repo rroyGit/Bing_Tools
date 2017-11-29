@@ -38,7 +38,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
     @Override
     public int getSectionCount() {
-        return 2;
+        return colorsMap.get(titles.get(0)).size();
     }
 
     @Override
@@ -126,9 +126,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         SettingsAdapter adapter;
         Toast toast;
 
-
-
-        public MainVH(View itemView, SettingsAdapter myAdapter) {
+        private MainVH(View itemView, SettingsAdapter myAdapter) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.Bing_header);
             radioButton = (RadioButton) itemView.findViewById(R.id.radio);
@@ -152,7 +150,6 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 }
                 toast = Toast.makeText(v.getContext(), getRelativePosition().toString(), Toast.LENGTH_SHORT);
                 toast.show();
-
             }
         }
     }
@@ -164,15 +161,6 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         sEditor.apply();
     }
 
-
-    /* //add something else
-    protected void resetRadio(){
-        View view = getChildView(0,0, false, null, null);
-        RadioButton radioButton = (RadioButton) view.findViewById(R.id.radioButton);
-        Toast.makeText(context,radioButton.getText(), Toast.LENGTH_LONG).show();
-        radioButton.setChecked(false);
-    }
-    */
     protected void saveForReset(boolean bool){
         SharedPreferences sP = context.getSharedPreferences("resetState", MODE_PRIVATE);
         sP.edit().putBoolean("colorReset", bool).apply();

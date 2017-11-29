@@ -151,7 +151,16 @@ public class CryptoFragment extends Fragment {
 
             if(words != null) {
                 super.onPostExecute(aVoid);
-                etherVal = Double.parseDouble(words.substring(1, words.length()));
+                String value;
+                try{
+                     value = words.substring(0, words.length()-4);
+                    etherVal = Double.parseDouble(value);
+                }catch(NumberFormatException e){
+                    value = "0.00";
+                    etherVal = Double.parseDouble(value);
+                    Toast.makeText(context, "Parsing error", Toast.LENGTH_LONG).show();
+                }
+
                 etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", etherVal)));
                 saveCryptoData();
 
