@@ -85,7 +85,8 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
                break;
        }
-
+        //preserve saved state
+        preseveRadioCheckState(section, holder);
     }
     @Override
     public int getItemViewType(int section, int relativePosition, int absolutePosition) {
@@ -166,14 +167,43 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         sP.edit().putBoolean("colorReset", bool).apply();
     }
 
-    private void radioListener(RadioButton radioButton, final String saveLocation, final int color){
+    private void radioListener(final RadioButton radioButton, final String saveLocation, final int color){
         radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 saveColors(saveLocation, color);
                 saveForReset(true);
             }
         });
+    }
+
+    void preseveRadioCheckState(int section, final MainVH holder){
+        String saveLocation[] = {"ColorSpace0", "ColorSpace1"};
+        SharedPreferences colors = context.getSharedPreferences("Colors", MODE_PRIVATE);
+        String ret = colors.getString(saveLocation[section], "error");
+
+        if (ret.compareTo("error") != 0) {
+            int colorInt = Integer.parseInt(ret);
+            switch (section) {
+                case 0:
+                    if (colorInt == Color.RED) {
+                        holder.radioButton.setChecked(true);
+                    } else if (colorInt == Color.BLUE) {
+                        holder.radioButton2.setChecked(true);
+                    }
+                    break;
+                case 1:
+                    if (colorInt == Color.BLACK) {
+                        holder.radioButton.setChecked(true);
+                    } else if (colorInt == Color.LTGRAY) {
+                        holder.radioButton2.setChecked(true);
+                    }
+                    break;
+                default:
+                    Toast.makeText(context, "Radio Button State Preservation Error", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }

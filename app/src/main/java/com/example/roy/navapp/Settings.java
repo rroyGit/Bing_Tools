@@ -78,8 +78,8 @@ public class Settings extends AppCompatActivity{
         colorsBody.add("Light Gray");
         //colorsBody.add("Light Brown");
 
-        titles.add("Head");
-        titles.add("Body");
+        titles.add("Meal Time");
+        titles.add("Menu List");
 
 
         colorsMap.put(titles.get(0), colorsHead);
