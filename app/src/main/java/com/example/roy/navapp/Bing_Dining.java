@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -51,6 +52,7 @@ public class Bing_Dining extends Fragment {
     private String month, date, year;
     private String[] savedDate;
     private StringTokenizer sT;
+    private final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
 
     public Bing_Dining() {
         //empty constructor
@@ -80,73 +82,7 @@ public class Bing_Dining extends Fragment {
         date = savedDate[1];
         year = savedDate[2];
 
-        //Async Task for getting bing dining data from the web
-        getBingDiningData bing = new getBingDiningData();
-
-
-
-        //determine whether to load data from saved storage or from the web
-        while(true) {
-            if (getSavedBingData("Breakmonday").equals("error")) {
-
-                if(getDeviceInternetStatus(context) == null){
-                    Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                bing.execute();
-                break;
-            } else {
-                sT = new StringTokenizer(getWeekDate(), " ");
-                String firstDate = sT.nextToken();
-                sT.nextToken();
-                String secDate = sT.nextToken();
-
-                sT = new StringTokenizer(firstDate, "/");
-                String month1 = sT.nextToken();
-                String date1 = sT.nextToken();
-                String year1 = sT.nextToken();
-
-                //Log.d(TAG, month1 + " "+ date1 + " "+ year1);
-
-                sT = new StringTokenizer(secDate, "/");
-                String month2 = sT.nextToken();
-                String date2 = sT.nextToken();
-                String year2 = sT.nextToken();
-
-                //Log.d(TAG, month2 + " "+ date2 + " "+ year2);
-                //Log.d(TAG, month + " "+ date + " "+ year);
-
-                if (Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
-                    bing.execute();
-                    break;
-                } else if (((month.equals(month1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
-                        ((month.equals(month2)) && (Integer.parseInt(date) > Integer.parseInt(date2)))) {
-                    bing.execute();
-                    break;
-                } else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
-                    bing.execute();
-                    break;
-                } else {
-                    toolbar.setTitleMarginStart(225);
-                    toolbar.setTitle(getWeekDate());
-                    Thread loadDataThread = new Thread(){
-
-                        @Override
-                        public void run() {
-                            super.run();
-                            loadData();
-                        }
-                    };
-                    loadDataThread.start();
-                    try {
-                        loadDataThread.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                }
-            }
-        }
+        startBingDiningRequest();
         //set empty adapter due to waiting for data
         adapter = new MyAdapter(listItems,getContext());
         recyclerView.setAdapter(adapter);
@@ -170,7 +106,7 @@ public class Bing_Dining extends Fragment {
 
         private String urlStrings[] = new String[2];
         private String weekStrings[] = new String[2];
-        private String days[] ={"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+
         int i,j = 0;
 
         final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
@@ -315,39 +251,27 @@ public class Bing_Dining extends Fragment {
     private void loadData(){
         int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
                 R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
-        final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
         listItems = new ArrayList<>();
 
-        int index;
+        int index = 0;
         Date date =  new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("E", Locale.US);
         String dayWeek = dateFormatter.format(date);
+        StringBuilder day_3char = new StringBuilder();
 
-        switch(dayWeek){
-            case "Mon":
-                index = 0;
-                break;
-            case "Tue":
-                index = 1;
-                break;
-            case "Wed":
-                index = 2;
-                break;
-            case "Thu":
-                index = 3;
-                break;
-            case "Fri":
-                index = 4;
-                break;
-            case "Sat":
-                index = 5;
-                break;
-            case "Sun":
-                index = 6;
-                break;
-            default:
-                index = 0;
-        }
+       for(int i = 0; i < days.length; i++){
+           String first_char = String.valueOf(days[i].charAt(0));
+           day_3char.append(first_char.toUpperCase());
+           day_3char.append(days[i].substring(1,3));
+
+           //Log.e(TAG,day_3char.toString() + " " + dayWeek);
+           if(dayWeek.compareTo(day_3char.toString()) == 0){
+               index = i;
+                day_3char = null;
+                dateFormatter = null;
+               break;
+           }else day_3char.delete(0, day_3char.length());
+       }
 
         for(int i = index ;i < 7; i++) {
             String res, res2, res3;
@@ -358,6 +282,7 @@ public class Bing_Dining extends Fragment {
 
             ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
             listItems.add(listItem);
+            listItem = null;
         }
         for(int i = 0 ; i < index; i++) {
             String res, res2, res3;
@@ -368,6 +293,7 @@ public class Bing_Dining extends Fragment {
 
             ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
             listItems.add(listItem);
+            listItem = null;
         }
 
         adapter = new MyAdapter(listItems, getContext());
@@ -388,7 +314,85 @@ public class Bing_Dining extends Fragment {
     public static NetworkInfo getDeviceInternetStatus(Context context){
         //check is if internet enabled
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connectivityManager.getActiveNetworkInfo();
+        if (connectivityManager != null) {
+            return connectivityManager.getActiveNetworkInfo();
+        }
+        return null;
+    }
+
+    private void startBingDiningRequest(){
+        Thread bingThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Async Task for getting bing dining data from the web
+                getBingDiningData bing = new getBingDiningData();
+                //determine whether to load data from saved storage or from the web
+                while(true) {
+                    if (getSavedBingData("Breakmonday").equals("error")) {
+
+                        if(getDeviceInternetStatus(context) == null){
+                            Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        bing.execute();
+                        break;
+                    } else {
+                        sT = new StringTokenizer(getWeekDate(), " ");
+                        String firstDate = sT.nextToken();
+                        sT.nextToken();
+                        String secDate = sT.nextToken();
+
+                        sT = new StringTokenizer(firstDate, "/");
+                        String month1 = sT.nextToken();
+                        String date1 = sT.nextToken();
+                        String year1 = sT.nextToken();
+
+                        //Log.d(TAG, month1 + " "+ date1 + " "+ year1);
+                        sT = new StringTokenizer(secDate, "/");
+                        String month2 = sT.nextToken();
+                        String date2 = sT.nextToken();
+                        String year2 = sT.nextToken();
+                        //Log.d(TAG, month2 + " "+ date2 + " "+ year2);
+                        //Log.d(TAG, month + " "+ date + " "+ year);
+                        if (Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
+                            bing.execute();
+                            break;
+                        } else if (((month.equals(month1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
+                                ((month.equals(month2)) && (Integer.parseInt(date) > Integer.parseInt(date2)))) {
+                            bing.execute();
+                            break;
+                        } else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
+                            bing.execute();
+                            break;
+                        } else {
+                            toolbar.setTitleMarginStart(225);
+                            toolbar.setTitle(getWeekDate());
+                            Thread loadDataThread = new Thread(){
+
+                                @Override
+                                public void run() {
+                                    super.run();
+                                    loadData();
+                                }
+                            };
+                            loadDataThread.start();
+                            try {
+                                loadDataThread.join();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }//end of run
+        });
+        bingThread.start();
+        try{
+            bingThread.join();
+        }catch (Exception e){
+            Toast.makeText(context, "Bing thread error: " + e, Toast.LENGTH_LONG).show();
+        }
     }
 
 }

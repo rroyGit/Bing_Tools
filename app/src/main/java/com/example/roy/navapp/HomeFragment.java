@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -32,7 +35,8 @@ public class HomeFragment extends Fragment {
     TextView result;
     EditText num1, num2;
     Button aB, mB, mulB,divB, cB;
-
+    final int space_btw_editText = 15;
+    final int editText1_width = 500, editText2_width = 500;
     double res_num, n1, n2;
 
 
@@ -45,8 +49,6 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Home");
-
-
         result = (TextView) getActivity().findViewById(R.id.resultB);
         result.setTextIsSelectable(true);
         num1 = (EditText) getActivity().findViewById(R.id.num1);
@@ -56,6 +58,11 @@ public class HomeFragment extends Fragment {
         cB = (Button) getActivity().findViewById(R.id.clear);
         mulB = (Button) getActivity().findViewById(R.id.mulB);
         divB = (Button) getActivity().findViewById(R.id.divB);
+
+        positonEditText();
+
+
+
 
 
         cB.setOnClickListener(new View.OnClickListener(){
@@ -211,6 +218,37 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    private void positonEditText(){
+        Thread editTextThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //position the EditTexts correctly
+                DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                int totalTextWidth =  editText1_width+editText2_width+space_btw_editText;
+                int device_width = displayMetrics.widthPixels;
+                int startIndex= (device_width-totalTextWidth)/2;
+
+                RelativeLayout.LayoutParams editT1 = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams editT2 = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                editT1.setMargins(startIndex,400,0,0);
+                editT2.setMargins(startIndex+editText1_width+space_btw_editText,400, 0, 0);
+                num1.setLayoutParams(editT1);
+                num1.setWidth(editText1_width);
+                num2.setLayoutParams(editT2);
+                num2.setWidth(editText2_width);
+            }
+        });
+
+        editTextThread.start();
+        try{
+            editTextThread.join();
+        }catch (Exception e){
+            Toast.makeText(getContext(), "Error: "+e, Toast.LENGTH_LONG).show();
+        }
     }
 
 }

@@ -34,17 +34,17 @@
         android:layout_width="170dp"
         android:layout_height="wrap_content"
 
-        android:background="@drawable/custom_edit_text"
-        android:textCursorDrawable="@drawable/edit_text_pipe_color"
-        android:hint="@string/zero"
+        android:layout_alignBaseline="@+id/num1"
+        android:layout_alignBottom="@+id/num1"
+        android:layout_toEndOf="@+id/num1"
 
+        android:background="@drawable/custom_edit_text"
+        android:hint="@string/zero"
         android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/red"
-        android:textSize="25sp"
-        android:layout_alignBaseline="@+id/num1"
-        android:layout_alignBottom="@+id/num1"
-        android:layout_toEndOf="@+id/minusB" />
+        android:textCursorDrawable="@drawable/edit_text_pipe_color"
+        android:textSize="25sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

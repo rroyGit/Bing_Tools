@@ -135,7 +135,6 @@ public class CryptoFragment extends Fragment {
     private class getEther extends AsyncTask<Void, Void, Void> {
         String words;
 
-
         @Override
         protected Void doInBackground(Void... params) {
             try {
@@ -148,37 +147,39 @@ public class CryptoFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(Void aVoid) {
+            try {
+                if (words != null) {
+                    super.onPostExecute(aVoid);
+                    String value;
+                    try {
+                        value = words.substring(0, words.length() - 4);
+                        etherVal = Double.parseDouble(value);
+                    } catch (NumberFormatException e) {
+                        value = "0.00";
+                        etherVal = Double.parseDouble(value);
+                        Toast.makeText(context, "Parsing error", Toast.LENGTH_LONG).show();
+                    }
 
-            if(words != null) {
-                super.onPostExecute(aVoid);
-                String value;
-                try{
-                     value = words.substring(0, words.length()-4);
-                    etherVal = Double.parseDouble(value);
-                }catch(NumberFormatException e){
-                    value = "0.00";
-                    etherVal = Double.parseDouble(value);
-                    Toast.makeText(context, "Parsing error", Toast.LENGTH_LONG).show();
+                    etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", etherVal)));
+                    saveCryptoData();
+
+                    retTime = new String[3];
+                    getDate(retTime);
+
+                    StringBuilder retString = new StringBuilder();
+                    retString.append("Last updated: ");
+                    retString.append(retTime[0]).append(':').append(retTime[1]).append(':').append(retTime[2]);
+
+                    timeText.setText(retString);
+                    progressBar.setVisibility(View.GONE);
+                    progressBar2.setVisibility(View.GONE);
+                } else {
+                    Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
+                    progressBar2.setVisibility(View.GONE);
                 }
-
-                etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", etherVal)));
-                saveCryptoData();
-
-                retTime = new String[3];
-                getDate(retTime);
-
-                StringBuilder retString = new StringBuilder();
-                retString.append("Last updated: ");
-                retString.append(retTime[0]).append(':').append(retTime[1]).append(':').append(retTime[2]);
-
-                timeText.setText(retString);
-                progressBar.setVisibility(View.GONE);
-                progressBar2.setVisibility(View.GONE);
-
-            }else{
-                Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
-                progressBar2.setVisibility(View.GONE);
+            }catch (Exception e){
+                //Toast.makeText(context, "error:" +e, Toast.LENGTH_LONG).show();
             }
         }
     }

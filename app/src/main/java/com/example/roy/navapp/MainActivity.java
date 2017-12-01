@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         activity = this;
 
         //clears saved data for ether crypto
@@ -77,12 +76,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
 
-
         Window window = this.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkGray2));
-
 
         NavigationView nView = (NavigationView) findViewById(R.id.nav_menu_view);
         nView.getLayoutParams().width = (int)(width/1.45);
@@ -91,11 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         headerView.getLayoutParams().height = (int)(height/3.2);
 
         bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
-
-        if(getDeviceInternetStatus(getApplicationContext()) == null){
-            Toast.makeText(getApplicationContext(), "Could not get Bing Daily Image", Toast.LENGTH_SHORT).show();
-        }else new getPic().execute();
-
+        setBingWall();
 
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
         setSupportActionBar(toolBar);
@@ -204,9 +197,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         }
 
+
         if(f != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_main, f).commit();
+            final Fragment finalFrag = f;
+
+            Thread fragThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_main, finalFrag).commit();
+                }
+            });
+            fragThread.start();
+            try {
+                fragThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -271,4 +278,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sP.edit().remove("Crypto").clear().apply();
     }
 
+    private void setBingWall(){
+        if(getDeviceInternetStatus(getApplicationContext()) == null){
+            Toast.makeText(getApplicationContext(), "Could not get Bing Daily Image", Toast.LENGTH_SHORT).show();
+        }else {
+
+            Thread picThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    new getPic().execute();
+                }
+            });
+            picThread.start();
+            try {
+                picThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
