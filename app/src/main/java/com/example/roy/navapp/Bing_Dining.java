@@ -311,13 +311,11 @@ public class Bing_Dining extends Fragment {
                 String date1 = sT.nextToken();
                 String year1 = sT.nextToken();
 
-                //Log.d(TAG, month1 + " "+ date1 + " "+ year1);
                 sT = new StringTokenizer(secDate, "/");
                 String month2 = sT.nextToken();
                 String date2 = sT.nextToken();
                 String year2 = sT.nextToken();
-                //Log.d(TAG, month2 + " "+ date2 + " "+ year2);
-                //Log.d(TAG, month + " "+ date + " "+ year);
+
                 if (Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
                     bing = new getBingDiningData();
                     bing.execute();
@@ -334,8 +332,9 @@ public class Bing_Dining extends Fragment {
                 } else {
                     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
                     int display_width = displayMetrics.widthPixels;
-                    toolbar.setTitleMarginStart((display_width-getWeekDate().length())/5);
+                    toolbar.setTitleMarginStart((display_width/2)-350);
                     toolbar.setTitle(getWeekDate());
+
                     Thread loadDataThread = new Thread(){
                         @Override
                         public void run() {
@@ -365,27 +364,25 @@ public class Bing_Dining extends Fragment {
             breakf = res[i];
             lunch = res2[i];
             dinner = res3[i];
-            if (breakf.equals("") || lunch.equals("") || dinner.equals("")) {
-                breakf = "Time to visit the Marketplace";
-                lunch = "Time to visit the Marketplace";
-                dinner = "Time to visit the Marketplace";
-            }
+            if (breakf.equals("")) breakf = "01. Time to visit the Marketplace\n\n";
+            if(lunch.equals("")) lunch = "01. Time to visit the Marketplace\n\n";
+            if (dinner.equals("")) dinner = "01. Time to visit the Marketplace\n\n";
+
             ListItem listItem = new ListItem(breakf, lunch, dinner, resImg[i]);
             listItems.add(listItem);
-            saveBingData(days[i], res[i], res2[i], res3[i]);
+            saveBingData(days[i], breakf, lunch, dinner);
         }
         for(int i = 0 ; i < findStartIndex(); i++) {
             breakf = res[i];
             lunch = res2[i];
             dinner = res3[i];
-            if (breakf.equals("") || lunch.equals("") || dinner.equals("")) {
-                breakf = "Time to visit the Marketplace";
-                lunch = "Time to visit the Marketplace";
-                dinner = "Time to visit the Marketplace";
-            }
+            if (breakf.equals("")) breakf = "01. Time to visit the Marketplace\n\n";
+            if(lunch.equals("")) lunch = "01. Time to visit the Marketplace\n\n";
+            if (dinner.equals("")) dinner = "01. Time to visit the Marketplace\n\n";
+
             ListItem listItem = new ListItem(breakf, lunch, dinner, resImg[i]);
             listItems.add(listItem);
-            saveBingData(days[i], res[i], res2[i], res3[i]);
+            saveBingData(days[i], breakf, lunch, dinner);
         }
     }
 
