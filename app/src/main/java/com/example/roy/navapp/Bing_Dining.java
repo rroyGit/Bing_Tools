@@ -12,6 +12,8 @@ import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -48,6 +49,7 @@ public class Bing_Dining extends Fragment {
     public RecyclerView.Adapter adapter;
     private Context context;
     private Toolbar toolbar;
+    private AppCompatTextView toolbarTitle;
 
     private List<ListItem> listItems;
     private String month, date, year;
@@ -68,6 +70,8 @@ public class Bing_Dining extends Fragment {
 
         savedDate = new String[3];
         toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
+        toolbarTitle = (AppCompatTextView) view.findViewById(R.id.toolbarText);
+
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
@@ -330,10 +334,8 @@ public class Bing_Dining extends Fragment {
                     bing.execute();
                     break;
                 } else {
-                    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                    int display_width = displayMetrics.widthPixels;
-                    toolbar.setTitleMarginStart((display_width/2)-350);
-                    toolbar.setTitle(getWeekDate());
+
+                    toolbarTitle.setText(getWeekDate());
 
                     Thread loadDataThread = new Thread(){
                         @Override
@@ -407,5 +409,10 @@ public class Bing_Dining extends Fragment {
             }else day_3char.delete(0, day_3char.length());
         }
         return index;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        recyclerView.setAdapter(adapter);
     }
 }
