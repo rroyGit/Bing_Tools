@@ -1,4 +1,4 @@
-# Bing_Tools
+ # Bing_Tools
 ## Bing Tools is an Android application developed using Android Studio.
 
 Bing Tools provide the following:
@@ -20,7 +20,7 @@ Bing Tools provide the following:
 	c2: Sort the cards view in relation to the current day; you have the latest card shown first when opening Bing Dining.
 	    No longer will you need to swipe/scroll down to see what's on menu for today.
 	c3: Menu data is stored on the device at first launch so https requests require only once per week;less overhead/faster loading.
-	c4: Settings page now gives you the ability to change colors of the cards; requires a refresh of the activity. 
+	c4: Settings page now gives you the ability to change colors of the cards instantly.
 	    You can change the colors of the expandable text as well as the meal time bar. More colors to be added soon.
 	c5: Added the ability to reset to default colors
   
@@ -28,7 +28,7 @@ Bing Tools provide the following:
   
 ### To be added:
 	a) An about page is in works, crediting the original owners of the icons, web data, etc.
-	b) Dynamically change the colors of the cards in Bing Dining.
+	b) Dynamically change the colors of the cards in Bing Dining.  (COMPLETED)
 	c) Save the bitmap of the navigation image to device. 
 
 ![Alt text](images/Bing_Dining1.png "Bing_Dining1")
