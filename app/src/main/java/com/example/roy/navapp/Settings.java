@@ -72,15 +72,16 @@ public class Settings extends AppCompatActivity{
 
         colorsHead.add("Red");
         colorsHead.add("Blue");
-        //colorsHead.add("Light Green");
+        colorsHead.add("Black");
+        colorsHead.add("Light Gray");
 
+        colorsBody.add("Red");
+        colorsBody.add("Blue");
         colorsBody.add("Black");
         colorsBody.add("Light Gray");
-        //colorsBody.add("Light Brown");
 
         titles.add("Meal Time");
         titles.add("Menu List");
-
 
         colorsMap.put(titles.get(0), colorsHead);
         colorsMap.put(titles.get(1), colorsBody);
@@ -145,7 +146,7 @@ public class Settings extends AppCompatActivity{
 
     private boolean getReset(){
         SharedPreferences sP = context.getSharedPreferences("resetState", MODE_PRIVATE);
-       return sP.getBoolean("colorReset", false);
+        return sP.getBoolean("colorReset", false);
     }
 }
 

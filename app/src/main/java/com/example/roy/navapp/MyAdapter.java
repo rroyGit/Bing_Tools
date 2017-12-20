@@ -120,7 +120,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         textView2.setBackgroundColor(color);
         textView3.setBackgroundColor(color);
 
-        if (color == Color.BLUE){
+        if (color == Color.BLUE || color == Color.BLACK){
             textView.setTextColor(Color.WHITE);
             textView2.setTextColor(Color.WHITE);
             textView3.setTextColor(Color.WHITE);

@@ -40,7 +40,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
     @Override
     public int getSectionCount() {
-        return colorsMap.get(titles.get(0)).size();
+        return titles.size();
     }
 
     @Override
@@ -73,22 +73,28 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
            case 0:
                holder.radioButton.setText(colorsMap.get(titles.get(0)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(0)).get(1));
+               holder.radioButton3.setText(colorsMap.get(titles.get(0)).get(2));
+               holder.radioButton4.setText(colorsMap.get(titles.get(0)).get(3));
 
                radioListener(holder.radioButton,"ColorSpace0", Color.RED);
                radioListener(holder.radioButton2,"ColorSpace0", Color.BLUE);
-
+               radioListener(holder.radioButton3,"ColorSpace0", Color.BLACK);
+               radioListener(holder.radioButton4,"ColorSpace0", Color.LTGRAY);
                break;
            case 1:
                holder.radioButton.setText(colorsMap.get(titles.get(1)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(1)).get(1));
+               holder.radioButton3.setText(colorsMap.get(titles.get(1)).get(2));
+               holder.radioButton4.setText(colorsMap.get(titles.get(1)).get(3));
 
-               radioListener(holder.radioButton,"ColorSpace1", Color.BLACK);
-               radioListener(holder.radioButton2,"ColorSpace1", Color.LTGRAY);
-
+               radioListener(holder.radioButton,"ColorSpace1", Color.RED);
+               radioListener(holder.radioButton2,"ColorSpace1", Color.BLUE);
+               radioListener(holder.radioButton3,"ColorSpace1", Color.BLACK);
+               radioListener(holder.radioButton4,"ColorSpace1", Color.LTGRAY);
                break;
        }
         //preserve saved state
-        preseveRadioCheckState(section, holder);
+        preserveRadioCheckState(section, holder);
     }
     @Override
     public int getItemViewType(int section, int relativePosition, int absolutePosition) {
@@ -124,8 +130,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
     public class MainVH extends SectionedViewHolder implements View.OnClickListener{
         TextView textView;
         ImageView imageView;
-        RadioButton radioButton;
-        RadioButton radioButton2;
+        RadioButton radioButton, radioButton2, radioButton3, radioButton4;
         SettingsAdapter adapter;
         Toast toast;
 
@@ -134,6 +139,9 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             textView = (TextView) itemView.findViewById(R.id.Bing_header);
             radioButton = (RadioButton) itemView.findViewById(R.id.radio);
             radioButton2 = (RadioButton) itemView.findViewById(R.id.radio2);
+            radioButton3 = (RadioButton) itemView.findViewById(R.id.radio3);
+            radioButton4 = (RadioButton) itemView.findViewById(R.id.radio4);
+
             adapter = myAdapter;
             imageView = (ImageView) itemView.findViewById(R.id.arrow);
             itemView.setOnClickListener(this);
@@ -173,14 +181,13 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 saveColors(saveLocation, color);
                 saveForReset(true);
             }
         });
     }
 
-    void preseveRadioCheckState(int section, final MainVH holder){
+    private void preserveRadioCheckState(int section, final MainVH holder){
         String saveLocation[] = {"ColorSpace0", "ColorSpace1"};
         SharedPreferences colors = context.getSharedPreferences("Colors", MODE_PRIVATE);
         String ret = colors.getString(saveLocation[section], "error");
@@ -189,18 +196,16 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             int colorInt = Integer.parseInt(ret);
             switch (section) {
                 case 0:
-                    if (colorInt == Color.RED) {
-                        holder.radioButton.setChecked(true);
-                    } else if (colorInt == Color.BLUE) {
-                        holder.radioButton2.setChecked(true);
-                    }
+                    if (colorInt == Color.RED) holder.radioButton.setChecked(true);
+                    else if (colorInt == Color.BLUE) holder.radioButton2.setChecked(true);
+                    else if (colorInt == Color.BLACK) holder.radioButton3.setChecked(true);
+                    else if (colorInt == Color.LTGRAY) holder.radioButton4.setChecked(true);
                     break;
                 case 1:
-                    if (colorInt == Color.BLACK) {
-                        holder.radioButton.setChecked(true);
-                    } else if (colorInt == Color.LTGRAY) {
-                        holder.radioButton2.setChecked(true);
-                    }
+                    if (colorInt == Color.RED) holder.radioButton.setChecked(true);
+                    else if (colorInt == Color.BLUE) holder.radioButton2.setChecked(true);
+                    else if (colorInt == Color.BLACK) holder.radioButton3.setChecked(true);
+                    else if (colorInt == Color.LTGRAY) holder.radioButton4.setChecked(true);
                     break;
                 default:
                     Toast.makeText(context, "Radio Button State Preservation Error", Toast.LENGTH_LONG).show();

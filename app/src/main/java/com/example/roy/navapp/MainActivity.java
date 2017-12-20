@@ -62,37 +62,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     ImageView bingImage;
     Activity activity;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity = this;
+        context = this;
 
-        //clears saved data for ether crypto
-        clearCryptoData();
-
-        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
 
-        Window window = this.getWindow();
+        Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkGray2));
-
+        window.setStatusBarColor(ContextCompat.getColor(context, R.color.darkGray2));
         NavigationView nView = (NavigationView) findViewById(R.id.nav_menu_view);
         nView.getLayoutParams().width = (int)(width/1.45);
 
         View headerView = nView.getHeaderView(0);
         headerView.getLayoutParams().height = (int)(height/3.2);
-
         bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
-        setBingWall();
-
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //clears saved data for crypto
+                clearCryptoData();
+                setBingWall();
+            }
+        }).start();
         setSupportActionBar(toolBar);
-
 
         final DrawerLayout dLayout;
         dLayout = (DrawerLayout) findViewById(R.id.nav_drawer_main);
@@ -111,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         dLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-
         nView.setNavigationItemSelectedListener(this);
 
         //set the initial homepage to Home
@@ -124,10 +125,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.currency);
-        ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(getApplicationContext(), R.color.darkGray));
-        this.setTaskDescription(taskDesc);
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.currency);
+                ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(getApplicationContext(), R.color.darkGray));
+                setTaskDescription(taskDesc);
+            }
+        }).start();
     }
 
     @Override
@@ -197,7 +202,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         }
 
-
         if(f != null) {
             final Fragment finalFrag = f;
 
@@ -209,21 +213,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
             fragThread.start();
-            try {
-                fragThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
-
         drawer.closeDrawer(GravityCompat.START);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        displaySelectedScreen(id, item);
+        displaySelectedScreen(item.getItemId(), item);
         return true;
     }
 
@@ -248,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             //Log.d(TAG, "image is null");
                         }else {
                             //Log.d(TAG, "image"+retVal);
-                            Picasso.with(getApplicationContext()).load(retVal).fit().into(bingImage);
+                            Picasso.with(context).load(retVal).fit().into(bingImage);
                         }
 
                     } catch (JSONException e) {
@@ -259,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Could not connect to the Internet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_LONG).show();
                 }
             });
             return null;
@@ -280,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setBingWall(){
         if(getDeviceInternetStatus(getApplicationContext()) == null){
-            Toast.makeText(getApplicationContext(), "Could not get Bing Daily Image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Could not get Bing Daily Image", Toast.LENGTH_SHORT).show();
         }else {
 
             Thread picThread = new Thread(new Runnable() {
@@ -290,11 +287,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
             picThread.start();
-            try {
-                picThread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

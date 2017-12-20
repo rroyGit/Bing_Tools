@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
 <RadioGroup
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
         <RadioButton
             android:buttonTint="@color/cardview_light_background"
@@ -15,7 +19,6 @@
             android:id="@+id/radio"
             android:layout_width="match_parent"
             android:layout_height="25dp" />
-
         <RadioButton
             android:buttonTint="@color/cardview_light_background"
             android:textSize="17sp"
@@ -23,5 +26,20 @@
             android:id="@+id/radio2"
             android:layout_width="match_parent"
             android:layout_height="25dp" />
+        <RadioButton
+            android:buttonTint="@color/cardview_light_background"
+            android:textSize="17sp"
+            android:textColor="@color/lightBlue"
+            android:id="@+id/radio3"
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+        <RadioButton
+            android:buttonTint="@color/cardview_light_background"
+            android:textSize="17sp"
+            android:textColor="@color/lightBlue"
+            android:id="@+id/radio4"
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
 </RadioGroup>
+    </ScrollView>
 </LinearLayout>

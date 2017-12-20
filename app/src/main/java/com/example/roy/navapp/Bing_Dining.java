@@ -51,12 +51,14 @@ public class Bing_Dining extends Fragment {
     private Toolbar toolbar;
     private AppCompatTextView toolbarTitle;
 
+    BingDiningMenu hinman_hall;
     private List<ListItem> listItems;
     private String month, date, year;
     private String[] savedDate;
     private StringTokenizer sT;
     private final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-
+    private final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
+    private final String c4Url = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/index.html";
     public Bing_Dining() {
         //empty constructor
     }
@@ -67,30 +69,29 @@ public class Bing_Dining extends Fragment {
         getActivity().setTitle("Bing Dining (Hinman)");
 
         context = this.getContext();
-
+        listItems = new ArrayList<>();
         savedDate = new String[3];
+
+        pD = new ProgressDialog(getActivity());
         toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
         toolbarTitle = (AppCompatTextView) view.findViewById(R.id.toolbarText);
-
-
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listItems = new ArrayList<>();
 
-        pD = new ProgressDialog(getActivity());
+        hinman_hall = new BingDiningMenu(hinmanUrl,context);
+        hinman_hall.setRecyclerView(recyclerView);
+        hinman_hall.setAdapter(listItems);
+        hinman_hall.setToolbar(toolbar, toolbarTitle);
+        hinman_hall.makeRequest();
 
-        //gets current date
-        getDate(savedDate);
-        //break date into three parts
-        month = savedDate[0];
-        date = savedDate[1];
-        year = savedDate[2];
 
-        startBingDiningRequest();
+        //makes asynchronous call, cannot be run in a new thread
+        //startBingDiningRequest();
+
         //set empty adapter due to waiting for data
-        adapter = new MyAdapter(listItems,getContext());
-        recyclerView.setAdapter(adapter);
+        //adapter = new MyAdapter(listItems,getContext());
+        //recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -98,6 +99,14 @@ public class Bing_Dining extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_bing__dining, container, false);
+    }
+
+    private void getSavedDate(){
+        //gets current date
+        getDate(savedDate);
+        month = savedDate[0];
+        date = savedDate[1];
+        year = savedDate[2];
     }
 
     private class getBingDiningData extends AsyncTask<Void, Void, Void> {
@@ -113,7 +122,6 @@ public class Bing_Dining extends Fragment {
         private String weekStrings[] = new String[2];
 
         int i,j = 0;
-        final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
 
         @Override
         protected void onPreExecute() {
@@ -180,9 +188,7 @@ public class Bing_Dining extends Fragment {
 
                 //save the date to device
                 saveBingWeekData(weekStrings[0]);
-
-                toolbar.setTitleMarginStart(225);
-                toolbar.setTitle(getWeekDate());
+                toolbarTitle.setText(getWeekDate());
                 String res[], res2[], res3[];
                 int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
                         R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
@@ -274,7 +280,6 @@ public class Bing_Dining extends Fragment {
     public static void getDate(String[] ret){
         Date dateNow = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.US);
-
         StringTokenizer sT = new StringTokenizer(dateFormatter.format(dateNow), "-");
         ret[0] = sT.nextToken();
         ret[1] = sT.nextToken();
@@ -292,6 +297,7 @@ public class Bing_Dining extends Fragment {
 
     private void startBingDiningRequest(){
         //Async Task for getting bing dining data from the web
+        getSavedDate();
         getBingDiningData bing;
         //determine whether to load data from saved storage or from the web
         while(true) {
@@ -334,22 +340,13 @@ public class Bing_Dining extends Fragment {
                     bing.execute();
                     break;
                 } else {
-
-                    toolbarTitle.setText(getWeekDate());
-
-                    Thread loadDataThread = new Thread(){
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            super.run();
+                            toolbarTitle.setText(getWeekDate());
                             loadData();
                         }
-                    };
-                    loadDataThread.start();
-                    try {
-                        loadDataThread.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    }).start();
                     break;
                 }
             }
@@ -413,6 +410,6 @@ public class Bing_Dining extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        recyclerView.setAdapter(adapter);
+        //recyclerView.setAdapter(adapter);
     }
 }
