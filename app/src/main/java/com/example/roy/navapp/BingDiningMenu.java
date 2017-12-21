@@ -35,10 +35,11 @@ import static android.content.Context.MODE_PRIVATE;
 public class BingDiningMenu {
 
     private final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-    private String month, date, year;
-    private String[] savedDate;
-    private String link;
-    private List<ListItem> listItems;
+    private final int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
+                                  R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
+    private String month, date, year, link, title;
+    private final String[] savedDate;
+    private final List<ListItem> listItems;
 
     private Context context;
     private ProgressDialog pD;
@@ -47,11 +48,12 @@ public class BingDiningMenu {
     private Toolbar toolbar;
     private AppCompatTextView toolbarTitle;
 
-    public BingDiningMenu(String link, Context context){
-        this.link = link;
+    public BingDiningMenu(String link, String title, Context context, List<ListItem> listItems){
         this.context = context;
+        this.link = link;
+        this.title = title;
+        this.listItems = listItems;
         savedDate = new String[3];
-        listItems = new ArrayList<>();
     }
 
     private void startBingDiningRequest(){
@@ -59,6 +61,7 @@ public class BingDiningMenu {
         getSavedDate();
         DiningDataScrapper bing;
         StringTokenizer sT;
+
         //determine whether to load data from saved storage or from the web
         if (getSavedBingData("Breakmonday").equals("error")) {
             if(getDeviceInternetStatus(context) == null){
@@ -86,15 +89,24 @@ public class BingDiningMenu {
                 year2 = sT.nextToken();
             } catch (Exception e){
                 if(getWeekDate().compareTo("Sample Menu") == 0){
+                    MenuDate menuDate = new MenuDate();
+                    menuDate.execute();
                     toolbarTitle.setText(getWeekDate());
-                    new Thread(new Runnable() {
+                    Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             loadData();
-                            MenuDate menuDate = new MenuDate();
-                            menuDate.execute();
                         }
-                    }).run();
+                    });
+                    thread.start();
+                    if(listItems.isEmpty()){
+                        try {
+                            thread.join();
+                        } catch (InterruptedException e2) {
+                            e2.printStackTrace();
+                        }
+                    }
+                    setData();
                     return;
                 }else Toast.makeText(context, "Error loading saved data " + e.toString(), Toast.LENGTH_LONG).show();
                 return;
@@ -110,20 +122,27 @@ public class BingDiningMenu {
                 bing = new DiningDataScrapper();
                 bing.execute();
             } else {
-                new Thread(new Runnable() {
+                toolbarTitle.setText(getWeekDate());
+                Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        toolbarTitle.setText(getWeekDate());
                         loadData();
                     }
-                }).start();
+                });
+                thread.start();
+                if(listItems.isEmpty()){
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e3) {
+                        e3.printStackTrace();
+                    }
+                }
+                setData();
             }
         }
     }
 
     private void loadData(){
-        int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
-                R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
         //clear previous remnants
         listItems.clear();
         int index = findStartIndex();
@@ -145,14 +164,25 @@ public class BingDiningMenu {
             ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
             listItems.add(listItem);
         }
+    }
+
+    private boolean setData(){
+        if(listItems.isEmpty()) {
+            Log.e("SetData ", "Must populate listItems before calling setData");
+            return false;
+        }
         adapter = new MyAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
+        return true;
     }
+
     public void setRecycleAdapter(){
         recyclerView.setAdapter(adapter);
     }
+
     private class MenuDate extends AsyncTask<Void, Void, Void>{
         private String weekStrings[] = new String[2];
+
         int i = 0;
         @Override
         protected Void doInBackground(Void ... voids) {
@@ -182,6 +212,8 @@ public class BingDiningMenu {
             if(weekStrings[0].compareTo("Sample Menu") != 0){
                 DiningDataScrapper diningDataScrapper = new DiningDataScrapper();
                 diningDataScrapper.execute();
+            }else {
+                Toast.makeText(context, "Just Checked: No new menu yet.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -268,8 +300,6 @@ public class BingDiningMenu {
                 toolbarTitle.setText(getWeekDate());
 
                 String res[], res2[], res3[];
-                int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
-                        R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
                 res = new String[7];
                 res2 = new String[7];
                 res3 = new String[7];
@@ -279,9 +309,7 @@ public class BingDiningMenu {
                 formatString(dinner, res3);
 
                 //sort listItems by current day of week
-                listItems = new ArrayList<>();
                 sortMenu_byDay(res, res2, res3, resImg);
-
                 adapter = new MyAdapter(listItems, context);
                 recyclerView.setAdapter(adapter);
                 pD.dismiss();
@@ -290,10 +318,30 @@ public class BingDiningMenu {
     }
 
     private void saveBingWeekData(String date){
-        SharedPreferences sP = context.getSharedPreferences("BingDining", MODE_PRIVATE);
+        SharedPreferences sP = context.getSharedPreferences("BingDining"+title, MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
         sEditor.putString("weekDate", date);
         sEditor.apply();
+    }
+
+    private String getWeekDate(){
+        SharedPreferences sP = context.getSharedPreferences("BingDining"+title, MODE_PRIVATE);
+        return sP.getString("weekDate", "noDate");
+    }
+
+    private void saveBingData(String day,String breakF, String lunch, String dinner){
+        SharedPreferences sP = context.getSharedPreferences("BingDining"+title, MODE_PRIVATE);
+        SharedPreferences.Editor sEditor = sP.edit();
+
+        sEditor.putString("Break"+day, breakF);
+        sEditor.putString("Lunch"+day, lunch);
+        sEditor.putString("Dinner"+day, dinner);
+        sEditor.apply();
+    }
+
+    private String getSavedBingData(String key){
+        SharedPreferences sP = context.getSharedPreferences("BingDining"+title, MODE_PRIVATE);
+        return sP.getString(key, "error");
     }
 
     public void setRecyclerView(RecyclerView recyclerView){
@@ -304,19 +352,14 @@ public class BingDiningMenu {
        adapter = new MyAdapter(listItems,context);
    }
 
-   public void setToolbar(Toolbar toolbar, AppCompatTextView toolbarTitle){
+    public void setToolbar(Toolbar toolbar, AppCompatTextView toolbarTitle){
        this.toolbar = toolbar;
        this.toolbarTitle = toolbarTitle;
-   }
+    }
 
-   public void makeRequest(){
+    public void makeRequest(){
        startBingDiningRequest();
    }
-
-    private String getWeekDate(){
-        SharedPreferences sP = context.getSharedPreferences("BingDining", MODE_PRIVATE);
-        return sP.getString("weekDate", "noDate");
-    }
 
     private void formatString(List<List<String>> listStr, String[] a){
         String res = "";
@@ -378,22 +421,12 @@ public class BingDiningMenu {
             if(dayWeek.compareTo(day_3char.toString()) == 0){
                 return index;
             }else day_3char.delete(0, day_3char.length());
+            index++;
         }
         return index;
     }
-    private void saveBingData(String day,String breakF, String lunch, String dinner){
-        SharedPreferences sP = context.getSharedPreferences("BingDining", MODE_PRIVATE);
-        SharedPreferences.Editor sEditor = sP.edit();
 
-        sEditor.putString("Break"+day, breakF);
-        sEditor.putString("Lunch"+day, lunch);
-        sEditor.putString("Dinner"+day, dinner);
-        sEditor.apply();
-    }
-    private String getSavedBingData(String key){
-        SharedPreferences sP = context.getSharedPreferences("BingDining", MODE_PRIVATE);
-        return sP.getString(key, "error");
-    }
+
 
     private void getSavedDate(){
         //gets current date

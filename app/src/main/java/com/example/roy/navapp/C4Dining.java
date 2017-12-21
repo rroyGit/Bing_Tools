@@ -19,16 +19,12 @@ import java.util.StringTokenizer;
 
 public class C4Dining extends Fragment {
 
-    private ProgressDialog pD;
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
 
     private BingDiningMenu c4_hall;
-    private String month, date, year;
-    private String[] savedDate;
-    private StringTokenizer sT;
-    private final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
     private final String c4Url = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/index.html";
+    private final String title = "C4";
 
     public C4Dining() {
         //empty constructor
@@ -42,16 +38,14 @@ public class C4Dining extends Fragment {
         AppCompatTextView toolbarTitle;
 
         List<ListItem> listItems = new ArrayList<>();
-        savedDate = new String[3];
 
-        pD = new ProgressDialog(getActivity());
         toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
         toolbarTitle = (AppCompatTextView) view.findViewById(R.id.toolbarText);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        c4_hall = new BingDiningMenu(c4Url,context);
+        c4_hall = new BingDiningMenu(c4Url, title, context, listItems);
         c4_hall.setRecyclerView(recyclerView);
         c4_hall.setAdapter(listItems);
         c4_hall.setToolbar(toolbar, toolbarTitle);

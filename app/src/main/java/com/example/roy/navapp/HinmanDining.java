@@ -18,16 +18,13 @@ import java.util.StringTokenizer;
 
 public class HinmanDining extends Fragment {
 
-    private ProgressDialog pD;
+
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
 
     private BingDiningMenu hinman_hall;
-    private String month, date, year;
-    private String[] savedDate;
-    private StringTokenizer sT;
-    private final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
     private final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
+    private final String title = "Hinman";
 
     public HinmanDining() {
         //empty constructor
@@ -41,16 +38,14 @@ public class HinmanDining extends Fragment {
         AppCompatTextView toolbarTitle;
 
         List<ListItem> listItems = new ArrayList<>();
-        savedDate = new String[3];
 
-        pD = new ProgressDialog(getActivity());
         toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
         toolbarTitle = (AppCompatTextView) view.findViewById(R.id.toolbarText);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        hinman_hall = new BingDiningMenu(hinmanUrl,context);
+        hinman_hall = new BingDiningMenu(hinmanUrl,title,context, listItems);
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
         hinman_hall.setToolbar(toolbar, toolbarTitle);
