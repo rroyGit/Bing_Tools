@@ -5,16 +5,11 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -24,16 +19,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.JsonReader;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -45,21 +36,12 @@ import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
 import org.json.*;
-
-
-import static android.content.ContentValues.TAG;
 import static com.example.roy.navapp.BingDiningMenu.getDeviceInternetStatus;
 import static com.example.roy.navapp.HomeFragment.hideKeyboard;
 
-
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-
-    private ActionBarDrawerToggle mToggle;
-    private Toolbar toolBar;
     private String retVal;
-
     ImageView bingImage;
     Activity activity;
     Context context;
@@ -68,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActionBarDrawerToggle mToggle;
+        Toolbar toolBar;
         activity = this;
         context = this;
 
@@ -196,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     drawer.closeDrawer(GravityCompat.START);
                     break;
                 }else {
-                    f = new Bing_Dining();
+                    f = new BingDining();
                     item.setChecked(true);
                     break;
                 }

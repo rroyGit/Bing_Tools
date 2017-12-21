@@ -39,7 +39,7 @@
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:background="@color/black"
-        tools:context="com.example.roy.navapp.Bing_Dining">
+        tools:context="com.example.roy.navapp.HinmanDining">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleView"
