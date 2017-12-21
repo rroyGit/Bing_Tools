@@ -48,7 +48,7 @@ import org.json.*;
 
 
 import static android.content.ContentValues.TAG;
-import static com.example.roy.navapp.Bing_Dining.getDeviceInternetStatus;
+import static com.example.roy.navapp.BingDiningMenu.getDeviceInternetStatus;
 import static com.example.roy.navapp.HomeFragment.hideKeyboard;
 
 

@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
@@ -37,7 +38,7 @@ public class BingDiningMenu {
     private final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
     private String month, date, year;
     private String[] savedDate;
-    private static String link;
+    private String link;
     private List<ListItem> listItems;
 
     private Context context;
@@ -60,9 +61,7 @@ public class BingDiningMenu {
         DiningDataScrapper bing;
         StringTokenizer sT;
         //determine whether to load data from saved storage or from the web
-
         if (getSavedBingData("Breakmonday").equals("error")) {
-
             if(getDeviceInternetStatus(context) == null){
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                 return;
@@ -87,10 +86,16 @@ public class BingDiningMenu {
                 date2 = sT.nextToken();
                 year2 = sT.nextToken();
             } catch (Exception e){
-
                 if(getWeekDate().compareTo("Sample Menu") == 0){
                     toolbarTitle.setText(getWeekDate());
-                    loadData();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadData();
+                            MenuDate menuDate = new MenuDate();
+                            menuDate.execute();
+                        }
+                    }).run();
                     return;
                 }else Toast.makeText(context, "Error loading saved data " + e.toString(), Toast.LENGTH_LONG).show();
                 return;
@@ -144,32 +149,15 @@ public class BingDiningMenu {
         adapter = new MyAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
     }
-    public void getDate(){
-        final String urlStrings[] = new String[2];
-        final String weekStrings[] = new String[2];
-        final MenuDate menuDate = new MenuDate();
-
-        //bing = new DiningDataScrapper();
-        //bing.execute();
-
-        if(getWeekDate().compareTo("Sample Menu") == 0){
-            menuDate.execute(urlStrings,weekStrings);
-            toolbarTitle.setText(getWeekDate());
-            loadData();
-            Log.e("YO: "+urlStrings[0], '\n'+weekStrings[0]);
-            return;
-        }
-
-
+    public void setRecycleAdapter(){
+        recyclerView.setAdapter(adapter);
     }
-    private static class MenuDate extends AsyncTask<String[], String[], Void>{
-       // private String urlStrings[] = new String[2];
-       // private String weekStrings[] = new String[2];
+    private class MenuDate extends AsyncTask<Void, Void, Void>{
+        private String weekStrings[] = new String[2];
         int i = 0;
         @Override
-        protected Void doInBackground(String[] ... strings) {
-
-            Document doc = null;
+        protected Void doInBackground(Void ... voids) {
+            Document doc;
             Elements weekUrl = null;
             try {
                 doc = Jsoup.connect(link).get();
@@ -178,12 +166,11 @@ public class BingDiningMenu {
                 e.printStackTrace();
             }
             //get updated links to Bing dining data
+            assert weekUrl != null;
             for (Element link : weekUrl) {
                 Elements f = link.getElementsByTag("a");
-                for(Element a: f) {
-                    strings[0][i] = a.attr("href");
-                    strings[1][i] = a.text();
-                    //Log.e("url",  strings[1][0]);
+                for (Element a : f) {
+                    weekStrings[i] = a.text();
                     i++;
                 }
             }
@@ -193,7 +180,10 @@ public class BingDiningMenu {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
+            if(weekStrings[0].compareTo("Sample Menu") != 0){
+                DiningDataScrapper diningDataScrapper = new DiningDataScrapper();
+                diningDataScrapper.execute();
+            }
         }
     }
 

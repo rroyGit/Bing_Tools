@@ -30,7 +30,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.roy.navapp.Bing_Dining.getDate;
+import static com.example.roy.navapp.BingDiningMenu.getDate;
 
 /**
  * A simple {@link Fragment} subclass.
