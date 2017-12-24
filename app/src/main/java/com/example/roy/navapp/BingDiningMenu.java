@@ -88,10 +88,14 @@ public class BingDiningMenu {
                 year2 = sT.nextToken();
             } catch (Exception e){
                 if(getWeekDate().compareTo("Sample Menu") == 0){
-                    MenuDate menuDate = new MenuDate();
-                    menuDate.execute();
-                    toolbarTitle.setText(getWeekDate());
+                    if(getDeviceInternetStatus(context) == null){
+                        Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
+                    }else {
+                        MenuDate menuDate = new MenuDate();
+                        menuDate.execute();
+                    }
 
+                    toolbarTitle.setText(getWeekDate());
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -187,7 +191,7 @@ public class BingDiningMenu {
         @Override
         protected Void doInBackground(Void ... voids) {
             Document doc;
-            Elements weekUrl = null;
+            Elements weekUrl;
             try {
                 doc = Jsoup.connect(link).get();
                 weekUrl = doc.getElementsByClass("accordionBody");
@@ -431,10 +435,8 @@ public class BingDiningMenu {
         return index;
     }
 
-
-
     private void getSavedDate(){
-        //gets current date
+        //get current date
         getDate(savedDate);
         month = savedDate[0];
         date = savedDate[1];
