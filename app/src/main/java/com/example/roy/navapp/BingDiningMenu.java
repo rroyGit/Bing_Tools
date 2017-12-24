@@ -193,6 +193,7 @@ public class BingDiningMenu {
                 weekUrl = doc.getElementsByClass("accordionBody");
             } catch (IOException e) {
                 e.printStackTrace();
+                return null;
             }
             //get updated links to Bing dining data
             assert weekUrl != null;
@@ -209,6 +210,10 @@ public class BingDiningMenu {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if(weekStrings[0] == null) {
+                Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if(weekStrings[0].compareTo("Sample Menu") != 0){
                 DiningDataScrapper diningDataScrapper = new DiningDataScrapper();
                 diningDataScrapper.execute();

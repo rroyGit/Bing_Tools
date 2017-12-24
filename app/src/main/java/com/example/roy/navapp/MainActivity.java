@@ -42,6 +42,7 @@ import static com.example.roy.navapp.HomeFragment.hideKeyboard;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private String retVal;
+    private boolean bingWall;
     ImageView bingImage;
     Activity activity;
     Context context;
@@ -70,15 +71,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         headerView.getLayoutParams().height = (int)(height/3.2);
         bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 //clears saved data for crypto
                 clearCryptoData();
-                setBingWall();
+                bingWall = setBingWall();
             }
         }).start();
         setSupportActionBar(toolBar);
+        setToast(bingWall ? null:"Could not get Bing Daily Image");
 
         final DrawerLayout dLayout;
         dLayout = (DrawerLayout) findViewById(R.id.nav_drawer_main);
@@ -104,6 +107,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_main, home).commit();
         nView.getMenu().findItem(R.id.Home).setChecked(true);
+    }
+
+    private void setToast(String string){
+        if(string != null) Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -259,11 +266,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sP.edit().remove("Crypto").clear().apply();
     }
 
-    private void setBingWall(){
+    private boolean setBingWall(){
         if(getDeviceInternetStatus(getApplicationContext()) == null){
-            Toast.makeText(context, "Could not get Bing Daily Image", Toast.LENGTH_SHORT).show();
+           return false;
         }else {
-
             Thread picThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -271,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
             picThread.start();
+            return true;
         }
     }
 }
