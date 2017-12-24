@@ -4,14 +4,22 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +42,12 @@ public class C4Dining extends Fragment {
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
         Context context = this.getContext();
-        Toolbar toolbar;
-        AppCompatTextView toolbarTitle;
-
         List<ListItem> listItems = new ArrayList<>();
 
-        toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
-        toolbarTitle = (AppCompatTextView) view.findViewById(R.id.toolbarText);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
+        AppCompatTextView toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewC4);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -51,8 +57,9 @@ public class C4Dining extends Fragment {
         c4_hall.setToolbar(toolbar, toolbarTitle);
         c4_hall.makeRequest();
 
+
         //set empty adapter due to waiting for data
-        adapter = new MyAdapter(listItems,getContext());
+        adapter = new MyAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
     }
 

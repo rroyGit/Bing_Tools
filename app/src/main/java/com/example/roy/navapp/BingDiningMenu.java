@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ThemedSpinnerAdapter;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
@@ -92,6 +91,7 @@ public class BingDiningMenu {
                     MenuDate menuDate = new MenuDate();
                     menuDate.execute();
                     toolbarTitle.setText(getWeekDate());
+
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {

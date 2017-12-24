@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
+
 
 public class HinmanDining extends Fragment {
 
@@ -34,14 +34,12 @@ public class HinmanDining extends Fragment {
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context = getContext();
-        Toolbar toolbar;
-        AppCompatTextView toolbarTitle;
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        AppCompatTextView toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
 
         List<ListItem> listItems = new ArrayList<>();
 
-        toolbar = (Toolbar) view.findViewById(R.id.bing_toolbar);
-        toolbarTitle = (AppCompatTextView) view.findViewById(R.id.toolbarText);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewHinman);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -52,7 +50,7 @@ public class HinmanDining extends Fragment {
         hinman_hall.makeRequest();
 
         //set empty adapter due to waiting for data
-        adapter = new MyAdapter(listItems,getContext());
+        adapter = new MyAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
     }
 
