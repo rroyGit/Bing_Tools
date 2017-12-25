@@ -42,7 +42,7 @@ import static com.example.roy.navapp.HomeFragment.hideKeyboard;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private String retVal;
-    private boolean bingWall;
+    private boolean bingWall = true;
     ImageView bingImage;
     Activity activity;
     Context context;
@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private boolean setBingWall(){
-        if(getDeviceInternetStatus(getApplicationContext()) == null){
+        if(getDeviceInternetStatus(context) == null){
            return false;
         }else {
             Thread picThread = new Thread(new Runnable() {
