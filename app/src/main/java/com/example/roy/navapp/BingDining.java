@@ -27,6 +27,8 @@ public class BingDining extends Fragment implements HinmanDining.OnFragmentInter
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tablayout);
         tabLayout.addTab(tabLayout.newTab().setText("Hinman"));
         tabLayout.addTab(tabLayout.newTab().setText("C4"));
+        tabLayout.addTab(tabLayout.newTab().setText("Appalachian"));
+        tabLayout.addTab(tabLayout.newTab().setText("CIW"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);

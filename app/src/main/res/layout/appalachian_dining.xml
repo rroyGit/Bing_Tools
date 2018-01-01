@@ -15,10 +15,10 @@
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:background="@color/black"
-        tools:context="com.example.roy.navapp.C4Dining">
+        tools:context="com.example.roy.navapp.AppalachianDining">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycleViewC4"
+            android:id="@+id/recycleViewAppalachian"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"

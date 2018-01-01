@@ -1,6 +1,5 @@
 package com.example.roy.navapp;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,21 +11,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class HinmanDining extends Fragment {
+public class CIWDining extends Fragment {
 
 
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
 
     private BingDiningMenu hinman_hall;
-    private final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
-    private final String title = "Hinman";
+    private final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/ciw.html";
+    private final String title = "CIW";
 
-    public HinmanDining() {
+    public CIWDining() {
         //empty constructor
     }
 
@@ -39,7 +39,7 @@ public class HinmanDining extends Fragment {
 
         List<ListItem> listItems = new ArrayList<>();
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewHinman);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewCIW);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -58,7 +58,7 @@ public class HinmanDining extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.hinman_dining, container, false);
+        return inflater.inflate(R.layout.ciw_dining, container, false);
     }
 
     @Override

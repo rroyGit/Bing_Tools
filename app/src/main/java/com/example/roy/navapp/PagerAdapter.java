@@ -25,7 +25,14 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 C4Dining c4Dining = new C4Dining();
                 return c4Dining;
-            default: return  null;
+            case 2:
+                AppalachianDining appalachianDining = new AppalachianDining();
+                return appalachianDining;
+            case 3:
+                CIWDining ciwDining = new CIWDining();
+                return ciwDining;
+            default:
+                return  null;
         }
     }
 

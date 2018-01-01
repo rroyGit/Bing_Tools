@@ -3,6 +3,7 @@ package com.example.roy.navapp;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -10,7 +11,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,8 +18,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -33,26 +33,28 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class BingDiningMenu {
 
-    private final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-    private final int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
+    private static final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+    private static final int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
                                   R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
-    private String month, date, year, link, title;
+    private String month, date, year, title;
+    private String link;
     private final String[] savedDate;
-    private final List<ListItem> listItems;
+    private List<ListItem> listItems;
 
     private Context context;
-    private ProgressDialog pD;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
-    private Toolbar toolbar;
     private AppCompatTextView toolbarTitle;
+    private DiningDatabase diningDatabase;
 
     public BingDiningMenu(String link, String title, Context context, List<ListItem> listItems){
         this.context = context;
-        this.link = link;
         this.title = title;
+        this.link = link;
         this.listItems = listItems;
         savedDate = new String[3];
+        diningDatabase = new DiningDatabase(context, title);
+        diningDatabase.createTable(title);
     }
 
     private void startBingDiningRequest(){
@@ -61,15 +63,8 @@ public class BingDiningMenu {
         DiningDataScrapper bing;
         StringTokenizer sT;
 
-        //determine whether to load data from saved storage or from the web
-        if (getSavedBingData("Breakmonday").equals("error")) {
-            if(getDeviceInternetStatus(context) == null){
-                Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            bing = new DiningDataScrapper();
-            bing.execute();
-        } else {
+        //load data from saved storage or from the web
+        if(diningDatabase.getDatabaseCount() > 0) {
             String month1, month2, date1, date2, year1, year2;
             try {
                 sT = new StringTokenizer(getWeekDate(), " ");
@@ -88,89 +83,70 @@ public class BingDiningMenu {
                 year2 = sT.nextToken();
             } catch (Exception e){
                 if(getWeekDate().compareTo("Sample Menu") == 0){
-                    if(getDeviceInternetStatus(context) == null){
-                        Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
-                    }else {
-                        MenuDate menuDate = new MenuDate();
-                        menuDate.execute();
-                    }
-
                     toolbarTitle.setText(getWeekDate());
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            loadData();
+                           loadSortedData(BingDiningMenu.this);
                         }
                     });
                     thread.start();
+                    assert listItems != null;
                     if(listItems.isEmpty()){
                         try {
                             thread.join();
+                            setData();
                         } catch (InterruptedException e2) {
                             e2.printStackTrace();
                         }
                     }
-                    setData();
                     return;
                 }else Toast.makeText(context, "Error loading saved data " + e.toString(), Toast.LENGTH_LONG).show();
                 return;
             }
-            if (Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
-                bing = new DiningDataScrapper();
+            if(Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
+                bing = new DiningDataScrapper(this);
                 bing.execute();
-            } else if (((month.equals(month1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
+            }else if (((month.equals(month1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
                     ((month.equals(month2)) && (Integer.parseInt(date) > Integer.parseInt(date2)))) {
-                bing = new DiningDataScrapper();
+                bing = new DiningDataScrapper(this);
                 bing.execute();
-            } else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
-                bing = new DiningDataScrapper();
+            }else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
+                bing = new DiningDataScrapper(this);
                 bing.execute();
-            } else {
+            }else {
                 toolbarTitle.setText(getWeekDate());
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        loadData();
+                        loadSortedData(BingDiningMenu.this);
                     }
                 });
                 thread.start();
+                assert listItems != null;
                 if(listItems.isEmpty()){
                     try {
                         thread.join();
+                        setData();
                     } catch (InterruptedException e3) {
                         e3.printStackTrace();
                     }
                 }
-                setData();
             }
+        }else{
+            if(getDeviceInternetStatus(context) == null){
+                Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            bing = new DiningDataScrapper(this);
+            bing.execute();
         }
-    }
-
-    private void loadData(){
-        //clear previous remnants
-        listItems.clear();
-        int index = findStartIndex();
-
-        for(int i = index; i < 7; i++) {
-            String res, res2, res3;
-            res = getSavedBingData("Break"+days[i]);
-            res2 = getSavedBingData("Lunch"+days[i]);
-            res3 = getSavedBingData("Dinner"+days[i]);
-
-            ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
-            listItems.add(listItem);
-        }
-        for(int i = 0; i < index; i++) {
-            String res, res2, res3;
-            res = getSavedBingData("Break"+days[i]);
-            res2 = getSavedBingData("Lunch"+days[i]);
-            res3 = getSavedBingData("Dinner"+days[i]);
-            ListItem listItem = new ListItem(res, res2, res3, resImg[i]);
-            listItems.add(listItem);
-        }
+        adapter = new MyAdapter(listItems, context);
+        recyclerView.setAdapter(adapter);
     }
 
     private boolean setData(){
+        assert listItems != null;
         if(listItems.isEmpty()) {
             Log.e("SetData ", "Must populate listItems before calling setData");
             return false;
@@ -184,6 +160,7 @@ public class BingDiningMenu {
         recyclerView.setAdapter(adapter);
     }
 
+    /*
     private class MenuDate extends AsyncTask<Void, Void, Void>{
         private String weekStrings[] = new String[2];
 
@@ -219,31 +196,33 @@ public class BingDiningMenu {
                 return;
             }
             if(weekStrings[0].compareTo("Sample Menu") != 0){
-                DiningDataScrapper diningDataScrapper = new DiningDataScrapper();
+                DiningDataScrapper diningDataScrapper = new DiningDataScrapper(get);
                 diningDataScrapper.execute();
             }else {
                 Toast.makeText(context, "Just Checked: No new menu yet.", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-    private class DiningDataScrapper extends AsyncTask<Void, Void, Void> {
-        private List<String> temp;
-        private List<String> temp2;
-        private List<String> temp3;
-
-        private List<List<String>> breakF = new ArrayList<>();
-        private List<List<String>> lunch = new ArrayList<>();
-        private List<List<String>> dinner = new ArrayList<>();
+*/
+    private static class DiningDataScrapper extends AsyncTask<Void, Void, Void> {
+        private StringBuilder stringBuilderBreakfast = new StringBuilder();
+        private StringBuilder stringBuilderLunch = new StringBuilder();
+        private StringBuilder stringBuilderDinner = new StringBuilder();
 
         private String urlStrings[] = new String[2];
         private String weekStrings[] = new String[2];
+        private ProgressDialog pD;
 
-        int i,j = 0;
+        //weak reference
+        private WeakReference <BingDiningMenu> activityReference;
+        DiningDataScrapper(BingDiningMenu context){
+            activityReference = new WeakReference<>(context);
+        }
 
         @Override
         protected void onPreExecute() {
-            pD = new ProgressDialog(context);
+            BingDiningMenu bingDiningMenu = activityReference.get();
+            pD = new ProgressDialog(bingDiningMenu.context);
             pD.setCancelable(false);
             pD.setMessage("Loading, please wait...");
             pD.show();
@@ -251,43 +230,62 @@ public class BingDiningMenu {
 
         @Override
         protected Void doInBackground(Void... params) {
+            BingDiningMenu bingDiningMenu = activityReference.get();
+            if(bingDiningMenu == null){
+                Log.e("weakRef is ", "null");
+                return null;
+            }
             try {
-                Document doc = Jsoup.connect(link).get();
+                Document doc = Jsoup.connect(bingDiningMenu.link).get();
                 Elements weekUrl = doc.getElementsByClass("accordionBody");
 
                 //get updated links to Bing dining data
+                int i = 0;
                 for (Element link : weekUrl) {
                     Elements f = link.getElementsByTag("a");
                     for(Element a: f) {
-                        urlStrings[i++] = a.attr("href");
-                        weekStrings[j++] = a.text();
+                        urlStrings[i] = a.attr("href");
+                        weekStrings[i] = a.text();
+                        i++;
                     }
                 }
 
                 String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
                 Document doc2 = Jsoup.connect(firstUrl).get();
-
-                for(int i = 0; i < 7; i++) {
+                String stringToAppend;
+                int index;
+                for(i = 0; i < 7; i++) {
                     Elements B = doc2.getElementById(days[i]).select("tr.brk").select("span.ul");
                     Elements L = doc2.getElementById(days[i]).select("tr.lun").select("span.ul");
                     Elements D = doc2.getElementById(days[i]).select("tr.din").select("span.ul");
 
-                    temp = new ArrayList<>();
-                    temp2 = new ArrayList<>();
-                    temp3 = new ArrayList<>();
-
+                    index = 1;
                     for (Element e : B) {
-                        temp.add(e.text());
+                        stringToAppend = ((index < 10)? "0"+index:index) +". "+ e.text()+'\n';
+                        stringBuilderBreakfast.append(stringToAppend);
+                        index++;
                     }
+                    index = 1;
                     for (Element e : L) {
-                        temp2.add(e.text());
+                        stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
+                        stringBuilderLunch.append(stringToAppend);
+                        index++;
                     }
+                    index = 1;
                     for (Element e : D) {
-                        temp3.add(e.text());
+                        stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
+                        stringBuilderDinner.append(stringToAppend);
+                        index++;
                     }
-                    breakF.add(temp);
-                    lunch.add(temp2);
-                    dinner.add(temp3);
+
+                    stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+                    stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+                    stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+
+                    bingDiningMenu.diningDatabase.insertMenuItem(days[i],stringBuilderBreakfast.toString(), stringBuilderLunch.toString(),stringBuilderDinner.toString());
+                    stringBuilderBreakfast.delete(0, stringBuilderBreakfast.length());
+                    stringBuilderLunch.delete(0, stringBuilderLunch.length());
+                    stringBuilderDinner.delete(0, stringBuilderDinner.length());
                 }
 
             }catch(IOException e){
@@ -298,31 +296,17 @@ public class BingDiningMenu {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
-            if(weekStrings[0] == null){
-                Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
-                pD.dismiss();
-            }else {
-
-                //save the date to device
-                saveBingWeekData(weekStrings[0]);
-                toolbarTitle.setText(getWeekDate());
-
-                String res[], res2[], res3[];
-                res = new String[7];
-                res2 = new String[7];
-                res3 = new String[7];
-
-                formatString(breakF, res);
-                formatString(lunch, res2);
-                formatString(dinner, res3);
-
-                //sort listItems by current day of week
-                sortMenu_byDay(res, res2, res3, resImg);
-                adapter = new MyAdapter(listItems, context);
-                recyclerView.setAdapter(adapter);
-                pD.dismiss();
+            BingDiningMenu bingDiningMenu = activityReference.get();
+            if(bingDiningMenu == null){
+                Log.e("weakRef is ", "null"); return;
             }
+            bingDiningMenu.saveBingWeekData(weekStrings[0]);
+            bingDiningMenu.toolbarTitle.setText(weekStrings[0]);
+
+            bingDiningMenu.loadSortedData(bingDiningMenu);
+            bingDiningMenu.adapter = new MyAdapter(bingDiningMenu.listItems, bingDiningMenu.context);
+            bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
+            pD.dismiss();
         }
     }
 
@@ -338,20 +322,6 @@ public class BingDiningMenu {
         return sP.getString("weekDate", "noDate");
     }
 
-    private void saveBingData(String day,String breakF, String lunch, String dinner){
-        SharedPreferences sP = context.getSharedPreferences("BingDining"+title, MODE_PRIVATE);
-        SharedPreferences.Editor sEditor = sP.edit();
-
-        sEditor.putString("Break"+day, breakF);
-        sEditor.putString("Lunch"+day, lunch);
-        sEditor.putString("Dinner"+day, dinner);
-        sEditor.apply();
-    }
-
-    private String getSavedBingData(String key){
-        SharedPreferences sP = context.getSharedPreferences("BingDining"+title, MODE_PRIVATE);
-        return sP.getString(key, "error");
-    }
 
     public void setRecyclerView(RecyclerView recyclerView){
         this.recyclerView = recyclerView;
@@ -361,59 +331,47 @@ public class BingDiningMenu {
        adapter = new MyAdapter(listItems,context);
    }
 
-    public void setToolbar(Toolbar toolbar, AppCompatTextView toolbarTitle){
-       this.toolbar = toolbar;
+    public void setToolbar(AppCompatTextView toolbarTitle){
        this.toolbarTitle = toolbarTitle;
     }
 
     public void makeRequest(){
        startBingDiningRequest();
-   }
-
-    private void formatString(List<List<String>> listStr, String[] a){
-        String res = "";
-        for(int j = 0; j < listStr.size(); j++) {
-
-            List<String> temp = listStr.get(j);
-            for (int i = 0; i < temp.size(); i++) {
-                if (i < 9) res = res + 0 + (i + 1) + ". " + temp.get(i) + '\n';
-                else res = res + (i + 1) + ". " + temp.get(i) + '\n';
-            }
-            a[j] = res;
-            res = "";
-        }
     }
 
-    private void sortMenu_byDay(String[] res, String[] res2, String[] res3, int[] resImg){
+
+    private void loadSortedData(BingDiningMenu bingDiningMenu){
         String breakfast, lunch, dinner;
         //clear all previous remnants
         listItems.clear();
-        int index = findStartIndex();
+        int index = findStartIndex() +1;
 
-        for(int i = index; i < 7; i++) {
-            breakfast = res[i];
-            lunch = res2[i];
-            dinner = res3[i];
-            if (breakfast.equals("")) breakfast = "01. Time to visit the Marketplace\n\n\n";
-            if(lunch.equals("")) lunch = "01. Time to visit the Marketplace\n\n\n";
-            if (dinner.equals("")) dinner = "01. Time to visit the Marketplace\n\n\n";
-
-            ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[i]);
-            listItems.add(listItem);
-            saveBingData(days[i], breakfast, lunch, dinner);
+        Cursor cursor = null;
+        for(int id = index; id <= days.length; id++) {
+            cursor = bingDiningMenu.diningDatabase.getMenuItem(id);
+            if (cursor.moveToFirst()) {
+                breakfast = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_BREAKFAST));
+                lunch = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_LUNCH));
+                dinner = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_DINNER));
+                ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[id-1]);
+                assert bingDiningMenu.listItems != null;
+                bingDiningMenu.listItems.add(listItem);
+            }
         }
-        for(int i = 0; i < index; i++) {
-            breakfast = res[i];
-            lunch = res2[i];
-            dinner = res3[i];
-            if (breakfast.equals("")) breakfast = "01. Time to visit the Marketplace\n\n\n";
-            if(lunch.equals("")) lunch = "01. Time to visit the Marketplace\n\n\n";
-            if (dinner.equals("")) dinner = "01. Time to visit the Marketplace\n\n\n";
 
-            ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[i]);
-            listItems.add(listItem);
-            saveBingData(days[i], breakfast, lunch, dinner);
+        for(int id = 1; id < index; id++) {
+            cursor = bingDiningMenu.diningDatabase.getMenuItem(id);
+            if (cursor.moveToFirst()) {
+                breakfast = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_BREAKFAST));
+                lunch = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_LUNCH));
+                dinner = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_DINNER));
+                ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[id-1]);
+                assert bingDiningMenu.listItems != null;
+                bingDiningMenu.listItems.add(listItem);
+            }
         }
+        assert cursor != null;
+        cursor.close();
     }
 
     private int findStartIndex(){
