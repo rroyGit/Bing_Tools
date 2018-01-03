@@ -1,6 +1,5 @@
 package com.example.roy.navapp;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,8 +16,6 @@ import java.util.List;
 
 
 public class HinmanDining extends Fragment {
-
-
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
 

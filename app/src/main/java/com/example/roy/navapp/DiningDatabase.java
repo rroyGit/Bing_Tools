@@ -74,9 +74,9 @@ public class DiningDatabase extends SQLiteOpenHelper {
     }
 
     public Cursor getMenuItem(Integer id){
-        SQLiteDatabase database = this.getReadableDatabase();
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         String query = "SELECT * FROM " + MENU_TABLE_NAME + " WHERE " + MENU_COLUMN_ID + "= ?";
-        Cursor cursor = database.rawQuery(query, new String[] {Integer.toString(id)});
+        Cursor cursor = sqLiteDatabase.rawQuery(query, new String[] {Integer.toString(id)});
         return cursor;
     }
 
@@ -89,7 +89,8 @@ public class DiningDatabase extends SQLiteOpenHelper {
 
     public Integer deleteItem(Integer id){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        return sqLiteDatabase.delete(MENU_TABLE_NAME, "WHERE " + MENU_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+        Integer ret = sqLiteDatabase.delete(MENU_TABLE_NAME, "WHERE " + MENU_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+        return ret;
     }
 
     public int getDatabaseCount(){
@@ -98,6 +99,7 @@ public class DiningDatabase extends SQLiteOpenHelper {
         Cursor cursor = sqLiteDatabase.rawQuery(query, null);
         int ret = cursor.getCount();
         cursor.close();
+        sqLiteDatabase.close();
         return ret;
     }
 }

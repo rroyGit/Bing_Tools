@@ -169,15 +169,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch(id){
             case R.id.Calculator:
-                chooseFragment = new CalculatorFragment();
+                if(item.isChecked()) drawer.closeDrawer(GravityCompat.START);
+                else chooseFragment = new CalculatorFragment();
                 break;
             case R.id.Crypto:
-                chooseFragment = new CryptoFragment();
+                if(item.isChecked()) drawer.closeDrawer(GravityCompat.START);
+                else chooseFragment = new CryptoFragment();
                 break;
             case R.id.Bing_Dining:
-                chooseFragment = new BingDining();
+                if(item.isChecked()) drawer.closeDrawer(GravityCompat.START);
+                else chooseFragment = new BingDining();
                 break;
         }
+
         if(chooseFragment != null) {
             final Fragment finalFrag = chooseFragment;
             Thread fragThread = new Thread(new Runnable() {
