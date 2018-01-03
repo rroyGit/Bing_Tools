@@ -164,47 +164,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void displaySelectedScreen(int id, final MenuItem item){
-        Fragment f = null;
+        Fragment chooseFragment = null;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.nav_drawer_main);
 
         switch(id){
             case R.id.Calculator:
-                if(item.isChecked()) {
-                    drawer.closeDrawer(GravityCompat.START);
-                }else {
-                    f = new CalculatorFragment();
-                }
+                chooseFragment = new CalculatorFragment();
                 break;
             case R.id.Crypto:
-                if(item.isChecked()){
-                    drawer.closeDrawer(GravityCompat.START);
-                }else {
-                    f = new CryptoFragment();
-
-                }
+                chooseFragment = new CryptoFragment();
                 break;
             case R.id.Bing_Dining:
-                if(item.isChecked()) {
-                    drawer.closeDrawer(GravityCompat.START);
-                }else {
-                    f = new BingDining();
-                }
+                chooseFragment = new BingDining();
                 break;
         }
-
-        if(f != null) {
-            final Fragment finalFrag = f;
-
+        if(chooseFragment != null) {
+            final Fragment finalFrag = chooseFragment;
             Thread fragThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_main, finalFrag).commit();
-                    item.setChecked(true);
                 }
             });
             fragThread.start();
         }
+        item.setChecked(true);
         drawer.closeDrawer(GravityCompat.START);
     }
 

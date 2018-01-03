@@ -5,8 +5,8 @@
         android:checkableBehavior="single">
 
         <item android:id="@+id/Bing_Dining"
-        android:icon="@mipmap/ic_local_dining_black_24dp"
-        android:title="@string/bing_dining">
+            android:icon="@mipmap/ic_local_dining_black_24dp"
+            android:title="@string/bing_dining">
         </item>
 
         <item android:id="@+id/Calculator"
