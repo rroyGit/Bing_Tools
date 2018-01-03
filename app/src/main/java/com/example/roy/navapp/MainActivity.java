@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void displaySelectedScreen(int id, final MenuItem item){
         Fragment chooseFragment = null;
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.nav_drawer_main);
+       final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.nav_drawer_main);
 
         switch(id){
             case R.id.Calculator:
@@ -194,7 +195,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragThread.start();
         }
         item.setChecked(true);
-        drawer.closeDrawer(GravityCompat.START);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                drawer.closeDrawer(GravityCompat.START);
+            }
+        }, 35);
+
     }
 
     @Override

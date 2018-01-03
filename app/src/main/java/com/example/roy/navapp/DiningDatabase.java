@@ -38,7 +38,6 @@ public class DiningDatabase extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MENU_TABLE_NAME);
         onCreate(sqLiteDatabase);
-
     }
 
     public void createTable(String tableName){
@@ -48,28 +47,31 @@ public class DiningDatabase extends SQLiteOpenHelper {
                 MENU_COLUMN_BREAKFAST + " TEXT, "+ MENU_COLUMN_LUNCH + " TEXT, " +
                 MENU_COLUMN_DINNER + " TEXT)";
         sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.close();
     }
 
     public boolean insertMenuItem(String day, String breakfast, String lunch, String dinner){
 
-        SQLiteDatabase database = this.getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(MENU_COLUMN_DAY, day);
         contentValues.put(MENU_COLUMN_BREAKFAST, breakfast);
         contentValues.put(MENU_COLUMN_LUNCH, lunch);
         contentValues.put(MENU_COLUMN_DINNER, dinner);
-        database.insert(MENU_TABLE_NAME,null, contentValues);
+        sqLiteDatabase.insert(MENU_TABLE_NAME,null, contentValues);
+        sqLiteDatabase.close();
         return true;
     }
 
     public boolean updateMenuItem(Integer id, String day, String breakfast, String lunch, String dinner){
-        SQLiteDatabase database = this.getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(MENU_COLUMN_DAY, day);
         contentValues.put(MENU_COLUMN_BREAKFAST, breakfast);
         contentValues.put(MENU_COLUMN_LUNCH, lunch);
         contentValues.put(MENU_COLUMN_DINNER, dinner);
-        database.update(MENU_TABLE_NAME, contentValues, MENU_COLUMN_ID + " = ?", new String[] {Integer.toString(id)});
+        sqLiteDatabase.update(MENU_TABLE_NAME, contentValues, MENU_COLUMN_ID + " = ?", new String[] {Integer.toString(id)});
+        sqLiteDatabase.close();
         return true;
     }
 
@@ -90,6 +92,7 @@ public class DiningDatabase extends SQLiteOpenHelper {
     public Integer deleteItem(Integer id){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         Integer ret = sqLiteDatabase.delete(MENU_TABLE_NAME, "WHERE " + MENU_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+        sqLiteDatabase.close();
         return ret;
     }
 

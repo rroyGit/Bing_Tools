@@ -166,6 +166,7 @@ public class BingDiningMenu {
             }
             diningDataScrapper = new DiningDataScrapper(this);
             diningDataScrapper.execute();
+            setDayMenuCheck(Integer.parseInt(day.toString()));
         }
         adapter = new MyAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
@@ -260,13 +261,7 @@ public class BingDiningMenu {
 
         @Override
         protected Void doInBackground(Void... params) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             final BingDiningMenu bingDiningMenu = activityReference.get();
-
             if(bingDiningMenu == null){
                 Log.e("weakRef is ", "null");
                 return null;
@@ -397,35 +392,34 @@ public class BingDiningMenu {
     private void loadSortedData(BingDiningMenu bingDiningMenu){
         String breakfast, lunch, dinner;
         //clear all previous remnants
+        assert listItems != null;
         listItems.clear();
         int index = findStartIndex() +1;
 
-        Cursor cursor = null;
+        Cursor cursor;
         for(int id = index; id <= days.length; id++) {
-            cursor = bingDiningMenu.diningDatabase.getMenuItem(id);
+            cursor = diningDatabase.getMenuItem(id);
             if (cursor.moveToFirst()) {
                 breakfast = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_BREAKFAST));
                 lunch = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_LUNCH));
                 dinner = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_DINNER));
                 ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[id-1]);
-                assert bingDiningMenu.listItems != null;
-                bingDiningMenu.listItems.add(listItem);
+                listItems.add(listItem);
             }
+            cursor.close();
         }
 
         for(int id = 1; id < index; id++) {
-            cursor = bingDiningMenu.diningDatabase.getMenuItem(id);
+            cursor = diningDatabase.getMenuItem(id);
             if (cursor.moveToFirst()) {
                 breakfast = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_BREAKFAST));
                 lunch = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_LUNCH));
                 dinner = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_DINNER));
                 ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[id-1]);
-                assert bingDiningMenu.listItems != null;
-                bingDiningMenu.listItems.add(listItem);
+                listItems.add(listItem);
             }
+            cursor.close();
         }
-        assert cursor != null;
-        cursor.close();
     }
 
     private int findStartIndex(){
