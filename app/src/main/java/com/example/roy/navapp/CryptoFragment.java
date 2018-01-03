@@ -1,14 +1,12 @@
 package com.example.roy.navapp;
 
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 
@@ -25,12 +23,11 @@ import android.widget.Toast;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.roy.navapp.BingDiningMenu.getDate;
+import static com.example.roy.navapp.BingDiningMenu.loadCurrentDate;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -163,12 +160,12 @@ public class CryptoFragment extends Fragment {
                     etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", etherVal)));
                     saveCryptoData();
 
-                    retTime = new String[3];
-                    getDate(retTime);
+                    StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
+                    loadCurrentDate(month, day, year);
 
                     StringBuilder retString = new StringBuilder();
                     retString.append("Last updated: ");
-                    retString.append(retTime[0]).append(':').append(retTime[1]).append(':').append(retTime[2]);
+                    retString.append(month.toString()).append(':').append(day.toString()).append(':').append(year.toString());
 
                     timeText.setText(retString);
                     progressBar.setVisibility(View.GONE);
@@ -197,11 +194,11 @@ public class CryptoFragment extends Fragment {
     private void saveCryptoData(){
         SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
-        retTime = new String[3];
-        getDate(retTime);
-        String date =  retTime[0]+':'+retTime[1]+':'+retTime[2];
+        StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
+        loadCurrentDate(month, day, year);
+        String date = month.toString()+':'+day.toString()+':'+year.toString();
 
-        sEditor.putString("Date",date);
+        sEditor.putString("Date", date);
         sEditor.putString("Ether", String.valueOf(etherVal));
         sEditor.apply();
     }

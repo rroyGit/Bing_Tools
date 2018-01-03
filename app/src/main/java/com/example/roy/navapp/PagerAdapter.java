@@ -20,17 +20,13 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                HinmanDining hinmanDining = new HinmanDining();
-                return  hinmanDining;
+                return new HinmanDining();
             case 1:
-                C4Dining c4Dining = new C4Dining();
-                return c4Dining;
+                return new C4Dining();
             case 2:
-                AppalachianDining appalachianDining = new AppalachianDining();
-                return appalachianDining;
+                return new AppalachianDining();
             case 3:
-                CIWDining ciwDining = new CIWDining();
-                return ciwDining;
+                return new CIWDining();
             default:
                 return  null;
         }

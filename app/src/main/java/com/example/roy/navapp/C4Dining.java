@@ -30,11 +30,13 @@ public class C4Dining extends Fragment {
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
         Context context = this.getContext();
-        List<ListItem> listItems = new ArrayList<>();
-
         AppCompatTextView toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
 
+        List<ListItem> listItems = new ArrayList<>();
+
+        c4Url = getString(R.string.c4Url);
+        title =  getString(R.string.c4);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewC4);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -55,6 +57,7 @@ public class C4Dining extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.c4_dining, container, false);
     }
 
@@ -68,9 +71,9 @@ public class C4Dining extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
     }
 
     @Override
@@ -84,8 +87,6 @@ public class C4Dining extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
         */
-        c4Url = getString(R.string.c4Url);
-        title = getString(R.string.c4);
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -33,9 +34,8 @@ public class BingDiningMenu {
     private static final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
     private static final int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
                                   R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
-    private String month, date, year, title;
-    private String link;
-    private final String[] savedDate;
+
+    private String title, link;
     private List<ListItem> listItems;
 
     private Context context;
@@ -49,15 +49,16 @@ public class BingDiningMenu {
         this.title = title;
         this.link = link;
         this.listItems = listItems;
-        savedDate = new String[3];
         diningDatabase = new DiningDatabase(context, title);
         diningDatabase.createTable(title);
     }
 
     private void startBingDiningRequest(){
         //Async Task for getting bing dining data from the web
-        getSavedDate();
-        DiningDataScrapper bing;
+        StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
+        loadCurrentDate(month, day, year);
+
+        DiningDataScrapper diningDataScrapper;
         StringTokenizer sT;
 
         //load data from saved storage or from the web
@@ -66,20 +67,35 @@ public class BingDiningMenu {
             String month1, month2, date1, date2, year1, year2;
             try {
                 if(getWeekDate().compareTo("Sample Menu") == 0){
-                    if(title.compareTo(context.getString(R.string.hinman)) == 0)
-                    new CheckForNewMenu(BingDiningMenu.this).execute(link);
+                    final int dayInt = Integer.parseInt(day.toString());
+                    new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if(getDayMenuCheck() == 404) {
+                                new CheckForNewMenu(BingDiningMenu.this).execute(link);
+                                setDayMenuCheck(dayInt);
+                            }else{
+                                if( dayInt != getDayMenuCheck()){
+                                    new CheckForNewMenu(BingDiningMenu.this).execute(link);
+                                }
+                            }
+                        }
+                    }).start();
 
                     if(getWeekDate().compareTo("Sample Menu") != 0){
-                        bing = new DiningDataScrapper(this);
-                        bing.execute();
+                        diningDataScrapper = new DiningDataScrapper(this);
+                        diningDataScrapper.execute();
                     }else {
                         final Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
+
                                 loadSortedData(BingDiningMenu.this);
                             }
                         });
                         thread.start();
+
                         assert listItems != null;
                         if (listItems.isEmpty()) {
                             try {
@@ -113,16 +129,16 @@ public class BingDiningMenu {
                 Toast.makeText(context, "Error loading saved data " + e.toString(), Toast.LENGTH_LONG).show();
                 return;
             }
-            if(Integer.parseInt(month) < Integer.parseInt(month1) || Integer.parseInt(month) > Integer.parseInt(month2)) {
-                bing = new DiningDataScrapper(this);
-                bing.execute();
-            }else if (((month.equals(month1)) && (Integer.parseInt(date) < Integer.parseInt(date1))) ||
-                    ((month.equals(month2)) && (Integer.parseInt(date) > Integer.parseInt(date2)))) {
-                bing = new DiningDataScrapper(this);
-                bing.execute();
-            }else if (Integer.parseInt(year) < Integer.parseInt(year1) || Integer.parseInt(year) > Integer.parseInt(year2)) {
-                bing = new DiningDataScrapper(this);
-                bing.execute();
+            if(Integer.parseInt(month.toString()) < Integer.parseInt(month1) || Integer.parseInt(month.toString()) > Integer.parseInt(month2)) {
+                diningDataScrapper = new DiningDataScrapper(this);
+                diningDataScrapper.execute();
+            }else if (((month.equals(month1)) && (Integer.parseInt(day.toString()) < Integer.parseInt(date1))) ||
+                    ((month.equals(month2)) && (Integer.parseInt(day.toString()) > Integer.parseInt(date2)))) {
+                diningDataScrapper = new DiningDataScrapper(this);
+                diningDataScrapper.execute();
+            }else if (Integer.parseInt(year.toString()) < Integer.parseInt(year1) || Integer.parseInt(year.toString()) > Integer.parseInt(year2)) {
+                diningDataScrapper = new DiningDataScrapper(this);
+                diningDataScrapper.execute();
             }else {
                 Thread thread = new Thread(new Runnable() {
                     @Override
@@ -148,8 +164,8 @@ public class BingDiningMenu {
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                 return;
             }
-            bing = new DiningDataScrapper(this);
-            bing.execute();
+            diningDataScrapper = new DiningDataScrapper(this);
+            diningDataScrapper.execute();
         }
         adapter = new MyAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
@@ -181,12 +197,6 @@ public class BingDiningMenu {
 
         @Override
         protected Void doInBackground(String ... strings) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             final String url = strings[0];
             Document doc;
             Elements weekUrl = null;
@@ -214,7 +224,7 @@ public class BingDiningMenu {
                 DiningDataScrapper diningDataScrapper = new DiningDataScrapper(bingDiningMenu);
                 diningDataScrapper.execute();
             }else {
-                Toast.makeText(bingDiningMenu.context, "Just Checked: No new menu yet... " + weekString, Toast.LENGTH_SHORT).show();
+                Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -359,6 +369,14 @@ public class BingDiningMenu {
         return sP.getString("weekDate", "noDate");
     }
 
+    private void setDayMenuCheck(int day){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("menuCounter", MODE_PRIVATE);
+        sharedPreferences.edit().putInt("day", day).apply();
+    }
+    private int getDayMenuCheck(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("menuCounter", MODE_PRIVATE);
+        return sharedPreferences.getInt("day", 404);
+    }
 
     public void setRecyclerView(RecyclerView recyclerView){
         this.recyclerView = recyclerView;
@@ -429,21 +447,14 @@ public class BingDiningMenu {
         return index;
     }
 
-    private void getSavedDate(){
-        //get current date
-        getDate(savedDate);
-        month = savedDate[0];
-        date = savedDate[1];
-        year = savedDate[2];
-    }
-
-    public static void getDate(String[] ret){
+    public static void loadCurrentDate(StringBuilder... strings){
         Date dateNow = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.US);
         StringTokenizer sT = new StringTokenizer(dateFormatter.format(dateNow), "-");
-        ret[0] = sT.nextToken();
-        ret[1] = sT.nextToken();
-        ret[2] = sT.nextToken();
+
+        strings[0].append(sT.nextToken());
+        strings[1].append(sT.nextToken());
+        strings[2].append(sT.nextToken());
     }
 
     public static NetworkInfo getDeviceInternetStatus(Context context){
@@ -454,4 +465,6 @@ public class BingDiningMenu {
         }
         return null;
     }
+
+
 }

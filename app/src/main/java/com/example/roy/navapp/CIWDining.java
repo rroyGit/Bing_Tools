@@ -36,6 +36,8 @@ public class CIWDining extends Fragment {
 
         List<ListItem> listItems = new ArrayList<>();
 
+        ciwUrl = getString(R.string.ciwUrl);
+        title = getString(R.string.ciw);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewCIW);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -54,6 +56,7 @@ public class CIWDining extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.ciw_dining, container, false);
     }
@@ -68,9 +71,9 @@ public class CIWDining extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
     }
 
     @Override
@@ -84,14 +87,12 @@ public class CIWDining extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
         */
-        ciwUrl = getString(R.string.ciwUrl);
-        title = getString(R.string.ciw);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+//        mListener = null;
     }
 
     /**

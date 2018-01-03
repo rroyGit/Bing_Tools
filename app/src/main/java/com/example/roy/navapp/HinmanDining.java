@@ -36,6 +36,8 @@ public class HinmanDining extends Fragment {
 
         List<ListItem> listItems = new ArrayList<>();
 
+        hinmanUrl = getString(R.string.hinmanUrl);
+        title = getString(R.string.hinman);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewHinman);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -54,6 +56,7 @@ public class HinmanDining extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.hinman_dining, container, false);
     }
@@ -68,9 +71,9 @@ public class HinmanDining extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
     }
 
     @Override
@@ -85,8 +88,7 @@ public class HinmanDining extends Fragment {
         }
         */
 
-        hinmanUrl = getString(R.string.hinmanUrl);
-        title = getString(R.string.hinman);
+
     }
 
     @Override

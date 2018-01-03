@@ -36,6 +36,8 @@ public class AppalachianDining extends Fragment {
 
         List<ListItem> listItems = new ArrayList<>();
 
+        appalachianUrl = getString(R.string.appalachianUrl);
+        title = getString(R.string.appalachian);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewAppalachian);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -68,9 +70,9 @@ public class AppalachianDining extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
     }
 
     @Override
@@ -84,14 +86,12 @@ public class AppalachianDining extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
         */
-        appalachianUrl = getString(R.string.appalachianUrl);
-        title = getString(R.string.appalachian);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+//        mListener = null;
     }
 
     /**
