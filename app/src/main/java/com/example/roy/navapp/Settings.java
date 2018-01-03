@@ -1,9 +1,12 @@
 package com.example.roy.navapp;
 
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 
@@ -147,6 +150,19 @@ public class Settings extends AppCompatActivity{
     private boolean getReset(){
         SharedPreferences sP = context.getSharedPreferences("resetState", MODE_PRIVATE);
         return sP.getBoolean("colorReset", false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.bing_tools_icon);
+                ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(getApplicationContext(), R.color.darkGray));
+                setTaskDescription(taskDesc);
+            }
+        }).start();
     }
 }
 

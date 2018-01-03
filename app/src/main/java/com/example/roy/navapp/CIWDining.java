@@ -22,9 +22,9 @@ public class CIWDining extends Fragment {
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
 
-    private BingDiningMenu hinman_hall;
-    private final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/ciw.html";
-    private final String title = "CIW";
+    private BingDiningMenu ciw_hall;
+    private String ciwUrl;
+    private String title;
 
     public CIWDining() {
         //empty constructor
@@ -43,11 +43,11 @@ public class CIWDining extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        hinman_hall = new BingDiningMenu(hinmanUrl,title,context, listItems);
-        hinman_hall.setRecyclerView(recyclerView);
-        hinman_hall.setAdapter(listItems);
-        hinman_hall.setToolbar(toolbarTitle);
-        hinman_hall.makeRequest();
+        ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems);
+        ciw_hall.setRecyclerView(recyclerView);
+        ciw_hall.setAdapter(listItems);
+        ciw_hall.setToolbar(toolbarTitle);
+        ciw_hall.makeRequest();
 
         //set empty adapter due to waiting for data
         adapter = new MyAdapter(listItems, context);
@@ -64,7 +64,7 @@ public class CIWDining extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        hinman_hall.setRecycleAdapter();
+        ciw_hall.setRecycleAdapter();
     }
     //--------------------------------------------------------------------------------------------//
     private OnFragmentInteractionListener mListener;
@@ -75,18 +75,22 @@ public class CIWDining extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-/*
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        /*
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        */
+        ciwUrl = getString(R.string.ciwUrl);
+        title = getString(R.string.ciw);
     }
-*/
+
     @Override
     public void onDetach() {
         super.onDetach();

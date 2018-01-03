@@ -3,19 +3,20 @@
 
     <group android:id="@+id/menu_top"
         android:checkableBehavior="single">
-        <item android:id="@+id/Home"
-            android:icon="@mipmap/ic_home_black_24dp"
-            android:title="Home">
+
+        <item android:id="@+id/Bing_Dining"
+        android:icon="@mipmap/ic_local_dining_black_24dp"
+        android:title="@string/bing_dining">
+        </item>
+
+        <item android:id="@+id/Calculator"
+            android:icon="@mipmap/ic_exposure_black_24dp"
+            android:title="@string/calculator">
         </item>
 
         <item android:id="@+id/Crypto"
             android:icon="@mipmap/ic_attach_money_black_24dp"
-            android:title="Crypto">
-        </item>
-
-        <item android:id="@+id/Bing_Dining"
-            android:icon="@mipmap/ic_local_dining_black_24dp"
-            android:title="Bing Dining">
+            android:title="@string/crypto">
         </item>
 
     </group>
@@ -25,7 +26,8 @@
 
         <item android:id="@+id/About"
             android:icon="@mipmap/ic_info_black_24dp"
-            android:title="About">
+            android:title="@string/about">
         </item>
+
     </group>
 </menu>

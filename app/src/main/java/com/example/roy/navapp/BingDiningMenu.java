@@ -27,9 +27,6 @@ import java.util.StringTokenizer;
 
 import static android.content.Context.MODE_PRIVATE;
 
-/**
- * Created by rroy6 on 12/15/2017.
- */
 
 public class BingDiningMenu {
 
@@ -95,7 +92,9 @@ public class BingDiningMenu {
                     if(listItems.isEmpty()){
                         try {
                             thread.join();
-                            setData();
+                            if(BuildConfig.DEBUG && !setData()){
+                                Toast.makeText(context,"Data was not set",Toast.LENGTH_SHORT).show();
+                            }
                         } catch (InterruptedException e2) {
                             e2.printStackTrace();
                         }
@@ -127,7 +126,9 @@ public class BingDiningMenu {
                 if(listItems.isEmpty()){
                     try {
                         thread.join();
-                        setData();
+                        if(BuildConfig.DEBUG && !setData()){
+                            Toast.makeText(context,"Data was not set",Toast.LENGTH_SHORT).show();
+                        }
                     } catch (InterruptedException e3) {
                         e3.printStackTrace();
                     }
@@ -222,73 +223,92 @@ public class BingDiningMenu {
         @Override
         protected void onPreExecute() {
             BingDiningMenu bingDiningMenu = activityReference.get();
-            pD = new ProgressDialog(bingDiningMenu.context);
-            pD.setCancelable(false);
-            pD.setMessage("Loading, please wait...");
-            pD.show();
+            Log.e("onPreExecute ", bingDiningMenu.title);
+
+            if(bingDiningMenu.title.compareTo(bingDiningMenu.context.getString(R.string.c4)) == 0 ||
+                    bingDiningMenu.title.compareTo(bingDiningMenu.context.getString(R.string.ciw)) == 0) {
+                pD = new ProgressDialog(bingDiningMenu.context);
+                pD.setCancelable(false);
+                pD.setMessage("Loading, please wait...");
+                pD.show();
+            }
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            BingDiningMenu bingDiningMenu = activityReference.get();
+            final BingDiningMenu bingDiningMenu = activityReference.get();
+
             if(bingDiningMenu == null){
                 Log.e("weakRef is ", "null");
                 return null;
             }
+            if(pD != null) pD.dismiss();
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Document doc = Jsoup.connect(bingDiningMenu.link).get();
+                        Elements weekUrl = doc.getElementsByClass("accordionBody");
+
+                        //get updated links to Bing dining data
+                        int i = 0;
+                        for (Element link : weekUrl) {
+                            Elements f = link.getElementsByTag("a");
+                            for(Element a: f) {
+                                urlStrings[i] = a.attr("href");
+                                weekStrings[i] = a.text();
+                                i++;
+                            }
+                        }
+
+                        String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
+                        Document doc2 = Jsoup.connect(firstUrl).get();
+                        String stringToAppend;
+                        int index;
+                        for(i = 0; i < 7; i++) {
+                            Elements B = doc2.getElementById(days[i]).select("tr.brk").select("span.ul");
+                            Elements L = doc2.getElementById(days[i]).select("tr.lun").select("span.ul");
+                            Elements D = doc2.getElementById(days[i]).select("tr.din").select("span.ul");
+
+                            index = 1;
+                            for (Element e : B) {
+                                stringToAppend = ((index < 10)? "0"+index:index) +". "+ e.text()+'\n';
+                                stringBuilderBreakfast.append(stringToAppend);
+                                index++;
+                            }
+                            index = 1;
+                            for (Element e : L) {
+                                stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
+                                stringBuilderLunch.append(stringToAppend);
+                                index++;
+                            }
+                            index = 1;
+                            for (Element e : D) {
+                                stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
+                                stringBuilderDinner.append(stringToAppend);
+                                index++;
+                            }
+
+                            stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+                            stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+                            stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+
+                            bingDiningMenu.diningDatabase.insertMenuItem(days[i],stringBuilderBreakfast.toString(), stringBuilderLunch.toString(),stringBuilderDinner.toString());
+                            stringBuilderBreakfast.delete(0, stringBuilderBreakfast.length());
+                            stringBuilderLunch.delete(0, stringBuilderLunch.length());
+                            stringBuilderDinner.delete(0, stringBuilderDinner.length());
+
+                        }
+
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+            thread.start();
             try {
-                Document doc = Jsoup.connect(bingDiningMenu.link).get();
-                Elements weekUrl = doc.getElementsByClass("accordionBody");
-
-                //get updated links to Bing dining data
-                int i = 0;
-                for (Element link : weekUrl) {
-                    Elements f = link.getElementsByTag("a");
-                    for(Element a: f) {
-                        urlStrings[i] = a.attr("href");
-                        weekStrings[i] = a.text();
-                        i++;
-                    }
-                }
-
-                String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
-                Document doc2 = Jsoup.connect(firstUrl).get();
-                String stringToAppend;
-                int index;
-                for(i = 0; i < 7; i++) {
-                    Elements B = doc2.getElementById(days[i]).select("tr.brk").select("span.ul");
-                    Elements L = doc2.getElementById(days[i]).select("tr.lun").select("span.ul");
-                    Elements D = doc2.getElementById(days[i]).select("tr.din").select("span.ul");
-
-                    index = 1;
-                    for (Element e : B) {
-                        stringToAppend = ((index < 10)? "0"+index:index) +". "+ e.text()+'\n';
-                        stringBuilderBreakfast.append(stringToAppend);
-                        index++;
-                    }
-                    index = 1;
-                    for (Element e : L) {
-                        stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
-                        stringBuilderLunch.append(stringToAppend);
-                        index++;
-                    }
-                    index = 1;
-                    for (Element e : D) {
-                        stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
-                        stringBuilderDinner.append(stringToAppend);
-                        index++;
-                    }
-
-                    stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
-                    stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
-                    stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
-
-                    bingDiningMenu.diningDatabase.insertMenuItem(days[i],stringBuilderBreakfast.toString(), stringBuilderLunch.toString(),stringBuilderDinner.toString());
-                    stringBuilderBreakfast.delete(0, stringBuilderBreakfast.length());
-                    stringBuilderLunch.delete(0, stringBuilderLunch.length());
-                    stringBuilderDinner.delete(0, stringBuilderDinner.length());
-                }
-
-            }catch(IOException e){
+                thread.join();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             return null;
@@ -296,17 +316,16 @@ public class BingDiningMenu {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            BingDiningMenu bingDiningMenu = activityReference.get();
+            final BingDiningMenu bingDiningMenu = activityReference.get();
             if(bingDiningMenu == null){
                 Log.e("weakRef is ", "null"); return;
             }
-            bingDiningMenu.saveBingWeekData(weekStrings[0]);
             bingDiningMenu.toolbarTitle.setText(weekStrings[0]);
-
+            bingDiningMenu.saveBingWeekData(weekStrings[0]);
             bingDiningMenu.loadSortedData(bingDiningMenu);
             bingDiningMenu.adapter = new MyAdapter(bingDiningMenu.listItems, bingDiningMenu.context);
             bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
-            pD.dismiss();
+
         }
     }
 

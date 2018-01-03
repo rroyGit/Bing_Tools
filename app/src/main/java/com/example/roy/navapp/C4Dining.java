@@ -31,8 +31,8 @@ public class C4Dining extends Fragment {
     public RecyclerView.Adapter adapter;
 
     private BingDiningMenu c4_hall;
-    private final String c4Url = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/index.html";
-    private final String title = "C4";
+    private String c4Url;
+    private String title;
 
     public C4Dining() {
         //empty constructor
@@ -84,22 +84,26 @@ public class C4Dining extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-/*
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        /*
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        */
+        c4Url = getString(R.string.c4Url);
+        title = getString(R.string.c4);
     }
-*/
+
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        //mListener = null;
     }
 
     /**

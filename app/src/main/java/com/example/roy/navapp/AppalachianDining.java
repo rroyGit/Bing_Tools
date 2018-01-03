@@ -22,9 +22,9 @@ public class AppalachianDining extends Fragment {
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
 
-    private BingDiningMenu hinman_hall;
-    private final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/appalachian.html";
-    private final String title = "Appalachian";
+    private BingDiningMenu appalachian_hall;
+    private String appalachianUrl;
+    private String title;
 
     public AppalachianDining() {
         //empty constructor
@@ -43,11 +43,11 @@ public class AppalachianDining extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        hinman_hall = new BingDiningMenu(hinmanUrl,title,context, listItems);
-        hinman_hall.setRecyclerView(recyclerView);
-        hinman_hall.setAdapter(listItems);
-        hinman_hall.setToolbar(toolbarTitle);
-        hinman_hall.makeRequest();
+        appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems);
+        appalachian_hall.setRecyclerView(recyclerView);
+        appalachian_hall.setAdapter(listItems);
+        appalachian_hall.setToolbar(toolbarTitle);
+        appalachian_hall.makeRequest();
 
         //set empty adapter due to waiting for data
         adapter = new MyAdapter(listItems, context);
@@ -64,7 +64,7 @@ public class AppalachianDining extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        hinman_hall.setRecycleAdapter();
+        appalachian_hall.setRecycleAdapter();
     }
     //--------------------------------------------------------------------------------------------//
     private OnFragmentInteractionListener mListener;
@@ -75,18 +75,22 @@ public class AppalachianDining extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-/*
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        /*
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        */
+        appalachianUrl = getString(R.string.appalachianUrl);
+        title = getString(R.string.appalachian);
     }
-*/
+
     @Override
     public void onDetach() {
         super.onDetach();

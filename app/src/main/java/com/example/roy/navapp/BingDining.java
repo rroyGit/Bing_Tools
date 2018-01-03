@@ -25,10 +25,10 @@ public class BingDining extends Fragment implements HinmanDining.OnFragmentInter
         getActivity().setTitle("Bing Dining");
 
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tablayout);
-        tabLayout.addTab(tabLayout.newTab().setText("Hinman"));
-        tabLayout.addTab(tabLayout.newTab().setText("C4"));
-        tabLayout.addTab(tabLayout.newTab().setText("Appalachian"));
-        tabLayout.addTab(tabLayout.newTab().setText("CIW"));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.hinman));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.c4));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.appalachian));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.ciw));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
@@ -66,18 +66,18 @@ public class BingDining extends Fragment implements HinmanDining.OnFragmentInter
             mListener.onFragmentInteraction(uri);
         }
     }
-/*
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
     }
-*/
+
     @Override
     public void onDetach() {
         super.onDetach();

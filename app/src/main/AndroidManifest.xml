@@ -7,9 +7,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/currency"
+        android:icon="@mipmap/bing_tools_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/currency"
+        android:roundIcon="@mipmap/bing_tools_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity

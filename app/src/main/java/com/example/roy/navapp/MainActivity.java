@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,16 +38,19 @@ import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
 import org.json.*;
+
+import java.lang.ref.WeakReference;
+
 import static com.example.roy.navapp.BingDiningMenu.getDeviceInternetStatus;
-import static com.example.roy.navapp.HomeFragment.hideKeyboard;
+import static com.example.roy.navapp.CalculatorFragment.hideKeyboard;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String retVal;
+
     private boolean bingWall = true;
-    ImageView bingImage;
-    Activity activity;
-    Context context;
+    private ImageView bingImage;
+    private Activity activity;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,11 +107,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToggle.syncState();
         nView.setNavigationItemSelectedListener(this);
 
-        //set the initial homepage to Home
-        Fragment home = new HomeFragment();
+        //set the initial fragment
+        Fragment bingDining = new BingDining();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_main, home).commit();
-        nView.getMenu().findItem(R.id.Home).setChecked(true);
+        ft.replace(R.id.content_main, bingDining).commit();
+        nView.getMenu().findItem(R.id.Bing_Dining).setChecked(true);
     }
 
     private void setToast(String string){
@@ -119,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.currency);
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.bing_tools_icon);
                 ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(getApplicationContext(), R.color.darkGray));
                 setTaskDescription(taskDesc);
             }
@@ -153,44 +158,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.action_settings) {
             Intent settingsIntent = new Intent(MainActivity.this, Settings.class);
             startActivity(settingsIntent);
-
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void displaySelectedScreen(int id, MenuItem item){
+    private void displaySelectedScreen(int id, final MenuItem item){
         Fragment f = null;
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.nav_drawer_main);
 
         switch(id){
-            case R.id.Home:
+            case R.id.Calculator:
                 if(item.isChecked()) {
                     drawer.closeDrawer(GravityCompat.START);
-                    break;
                 }else {
-                    f = new HomeFragment();
-                    item.setChecked(true);
-                    break;
+                    f = new CalculatorFragment();
                 }
+                break;
             case R.id.Crypto:
                 if(item.isChecked()){
                     drawer.closeDrawer(GravityCompat.START);
-                    break;
                 }else {
                     f = new CryptoFragment();
-                    item.setChecked(true);
-                    break;
+
                 }
+                break;
             case R.id.Bing_Dining:
                 if(item.isChecked()) {
                     drawer.closeDrawer(GravityCompat.START);
-                    break;
                 }else {
                     f = new BingDining();
-                    item.setChecked(true);
-                    break;
                 }
+                break;
         }
 
         if(f != null) {
@@ -201,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void run() {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.content_main, finalFrag).commit();
+                    item.setChecked(true);
                 }
             });
             fragThread.start();
@@ -209,19 +209,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         displaySelectedScreen(item.getItemId(), item);
         return true;
     }
 
 
-    private class getPic extends AsyncTask<Void, Void, Void> {
+    private static class BingWallpaper extends AsyncTask<Void, Void, Void> {
         StringRequest sR;
         final String URL_DATA = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US";
+        private WeakReference<MainActivity> reference;
+        private String retVal;
+
+        BingWallpaper(MainActivity context){
+            reference = new WeakReference<>(context);
+        }
 
         @Override
         protected Void doInBackground(Void... params) {
+            final MainActivity mainActivity = reference.get();
+
             sR = new StringRequest(Request.Method.GET,
                     URL_DATA, new Response.Listener<String>() {
 
@@ -232,22 +240,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         JSONArray array = jsonObject.getJSONArray("images");
                         JSONObject urlObj = array.getJSONObject(0);
                         retVal = "https://www.bing.com/"+ urlObj.getString("url");
-                        if(bingImage == null) {
-                            //Log.d(TAG, "image is null");
-                        }else {
-                            //Log.d(TAG, "image"+retVal);
-                            Picasso.with(context).load(retVal).fit().into(bingImage);
-                        }
-
+                        assert (mainActivity.bingImage != null);
+                        Picasso.with(mainActivity.context).load(retVal).fit().into(mainActivity.bingImage);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mainActivity.context, "Could not connect to the Internet", Toast.LENGTH_LONG).show();
                 }
             });
             return null;
@@ -256,7 +258,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            RequestQueue rQ = Volley.newRequestQueue(getApplicationContext());
+            final MainActivity mainActivity = reference.get();
+            RequestQueue rQ = Volley.newRequestQueue(mainActivity.context);
             rQ.add(sR);
         }
     }
@@ -273,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Thread picThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    new getPic().execute();
+                    new BingWallpaper(MainActivity.this).execute();
                 }
             });
             picThread.start();

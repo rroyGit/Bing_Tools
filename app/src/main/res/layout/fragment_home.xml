@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:id="@+id/frag_home"
     android:focusableInTouchMode="true"
-    tools:context="com.example.roy.navapp.HomeFragment">
+    tools:context="com.example.roy.navapp.CalculatorFragment">
 
 
     <EditText

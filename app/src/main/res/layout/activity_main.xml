@@ -16,6 +16,7 @@
         android:layout_height="match_parent" />
 
     <android.support.design.widget.NavigationView
+        android:animationCache="true"
         android:layout_width="260dp"
         android:layout_height="match_parent"
         android:id="@+id/nav_menu_view"

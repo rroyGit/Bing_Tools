@@ -30,7 +30,7 @@ import java.text.NumberFormat;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class CalculatorFragment extends Fragment {
 
     TextView result;
     EditText num1, num2;
@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment {
     double res_num, n1, n2;
 
 
-    public HomeFragment() {
+    public CalculatorFragment() {
         // Required empty public constructor
     }
 
@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getActivity().setTitle("Home");
+        getActivity().setTitle(R.string.calculator);
         result = (TextView) getActivity().findViewById(R.id.resultB);
         result.setTextIsSelectable(true);
         num1 = (EditText) getActivity().findViewById(R.id.num1);
@@ -60,9 +60,6 @@ public class HomeFragment extends Fragment {
         divB = (Button) getActivity().findViewById(R.id.divB);
 
         positonEditText();
-
-
-
 
 
         cB.setOnClickListener(new View.OnClickListener(){
@@ -82,7 +79,7 @@ public class HomeFragment extends Fragment {
                 if(num1.getText().toString().trim().isEmpty() ||
                         num2.getText().toString().trim().isEmpty()) {
                     result.setText(getString(R.string.error));
-                    hideKeyboard(getActivity(),getView());;
+                    hideKeyboard(getActivity(),getView());
                     return;
                 }
 
@@ -209,6 +206,7 @@ public class HomeFragment extends Fragment {
         if(view != null) {
             InputMethodManager imm;
             imm = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }

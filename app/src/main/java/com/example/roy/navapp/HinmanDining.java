@@ -23,8 +23,8 @@ public class HinmanDining extends Fragment {
     public RecyclerView.Adapter adapter;
 
     private BingDiningMenu hinman_hall;
-    private final String hinmanUrl = "https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html";
-    private final String title = "Hinman";
+    private String hinmanUrl;
+    private String title;
 
     public HinmanDining() {
         //empty constructor
@@ -75,22 +75,27 @@ public class HinmanDining extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-/*
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        /*
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        */
+
+        hinmanUrl = getString(R.string.hinmanUrl);
+        title = getString(R.string.hinman);
     }
-*/
+
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        //mListener = null;
     }
 
     /**
