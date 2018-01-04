@@ -1,0 +1,148 @@
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:weightSum="1"
+    android:background="@color/gray"
+    android:orientation="vertical"
+    android:id="@+id/frag_home"
+    android:focusableInTouchMode="true"
+    tools:context="com.example.roy.navapp.CalculatorFragment">
+
+    <ScrollView
+        android:id="@+id/scrollViewCalculator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/num1"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+
+                android:background="@drawable/custom_edit_text"
+                android:textCursorDrawable="@drawable/edit_text_pipe_color"
+                android:hint="@string/zero"
+                android:inputType="numberDecimal"
+                android:textColor="@color/white"
+                android:textColorHint="@color/red"
+                android:textSize="25sp"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="46dp"
+                android:layout_below="@+id/linearLayout"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:id="@+id/num2"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+
+                android:layout_alignBaseline="@+id/num1"
+                android:layout_alignBottom="@+id/num1"
+                android:layout_toEndOf="@+id/num1"
+
+                android:background="@drawable/custom_edit_text"
+                android:hint="@string/zero"
+                android:inputType="numberDecimal"
+                android:textColor="@color/white"
+                android:textColorHint="@color/red"
+                android:textCursorDrawable="@drawable/edit_text_pipe_color"
+                android:textSize="25sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@drawable/round_layout"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:id="@+id/linearLayout">
+
+                <TextView
+                    android:id="@+id/resultB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:gravity="center"
+                    android:hint="@string/Result"
+                    android:textColorHint="@color/red"
+                    android:textColor="?android:attr/textColorHint"
+                    android:textSize="40sp" />
+
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/addB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@drawable/touch_button"
+
+                android:layout_marginTop="32dp"
+                android:text="@string/add"
+                android:textAllCaps="false"
+                android:textSize="35sp"
+                android:layout_below="@+id/num1"
+                android:layout_alignStart="@+id/num1" />
+
+            <Button
+                android:id="@+id/minusB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@drawable/touch_button"
+
+                android:layout_alignBaseline="@+id/addB"
+                android:layout_alignBottom="@+id/addB"
+                android:layout_toEndOf="@+id/addB"
+                android:text="@string/sub"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="35sp" />
+
+            <Button
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@drawable/touch_button"
+
+                android:layout_alignBaseline="@+id/minusB"
+                android:layout_alignBottom="@+id/minusB"
+                android:layout_toEndOf="@+id/minusB"
+                android:text="c"
+                android:textAllCaps="false"
+                android:textSize="35sp" />
+                <!--style="?android:attr/borderlessButtonStyle"-->
+            <Button
+                android:id="@+id/mulB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@drawable/touch_button"
+
+                android:text="@string/mul"
+                android:textAllCaps="false"
+                android:textSize="35sp"
+                android:layout_below="@+id/addB"
+                android:layout_alignStart="@+id/addB" />
+
+            <Button
+                android:id="@+id/divB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@drawable/touch_button"
+
+                android:text="@string/div"
+                android:textAllCaps="false"
+                android:textSize="35sp"
+                android:layout_below="@+id/minusB"
+                android:layout_toEndOf="@+id/mulB" />
+        </RelativeLayout>
+    </ScrollView>
+</android.widget.RelativeLayout>

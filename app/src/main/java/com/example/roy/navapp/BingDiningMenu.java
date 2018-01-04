@@ -63,7 +63,7 @@ public class BingDiningMenu {
 
         //load data from saved storage or from the web
         if(diningDatabase.getDatabaseCount() > 0) {
-            toolbarTitle.setText(getWeekDate());
+            if(toolbarTitle != null) toolbarTitle.setText(getWeekDate());
             String month1, month2, date1, date2, year1, year2;
             try {
                 if(getWeekDate().compareTo("Sample Menu") == 0){
@@ -76,8 +76,9 @@ public class BingDiningMenu {
                                 new CheckForNewMenu(BingDiningMenu.this).execute(link);
                                 setDayMenuCheck(dayInt);
                             }else{
-                                if( dayInt != getDayMenuCheck()){
+                                if(dayInt != getDayMenuCheck()){
                                     new CheckForNewMenu(BingDiningMenu.this).execute(link);
+                                    setDayMenuCheck(dayInt);
                                 }
                             }
                         }
