@@ -4,6 +4,7 @@ package com.example.roy.navapp;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -43,7 +44,7 @@ public class CalculatorFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle(R.string.calculator);
@@ -202,7 +203,15 @@ public class CalculatorFragment extends Fragment {
         num1.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                scrollView.fullScroll(View.FOCUS_DOWN);
+                final Handler handler = new Handler();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.pageScroll(View.FOCUS_DOWN);
+
+                    }
+                };
+                handler.postDelayed(runnable, 250);
             }
 
             @Override
@@ -215,6 +224,32 @@ public class CalculatorFragment extends Fragment {
 
             }
         });
+
+        num2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                final Handler handler = new Handler();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollView.pageScroll(View.FOCUS_DOWN);
+                        num2.requestFocus();
+                    }
+                };
+                handler.postDelayed(runnable, 250);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
     }
 
     public static void hideKeyboard(Activity thisActivity, View view){
