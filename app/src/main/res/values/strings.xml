@@ -9,6 +9,8 @@
     <string name="sub">-</string>
     <string name="mul">x</string>
     <string name="div">/</string>
+    <string name="clear">c</string>
+
     <string name="error">Error</string>
     <string name="error2">Undefined</string>
     <string name="error3">Too large </string>
