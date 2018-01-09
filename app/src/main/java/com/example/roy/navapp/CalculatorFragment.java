@@ -241,7 +241,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if(retString.compareTo("Too large") !=0 & retString.compareTo("Error") != 0 & retString.compareTo("Undefined") !=0 & retString.compareTo("") != 0) {
             StringTokenizer stringTokenizer = new StringTokenizer(result.getText().toString(), ",");
             if(stringTokenizer.countTokens() == 1){
-                num1.setText(retString);
+                num2.setText(retString);
             }else {
                 StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i <= stringTokenizer.countTokens() + 1; i++) {
