@@ -7,6 +7,7 @@
     android:background="@color/gray">
 
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -22,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@android:style/Widget.Material.Light.ProgressBar.Large"
-            android:layout_marginRight="5dp" />
+            android:layout_marginEnd="5dp" />
 
         <TextView
             android:id="@+id/etherText"
@@ -39,34 +40,59 @@
 
     <EditText
         android:id="@+id/editT"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="97dp"
-        android:background="@drawable/custom_edit_text"
-        android:textCursorDrawable="@drawable/edit_text_pipe_color"
+        android:layout_below="@+id/etherButton"
 
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/custom_edit_text"
         android:hint="@string/zero"
         android:inputType="numberDecimal"
         android:textAlignment="viewStart"
         android:textColor="@color/white"
         android:textColorHint="@color/red"
-        android:textSize="25sp"
-        android:layout_below="@+id/linearLayout"
-        android:layout_alignParentStart="true" />
+        android:textCursorDrawable="@drawable/edit_text_pipe_color"
+        android:textSize="25sp" />
+
     <Button
         android:id="@+id/etherButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ether"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/timeText"
+        android:layout_marginTop="12dp"
+        android:text="Ethereum"
         android:textAllCaps="false"
         android:textColor="?android:attr/textColorHintInverse"
-        android:textSize="20sp"
-        android:layout_alignBottom="@+id/editT"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="21dp" />
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/bitcoinButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/editT"
+        android:layout_toEndOf="@+id/etherButton"
+        android:text="Bitcoin"
+        android:textAllCaps="false"
+        android:textColor="?android:attr/textColorHintInverse"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/rippleButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/bitcoinButton"
+        android:layout_alignBottom="@+id/bitcoinButton"
+        android:layout_toEndOf="@+id/bitcoinButton"
+        android:text="Ripple"
+        android:textAllCaps="false"
+        android:textColor="?android:attr/textColorHintInverse"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/timeText"
@@ -79,15 +105,27 @@
         android:background="@color/white"
         android:text="Last updated: " />
 
-    <ProgressBar
-        android:id="@+id/proBar2"
+    <TextView
+        android:id="@+id/selectedCrypto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@android:style/Widget.Material.Light.ProgressBar.Small.Inverse"
+
+        android:layout_alignBaseline="@+id/timeText"
         android:layout_alignBottom="@+id/timeText"
-        android:layout_alignEnd="@+id/editT"
-        android:layout_marginEnd="82dp"
-        android:layout_below="@+id/linearLayout" />
+        android:layout_toEndOf="@+id/rippleButton"
+        android:text="1 Ethereum"
+        android:textStyle="bold" />
+
+
+    <ProgressBar
+        android:id="@+id/proBar2"
+        style="@android:style/Widget.Material.Light.ProgressBar.Small.Inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/timeText"
+        android:layout_below="@+id/linearLayout"
+        android:layout_marginStart="19dp"
+        android:layout_toEndOf="@+id/etherButton" />
 
 
 </RelativeLayout>
