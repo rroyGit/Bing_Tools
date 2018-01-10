@@ -46,8 +46,7 @@
 
                 android:layout_alignBaseline="@+id/num1"
                 android:layout_alignBottom="@+id/num1"
-                android:layout_toEndOf="@+id/num1"
-
+                android:layout_alignEnd="@+id/linearLayout"
                 android:background="@drawable/custom_edit_text"
                 android:hint="@string/zero"
                 android:inputType="numberDecimal"
@@ -82,95 +81,104 @@
                     android:textSize="40sp" />
 
             </LinearLayout>
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:id="@+id/firstRow"
+            android:layout_marginTop="220dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/addB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/num1"
-
-                android:layout_below="@+id/num1"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="32dp"
+                style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="@string/add"
                 android:textAllCaps="false"
                 android:textSize="35sp" />
-
             <Button
                 android:id="@+id/minusB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/addB"
-
-                android:layout_alignBottom="@+id/addB"
-                android:layout_toEndOf="@+id/addB"
+                style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="@string/sub"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textSize="35sp" />
-
-            <Button
-                android:id="@+id/clear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@+id/divB"
-                android:backgroundTint="@drawable/touch_button"
-                android:text="@string/clear"
-                android:textAllCaps="false"
-                android:textSize="35sp" />
-
-            <Button
-                android:id="@+id/mulB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/addB"
-
-                android:layout_below="@+id/addB"
-                android:backgroundTint="@drawable/touch_button"
-                android:text="@string/mul"
-                android:textAllCaps="false"
-                android:textSize="35sp" />
-
             <Button
                 android:id="@+id/leftCopy"
+                style="?android:attr/button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@drawable/touch_button"
                 android:textSize="35sp"
                 android:text="L"
-                android:layout_alignBaseline="@+id/minusB"
-                android:layout_alignBottom="@+id/minusB"
-                android:layout_toEndOf="@+id/minusB"
+                android:textAlignment="center"
                 android:textAllCaps="false"/>
-
             <Button
                 android:id="@+id/rightCopy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:textSize="35sp"
                 android:text="R"
-                android:layout_alignBaseline="@+id/leftCopy"
-                android:layout_alignBottom="@+id/leftCopy"
-                android:layout_toEndOf="@+id/leftCopy"
+                android:textAlignment="center"
                 android:textAllCaps="false"/>
-
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/secondRow"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="280dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/mulB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/button"
+                android:backgroundTint="@drawable/touch_button"
+                android:text="@string/mul"
+                android:textAllCaps="false"
+                android:textAlignment="center"
+                android:textSize="35sp" />
             <Button
                 android:id="@+id/divB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/minusB"
-
-                android:layout_toEndOf="@+id/mulB"
+                style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="@string/div"
                 android:textAllCaps="false"
+                android:textAlignment="center"
                 android:textSize="35sp" />
+            <Button
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/button"
+                android:backgroundTint="@drawable/touch_button"
+                android:text="c"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="35sp" />
+            <Button
+                android:visibility="invisible"
+                android:id="@+id/placementHolder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/button"
+                android:backgroundTint="@drawable/touch_button"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="35sp" />
+        </LinearLayout>
+
+
+
         </RelativeLayout>
     </ScrollView>
 </android.widget.RelativeLayout>
