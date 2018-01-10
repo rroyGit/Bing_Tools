@@ -1,4 +1,4 @@
- # Bing_Tools
+# Bing_Tools
 ## Bing Tools is an Android application developed using Android Studio.
 
 Bing Tools provide the following:
@@ -33,7 +33,7 @@ Bing Tools provide the following:
 
 ![Alt text](images/Bing_Dining.png "Bing_Dining")
 
-![Alt text](images/Bing_Dining1.png "Bing_Dining1")
+![Alt text](images/Bing_Dining2.png "Bing_Dining2")
 
 
 Adding new and cool stuff as time progresses.
