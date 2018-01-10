@@ -2,9 +2,6 @@ package com.example.roy.navapp;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -45,13 +42,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.mealL.setText(listItem.getMealL());
         holder.mealD.setText(listItem.getMealD());
 
-        holder.weekdayImage.setImageResource(listItem.getresInt());
+        holder.weekdayImage.setImageResource(listItem.getResInt());
 
         String color = getSavedColors("ColorSpace1", context);
         if(!color.equals("error")){
             changeExpandTextColors(holder, Integer.parseInt(color));
         }
-        color =  getSavedColors("ColorSpace0", context);
+        color = getSavedColors("ColorSpace0", context);
         if(!color.equals("error")){
             changeHeaderColors(holder, Integer.parseInt(color));
         }
@@ -74,13 +71,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             super(itemView);
 
             mealB = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view);
-            mealB.setOnExpandStateChangeListener(new ExpandableTextView.OnExpandStateChangeListener(){
-
-                @Override
-                public void onExpandStateChanged(TextView textView, boolean isExpanded) {
-
-                }
-            });
             mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
             mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
 

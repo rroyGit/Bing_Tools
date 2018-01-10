@@ -30,7 +30,7 @@ public class ListItem {
         return mealD;
     }
 
-    public int getresInt() {return resInt;}
+    public int getResInt() {return resInt;}
 
 
 }

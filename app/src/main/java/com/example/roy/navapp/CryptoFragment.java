@@ -28,6 +28,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.roy.navapp.BingDiningMenu.getDeviceInternetStatus;
 import static com.example.roy.navapp.BingDiningMenu.loadCurrentDate;
 
 /**
@@ -37,10 +38,8 @@ public class CryptoFragment extends Fragment {
     private TextView etherText, timeText, selectedCryptoText;
     private Button etherButton, bitcoinButton, rippleButton;
     private EditText editT;
-    private String[] retTime;
     private double currentCryptoVal = 0.00;
     private Context context;
-
     private ProgressBar progressBar, progressBar2;
 
     public CryptoFragment() {
@@ -68,9 +67,18 @@ public class CryptoFragment extends Fragment {
 
 
         if(getSavedEther("Ether") == 4.04){
-            new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ethereum/", "0");
-            currentCryptoVal = getSavedEther("Ether");
+            if(getDeviceInternetStatus(context) != null){
+                etherText.setText("");
+                etherText.setHint("");
+                new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ethereum/", "0");
+                currentCryptoVal = getSavedEther("Ether");
+            }else {
+                progressBar.setVisibility(View.GONE);
+                progressBar2.setVisibility(View.GONE);
+                Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
+            }
         }else{
+
             progressBar.setVisibility(View.GONE);
             progressBar2.setVisibility(View.GONE);
             currentCryptoVal = getSavedEther("Ether");
@@ -78,39 +86,64 @@ public class CryptoFragment extends Fragment {
             String ret = "Last updated: " + getSavedDate();
             timeText.setText(ret);
         }
+
         etherButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                timeText.setText("Last updated: ");
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar2.setVisibility(View.VISIBLE);
-                new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ethereum/", "0");
-                editT.setText("");
-                selectedCryptoText.setText("1 Ethereum");
+                if(getDeviceInternetStatus(context) != null) {
+                    timeText.setText("Last updated: ");
+                    etherText.setText("");
+                    etherText.setHint("");
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar2.setVisibility(View.VISIBLE);
+                    new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ethereum/", "0");
+                    editT.getText().clear();
+                    selectedCryptoText.setText("1 Ethereum");
+                }else{
+                    etherText.setText("");
+                    etherText.setHint("$0.00");
+                    Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         bitcoinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timeText.setText("Last updated: ");
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar2.setVisibility(View.VISIBLE);
-                new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/bitcoin/", "1");
-                editT.setText("");
-                selectedCryptoText.setText("1 Bitcoin");
+                if(getDeviceInternetStatus(context) != null) {
+                    etherText.setText("");
+                    etherText.setHint("");
+                    timeText.setText("Last updated: ");
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar2.setVisibility(View.VISIBLE);
+                    new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/bitcoin/", "1");
+                    editT.getText().clear();
+                    selectedCryptoText.setText("1 Bitcoin");
+                }else {
+                    etherText.setText("");
+                    etherText.setHint("$0.00");
+                    Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         rippleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timeText.setText("Last updated: ");
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar2.setVisibility(View.VISIBLE);
-                new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ripple/", "2");
-                editT.setText("");
-                selectedCryptoText.setText("1 Ripple");
+                if(getDeviceInternetStatus(context) != null) {
+                    etherText.setText("");
+                    etherText.setHint("");
+                    timeText.setText("Last updated: ");
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar2.setVisibility(View.VISIBLE);
+                    new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ripple/", "2");
+                    editT.getText().clear();
+                    selectedCryptoText.setText("1 Ripple");
+                }else{
+                    etherText.setText("");
+                    etherText.setHint("$0.00");
+                    Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -199,6 +232,7 @@ public class CryptoFragment extends Fragment {
 
                     cryptoFragment.currentCryptoVal = cryptoVal;
                     cryptoFragment.etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", cryptoVal)));
+                    cryptoFragment.progressBar.setVisibility(View.GONE);
                     switch(cryptoType){
                         case 0:
                             cryptoFragment.saveCryptoData("Ether", cryptoVal);
@@ -216,7 +250,6 @@ public class CryptoFragment extends Fragment {
                     retString.append(month.toString()).append(':').append(day.toString()).append(':').append(year.toString());
 
                     cryptoFragment.timeText.setText(retString);
-                    cryptoFragment.progressBar.setVisibility(View.GONE);
                     cryptoFragment.progressBar2.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(cryptoFragment.context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
@@ -224,7 +257,7 @@ public class CryptoFragment extends Fragment {
                     cryptoFragment.progressBar2.setVisibility(View.GONE);
                 }
             }catch (Exception e){
-                Toast.makeText(cryptoFragment.context, "error:" +e, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(cryptoFragment.context, "error:" +e, Toast.LENGTH_SHORT).show();
             }
         }
     }

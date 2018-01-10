@@ -452,6 +452,7 @@ public class BingDiningMenu {
         strings[2].append(sT.nextToken());
     }
 
+    //No Internet access if returns null
     public static NetworkInfo getDeviceInternetStatus(Context context){
         //check if internet is enabled
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
