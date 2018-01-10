@@ -6,8 +6,6 @@
     tools:context="com.example.roy.navapp.CryptoFragment"
     android:background="@color/gray">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -44,7 +42,6 @@
         android:layout_height="wrap_content"
 
         android:layout_below="@+id/etherButton"
-
         android:layout_centerHorizontal="true"
         android:layout_marginTop="21dp"
         android:background="@drawable/custom_edit_text"
@@ -115,7 +112,6 @@
         android:layout_toEndOf="@+id/rippleButton"
         android:text="1 Ethereum"
         android:textStyle="bold" />
-
 
     <ProgressBar
         android:id="@+id/proBar2"
