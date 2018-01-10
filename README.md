@@ -33,5 +33,7 @@ Bing Tools provide the following:
 
 ![Alt text](images/Bing_Dining.png "Bing_Dining")
 
+![Alt text](images/Bing_Dining1.png "Bing_Dining1")
+
 
 Adding new and cool stuff as time progresses.
