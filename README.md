@@ -31,7 +31,7 @@ Bing Tools provide the following:
 	b) Dynamically change the colors of the cards in Bing Dining.  (COMPLETED)
 	c) Save the bitmap of the navigation image to device. 
 
-![Alt text](images/Bing_Dining1.png "Bing_Dining1")
+![Alt text](images/Bing_Dining.png "Bing_Dining")
 
 
 Adding new and cool stuff as time progresses.
