@@ -17,16 +17,15 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     private List<ListItem> listItems;
     private Context context;
 
-    public MyAdapter(List<ListItem> listItems, Context context) {
+    public MenuAdapter(List<ListItem> listItems, Context context) {
         this.listItems = listItems;
         this.context = context;
     }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

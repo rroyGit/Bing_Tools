@@ -49,7 +49,7 @@ public class C4Dining extends Fragment {
 
 
         //set empty adapter due to waiting for data
-        adapter = new MyAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
     }
 

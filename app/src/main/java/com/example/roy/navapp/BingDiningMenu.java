@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -169,7 +168,7 @@ public class BingDiningMenu {
             diningDataScrapper.execute();
             setDayMenuCheck(Integer.parseInt(day.toString()));
         }
-        adapter = new MyAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
         diningDatabase.close();
     }
@@ -180,7 +179,7 @@ public class BingDiningMenu {
             Log.e("SetData ", "Must populate listItems before calling setData");
             return false;
         }
-        adapter = new MyAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context);
         recyclerView.setAdapter(adapter);
         return true;
     }
@@ -348,7 +347,7 @@ public class BingDiningMenu {
             bingDiningMenu.toolbarTitle.setText(weekStrings[0]);
             bingDiningMenu.saveBingWeekData(weekStrings[0]);
             bingDiningMenu.loadSortedData(bingDiningMenu);
-            bingDiningMenu.adapter = new MyAdapter(bingDiningMenu.listItems, bingDiningMenu.context);
+            bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context);
             bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
         }
     }
@@ -379,7 +378,7 @@ public class BingDiningMenu {
     }
 
     public void setAdapter(List<ListItem> listItems){
-       adapter = new MyAdapter(listItems,context);
+       adapter = new MenuAdapter(listItems,context);
    }
 
     public void setToolbar(AppCompatTextView toolbarTitle){

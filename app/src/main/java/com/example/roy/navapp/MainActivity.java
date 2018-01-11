@@ -181,6 +181,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if(item.isChecked()) drawer.closeDrawer(GravityCompat.START);
                 else chooseFragment = new BingDining();
                 break;
+            case R.id.About:
+                if(item.isChecked()) drawer.closeDrawer(GravityCompat.START);
+                else chooseFragment = new AboutFragment();
+                break;
+            default: drawer.closeDrawer(GravityCompat.START);
         }
 
         if(chooseFragment != null) {
