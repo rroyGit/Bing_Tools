@@ -81,10 +81,12 @@
                     android:textSize="40sp" />
 
             </LinearLayout>
+
         <LinearLayout
             android:gravity="center_horizontal"
             android:id="@+id/firstRow"
-            android:layout_marginTop="220dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/num1"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -129,10 +131,11 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"/>
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/secondRow"
             android:gravity="center_horizontal"
-            android:layout_marginTop="280dp"
+            android:layout_below="@id/firstRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
@@ -176,8 +179,6 @@
                 android:textAllCaps="false"
                 android:textSize="35sp" />
         </LinearLayout>
-
-
 
         </RelativeLayout>
     </ScrollView>
