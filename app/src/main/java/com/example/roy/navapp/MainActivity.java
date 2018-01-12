@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.bing_tools_icon);
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.bing_icon_new5);
                 ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(getApplicationContext(), R.color.darkGray));
                 setTaskDescription(taskDesc);
             }

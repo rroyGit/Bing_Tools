@@ -29,7 +29,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+       View v = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
        return new ViewHolder(v);
     }
 
@@ -40,7 +40,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         holder.mealB.setText(listItem.getMealB());
         holder.mealL.setText(listItem.getMealL());
         holder.mealD.setText(listItem.getMealD());
-
         holder.weekdayImage.setImageResource(listItem.getResInt());
 
         String color = getSavedColors("ColorSpace1", context);
@@ -63,16 +62,13 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         ExpandableTextView mealB;
         ExpandableTextView mealL;
         ExpandableTextView mealD;
-
         ImageView weekdayImage;
 
         public ViewHolder(View itemView) {
             super(itemView);
-
             mealB = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view);
             mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
             mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
-
             weekdayImage = (ImageView) itemView.findViewById(R.id.dayImage);
         }
     }

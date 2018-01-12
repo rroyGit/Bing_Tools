@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 
 
 import android.support.v4.content.ContextCompat;
@@ -22,13 +21,7 @@ import android.view.View;
 
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
-
-import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,8 +57,7 @@ public class Settings extends AppCompatActivity{
                 onSupportNavigateUp();
             }
         });
-
-        recyclerView = (RecyclerView) findViewById(R.id.recycleView2);
+        recyclerView = findViewById(R.id.recycleViewSettings);
 
         titles = new ArrayList<>();
         colorsHead = new ArrayList<>();
@@ -83,8 +75,8 @@ public class Settings extends AppCompatActivity{
         colorsBody.add("Black");
         colorsBody.add("Light Gray");
 
-        titles.add("Meal Time");
-        titles.add("Menu List");
+        titles.add("Card Colors: Meal Time");
+        titles.add("Card Colors: Meal List");
 
         colorsMap.put(titles.get(0), colorsHead);
         colorsMap.put(titles.get(1), colorsBody);
@@ -158,7 +150,7 @@ public class Settings extends AppCompatActivity{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.bing_tools_icon);
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.bing_icon_new5);
                 ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(getString(R.string.app_name), bm, ContextCompat.getColor(getApplicationContext(), R.color.darkGray));
                 setTaskDescription(taskDesc);
             }

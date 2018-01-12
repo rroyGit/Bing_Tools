@@ -2,6 +2,8 @@ package com.example.roy.navapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,17 +38,29 @@ public class AboutFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView = (ListView) view.findViewById(R.id.listView);
+        getActivity().setTitle("About");
+        listView = view.findViewById(R.id.listView);
 
         ArrayList<String> title = new ArrayList<>();
         ArrayList<String> desc = new ArrayList<>();
-        title.add("Bing Wallpaper");
-        title.add("Binghamton Campus Menu");
+        title.add("Daily Wallpaper");
+        title.add("Bing Dining Menu");
         title.add("Crypto");
+        title.add("Icons");
+        title.add("App Version");
 
-        desc.add("Daily wallpaper in navigation menu is retrieved from Microsoft Bing homepage");
-        desc.add("Dining data are retrieved from Binghamton University Sodexo website");
-        desc.add("Crypto currency exchange rate data are retrieved from www.coinmarketcap.com");
+        desc.add("Wallpaper in navigation menu is retrieved from Microsoft Bing homepage https://www.bing.com/");
+        desc.add("Binghamton campus dining data are retrieved from Binghamton University Sodexo website");
+        desc.add("Crypto currency exchange rate data are retrieved from https://coinmarketcap.com/");
+        desc.add("App icon created using Iconion and icons on navigation menu are retrieved from https://material.io/icons/");
+        try {
+            PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+            String version = pInfo.versionName;
+            desc.add(version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            desc.add("Unknown");
+        }
 
         aboutAdapter = new AboutAdapter(context, R.layout.row2_about, title, desc);
         listView.setAdapter(aboutAdapter);
@@ -67,7 +81,6 @@ public class AboutFragment extends Fragment {
 
                         break;
                     case 1:
-
                         break;
                     case 2:
                         new Thread(new Runnable() {
@@ -78,6 +91,17 @@ public class AboutFragment extends Fragment {
                                 startActivity(intent);
                             }
                         }).start();
+                        break;
+                    case 3:
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Uri uri = Uri.parse("https://material.io/icons/");
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                            }
+                        }).start();
+
                         break;
                 }
             }
