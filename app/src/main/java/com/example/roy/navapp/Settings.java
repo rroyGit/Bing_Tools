@@ -77,7 +77,7 @@ public class Settings extends AppCompatActivity{
 
         titles.add("Card Colors: Meal Time");
         titles.add("Card Colors: Meal List");
-        titles.add("Timer");
+        titles.add("Auto stop app");
 
         colorsMap.put(titles.get(0), colorsHead);
         colorsMap.put(titles.get(1), colorsBody);

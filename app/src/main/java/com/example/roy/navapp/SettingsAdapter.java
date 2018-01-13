@@ -215,10 +215,13 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                     scheduledExecutorService = timer(buttonStart, editTextTimerSettings);
                     return;
                 case R.id.buttonStop:
-                    scheduledExecutorService.shutdownNow();
-                    buttonStart.setClickable(true);
-                    buttonStart.setPressed(false);
-                    Toast.makeText(context, "Timer for " + editTextTimerSettings.getText().toString()+ " minutes has stopped", Toast.LENGTH_LONG).show();
+                    if (scheduledExecutorService != null) {
+                        scheduledExecutorService.shutdownNow();
+                        buttonStart.setClickable(true);
+                        buttonStart.setPressed(false);
+                        Toast.makeText(context, "Timer for " + editTextTimerSettings.getText().toString() + " minutes has stopped", Toast.LENGTH_LONG).show();
+                    }
+                    editTextTimerSettings.getText().clear();
                     return;
             }
 
