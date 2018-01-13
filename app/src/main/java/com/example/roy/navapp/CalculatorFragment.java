@@ -2,8 +2,14 @@ package com.example.roy.navapp;
 
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -24,7 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 
 /**
@@ -34,7 +47,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     TextView result;
     EditText num1, num2;
-    Button addB, subB, mulB, divB, clearB, leftCopyB, rightCopyB;
+    Button addB, subB, mulB, divB, clearB, leftCopyB, rightCopyB, timerB;
     ScrollView scrollView;
     final int space_btw_editText = 15;
     final int editText1_width = 500, editText2_width = 500;
@@ -61,6 +74,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         divB = (Button) view.findViewById(R.id.divB);
         leftCopyB =(Button) view.findViewById(R.id.leftCopy);
         rightCopyB =(Button) view.findViewById(R.id.rightCopy);
+        timerB = (Button) view.findViewById(R.id.timer);
         scrollView = (ScrollView) view.findViewById(R.id.scrollViewCalculator);
 
         positionEditText();
@@ -72,6 +86,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         subB.setOnClickListener(this);
         leftCopyB.setOnClickListener(this);
         rightCopyB.setOnClickListener(this);
+        timerB.setOnClickListener(this);
+
     }
 
     public static void hideKeyboard(Activity thisActivity, View view){
@@ -260,6 +276,45 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    private void timer(){
+        timerB.setClickable(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                timerB.setPressed(true);
+                timerB.invalidate();
+            }
+        }, 100);
+        int temp = 0;
+        if(num1.getText().toString().compareTo("") != 0) temp = Integer.parseInt(num1.getText().toString());
+        final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        final int secs = temp;
+        scheduledExecutorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    Toast.makeText(getContext(), "It has been "+secs+" secs", Toast.LENGTH_SHORT).show();
+
+
+                    Intent intent = new Intent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                    intent.setAction("android.intent.action.VIEW");
+                    intent.setComponent(ComponentName.unflattenFromString("com.example.roy.navapp/com.example.roy.navapp.MainActivity"));
+                    startActivity(intent);
+
+
+                    timerB.setClickable(true);
+                    timerB.setPressed(false);
+                    }
+                });
+
+            }
+        },secs,TimeUnit.MINUTES);
+
+    }
     @Override
     public void onClick(View view){
         switch(view.getId()){
@@ -284,6 +339,8 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
             case R.id.rightCopy:
                 rightCopyPaste();
                 break;
+            case R.id.timer:
+                timer();
             default:
         }
         hideKeyboard(getActivity(), getView());
