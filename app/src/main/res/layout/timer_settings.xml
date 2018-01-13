@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/slight_white">
+
+    <EditText
+        android:inputType="number"
+        android:id="@+id/editTextTimer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:text="+15"
+        android:id="@+id/button15"
+        android:textColor="@color/white"
+        android:backgroundTint="@drawable/touch_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:text="+30"
+        android:id="@+id/button30"
+        android:textColor="@color/white"
+        android:backgroundTint="@drawable/touch_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:text="START"
+        android:id="@+id/buttonStart"
+        android:textColor="@color/white"
+        android:backgroundTint="@drawable/touch_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <Button
+        android:text="STOP"
+        android:id="@+id/buttonStop"
+        android:textColor="@color/white"
+        android:backgroundTint="@drawable/touch_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

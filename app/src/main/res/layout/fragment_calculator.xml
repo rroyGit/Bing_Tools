@@ -171,7 +171,7 @@
                 android:textAllCaps="false"
                 android:textSize="35sp" />
             <Button
-                android:visibility="visible"
+                android:visibility="invisible"
                 android:text="T"
                 android:id="@+id/timer"
                 android:layout_width="wrap_content"

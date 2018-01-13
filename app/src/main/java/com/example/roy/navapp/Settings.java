@@ -77,11 +77,13 @@ public class Settings extends AppCompatActivity{
 
         titles.add("Card Colors: Meal Time");
         titles.add("Card Colors: Meal List");
+        titles.add("Timer");
 
         colorsMap.put(titles.get(0), colorsHead);
         colorsMap.put(titles.get(1), colorsBody);
+        //colorsMap.put(titles.get(2), null);
 
-        settingsAdapter = new SettingsAdapter(colorsMap, titles, context);
+        settingsAdapter = new SettingsAdapter(colorsMap, titles, context, this);
         GridLayoutManager manager = new GridLayoutManager(this, 1);
 
         recyclerView.setLayoutManager(manager);
