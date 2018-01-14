@@ -1,4 +1,4 @@
-Your privacy is important.
+### Your privacy is important.
 
 As of 1/13/2017 the Android app, Bing Tools, requires the following permissions:
 -Internet access
