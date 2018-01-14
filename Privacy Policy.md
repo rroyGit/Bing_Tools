@@ -1,7 +1,6 @@
 ### Your privacy is important.
 
-As of 1/13/2017 the Android app, Bing Tools, requires the following permissions:
-
+As of 1/13/2017 the Android app, Bing Tools, requires the following permissions:  
 - Internet access
     - Internet access is required to make http requests to retreive data from the Internet.
 - Device storage
@@ -19,7 +18,7 @@ Definition under the DPA: personal data consisting of information as to:
 - (g) the commission or alleged commission by him of any offence; or
 - (h) any proceedings for any offence committed or alleged to have been committed by him, the disposal of such proceedings or the sentence of any court in such proceedings.
 
-Bing Tools neither stores nor sends personal data, as specificed above, to a server or third parties.  
+Bing Tools neither stores nor sends personal data, as defined above, to a server or third parties.  
 What is saved to your device?
 - Bing campus menu data
 - Crypto exchange rate data
