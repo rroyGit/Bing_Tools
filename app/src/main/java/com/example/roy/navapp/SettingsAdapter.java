@@ -41,13 +41,25 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
     private Context context;
     private final static int TIMER_LAYOUT = 1;
     Activity activity;
-
+    Button button;
+    Holder holder;
 
     public SettingsAdapter(HashMap<String,List<String>> colorsMap, List<String> titles, Context context, Activity activity) {
         this.context = context;
         this.colorsMap = colorsMap;
         this.titles = titles;
         this.activity = activity;
+        holder = new Holder();
+    }
+
+    public class Holder{
+        ScheduledExecutorService scheduledExecutorService;
+        Holder(){
+
+        }
+        private void set(ScheduledExecutorService scheduledExecutorService){
+            this.scheduledExecutorService = scheduledExecutorService;
+        }
     }
 
     @Override
@@ -110,16 +122,16 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                preserveRadioCheckState(section, holder);
                break;
            case 2:
-
-
-
-
+                button = holder.buttonStart;
+                if(getTimerStatus()) {
+                    holder.buttonStart.setClickable(false);
+                    holder.buttonStart.setPressed(true);
+                }
+                break;
        }
 
 
     }
-
-
 
 
     @Override
@@ -166,7 +178,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         Button button15, button30, buttonStart, buttonStop;
         SettingsAdapter adapter;
         Toast toast;
-        ScheduledExecutorService scheduledExecutorService;
+
 
         private MainVH(View itemView, SettingsAdapter myAdapter, int viewType) {
             super(itemView);
@@ -182,6 +194,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 button30.setOnClickListener(this);
                 buttonStart.setOnClickListener(this);
                 buttonStop.setOnClickListener(this);
+                button = buttonStart;
 
             }else {
                 textView = (TextView) itemView.findViewById(R.id.Bing_header);
@@ -212,19 +225,26 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                     editTextTimerSettings.setText(String.valueOf(delayBy+30));
                     return;
                 case R.id.buttonStart:
-                    scheduledExecutorService = timer(buttonStart, editTextTimerSettings);
+                    if(editTextTimerSettings.getText().toString().compareTo("") != 0){
+                        if(Integer.parseInt(editTextTimerSettings.getText().toString()) > 0){
+                            holder.set(timer(buttonStart, editTextTimerSettings));
+                            Toast.makeText(context, "Timer for " +editTextTimerSettings.getText().toString()+" has started", Toast.LENGTH_LONG).show();
+                            saveTimerStatus(true);
+                            saveTimerValue(editTextTimerSettings.getText().toString());
+                        }
+                    }
                     return;
                 case R.id.buttonStop:
-                    if (scheduledExecutorService != null) {
-                        scheduledExecutorService.shutdownNow();
+                    if (holder.scheduledExecutorService != null && getTimerStatus()) {
+                        holder.scheduledExecutorService.shutdownNow();
                         buttonStart.setClickable(true);
                         buttonStart.setPressed(false);
-                        Toast.makeText(context, "Timer for " + editTextTimerSettings.getText().toString() + " minutes has stopped", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Timer for " + getTimerValue() + " minutes has stopped", Toast.LENGTH_LONG).show();
+                        saveTimerStatus(false);
                     }
                     editTextTimerSettings.getText().clear();
                     return;
             }
-
 
             if (isFooter()){
                 return;
@@ -239,6 +259,30 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 toast.show();
             }
         }
+    }
+
+    public void saveTimerStatus(boolean bool){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("status", bool);
+        editor.apply();
+    }
+
+    public void saveTimerValue(String string){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("value", string);
+        editor.apply();
+    }
+
+    public boolean getTimerStatus(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("status", false);
+    }
+
+    public String getTimerValue(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        return sharedPreferences.getString("value", "404");
     }
 
     private void saveColors(String col, int color){

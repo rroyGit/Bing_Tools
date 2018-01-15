@@ -4,13 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:focusableInTouchMode="true"
     android:background="@color/slight_white">
 
     <EditText
         android:inputType="number"
+        android:shadowColor="@color/dark"
         android:id="@+id/editTextTimer"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        android:backgroundTint="@color/red"/>
 
     <Button
         android:text="+15 Minutes"
@@ -45,6 +48,7 @@
         android:textColor="@color/white"
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
-        android:layout_height="55dp" />
+        android:layout_height="55dp"
+        android:paddingBottom="5dp"/>
 
 </LinearLayout>

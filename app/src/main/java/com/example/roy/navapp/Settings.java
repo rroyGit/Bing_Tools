@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -92,6 +93,8 @@ public class Settings extends AppCompatActivity{
         settingsAdapter.shouldShowFooters(false);
         settingsAdapter.collapseAllSections();
         recyclerView.setAdapter(settingsAdapter);
+
+
     }
 
     @Override
@@ -146,9 +149,30 @@ public class Settings extends AppCompatActivity{
         return sP.getBoolean("colorReset", false);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(settingsAdapter.holder.scheduledExecutorService != null) settingsAdapter.holder.scheduledExecutorService.shutdownNow();
+        if(settingsAdapter.getTimerStatus()){
+            settingsAdapter.saveTimerStatus(false);
+            Toast.makeText(context, "Timer has canceled", Toast.LENGTH_LONG).show();
+        }
+        settingsAdapter.saveForReset(false);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(settingsAdapter.button != null){
+            if(settingsAdapter.getTimerStatus()) {
+                settingsAdapter.button.setPressed(true);
+                settingsAdapter.button.setClickable(false);
+                Toast.makeText(context, "Timer has resumed", Toast.LENGTH_LONG).show();
+            }
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
