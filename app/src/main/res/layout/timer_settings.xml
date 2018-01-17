@@ -4,41 +4,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:focusableInTouchMode="true"
     android:background="@color/slight_white">
 
     <EditText
         android:inputType="number"
+        android:shadowColor="@color/dark"
         android:id="@+id/editTextTimer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="50dp"
+        android:backgroundTint="@color/red"/>
 
     <Button
-        android:text="+15"
+        android:text="+15 Minutes"
+        android:textAllCaps="false"
+        android:textSize="20sp"
         android:id="@+id/button15"
         android:textColor="@color/white"
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="55dp" />
     <Button
-        android:text="+30"
+        android:text="+30 Minutes"
+        android:textAllCaps="false"
         android:id="@+id/button30"
+        android:textSize="20sp"
         android:textColor="@color/white"
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="55dp" />
     <Button
         android:text="START"
         android:id="@+id/buttonStart"
+        android:textSize="20sp"
         android:textColor="@color/white"
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="55dp" />
     <Button
         android:text="STOP"
         android:id="@+id/buttonStop"
+        android:textSize="20sp"
         android:textColor="@color/white"
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="55dp"
+        android:paddingBottom="5dp"/>
 
 </LinearLayout>

@@ -8,13 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,15 +36,29 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
     private List<String> titles;
     private HashMap<String,List<String>> colorsMap;
     private Context context;
-    private final static int TIMER_LAYOUT = 1;
+    private final static int TIMER_LAYOUT = 2;
+    private final static int RADIO_LAYOUT = 0;
+    private final static int RADIO_LAYOUT_2 = 1;
     Activity activity;
-
+    Button button;
+    Holder holder;
 
     public SettingsAdapter(HashMap<String,List<String>> colorsMap, List<String> titles, Context context, Activity activity) {
         this.context = context;
         this.colorsMap = colorsMap;
         this.titles = titles;
         this.activity = activity;
+        holder = new Holder();
+    }
+
+    public class Holder{
+        ScheduledExecutorService scheduledExecutorService;
+        Holder(){
+
+        }
+        private void set(ScheduledExecutorService scheduledExecutorService){
+            this.scheduledExecutorService = scheduledExecutorService;
+        }
     }
 
     @Override
@@ -86,6 +97,11 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
        switch (section){
            case 0:
+//               holder.radioButton.setChecked(false);
+//               holder.radioButton2.setChecked(false);
+//               holder.radioButton3.setChecked(false);
+//               holder.radioButton4.setChecked(false);
+
                holder.radioButton.setText(colorsMap.get(titles.get(0)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(0)).get(1));
                holder.radioButton3.setText(colorsMap.get(titles.get(0)).get(2));
@@ -98,6 +114,11 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                preserveRadioCheckState(section, holder);
                break;
            case 1:
+//               holder.radioButton.setChecked(false);
+//               holder.radioButton2.setChecked(false);
+//               holder.radioButton3.setChecked(false);
+//               holder.radioButton4.setChecked(false);
+
                holder.radioButton.setText(colorsMap.get(titles.get(1)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(1)).get(1));
                holder.radioButton3.setText(colorsMap.get(titles.get(1)).get(2));
@@ -110,16 +131,16 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                preserveRadioCheckState(section, holder);
                break;
            case 2:
-
-
-
-
+                button = holder.buttonStart;
+                if(getTimerStatus()) {
+                    holder.buttonStart.setClickable(false);
+                    holder.buttonStart.setPressed(true);
+                }
+                break;
        }
 
 
     }
-
-
 
 
     @Override
@@ -128,30 +149,36 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         // VIEW_TYPE_FOOTER is -3, VIEW_TYPE_HEADER is -2, VIEW_TYPE_ITEM is -1.
         // You can return 0 or greater.
         switch(section){
-
+            case 0:
+                return RADIO_LAYOUT;
+            case 1:
+                return RADIO_LAYOUT_2;
             case 2:
                 return TIMER_LAYOUT;
+            default:
+                return 404;
         }
-        return 0;
     }
 
     @Override
     public MainVH onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        int layout;
+        int layout = 0;
         switch (viewType) {
             case VIEW_TYPE_HEADER:
                 layout = R.layout.header_list;
                 break;
-            case VIEW_TYPE_ITEM:
-                layout = R.layout.body_list;
+            case RADIO_LAYOUT:
+                layout = R.layout.radio_list_1;
+                break;
+            case RADIO_LAYOUT_2:
+                layout = R.layout.radio_list_2;
                 break;
             case TIMER_LAYOUT:
                 layout = R.layout.timer_settings;
                 break;
             default:
-                layout = R.layout.body_list;
-                break;
+                Log.e("layout", " "+viewType);
         }
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
@@ -166,11 +193,11 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         Button button15, button30, buttonStart, buttonStop;
         SettingsAdapter adapter;
         Toast toast;
-        ScheduledExecutorService scheduledExecutorService;
+
 
         private MainVH(View itemView, SettingsAdapter myAdapter, int viewType) {
             super(itemView);
-            if(viewType == 1){
+            if(viewType == 2){
                     textView = (TextView) itemView.findViewById(R.id.Bing_header);
                     editTextTimerSettings = (EditText) itemView.findViewById(R.id.editTextTimer);
                     button15 = (Button) itemView.findViewById(R.id.button15);
@@ -182,6 +209,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 button30.setOnClickListener(this);
                 buttonStart.setOnClickListener(this);
                 buttonStop.setOnClickListener(this);
+                button = buttonStart;
 
             }else {
                 textView = (TextView) itemView.findViewById(R.id.Bing_header);
@@ -212,16 +240,28 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                     editTextTimerSettings.setText(String.valueOf(delayBy+30));
                     return;
                 case R.id.buttonStart:
-                    scheduledExecutorService = timer(buttonStart, editTextTimerSettings);
+                    editTextTimerSettings.clearFocus();
+                    if(editTextTimerSettings.getText().toString().compareTo("") != 0){
+                        if(Integer.parseInt(editTextTimerSettings.getText().toString()) > 0){
+                            holder.set(timer(buttonStart, editTextTimerSettings));
+                            Toast.makeText(context, "Timer for " +editTextTimerSettings.getText().toString()+" minutes has started", Toast.LENGTH_SHORT).show();
+                            saveTimerStatus(true);
+                            saveTimerValue(editTextTimerSettings.getText().toString());
+                        }
+                    }
                     return;
                 case R.id.buttonStop:
-                    scheduledExecutorService.shutdownNow();
-                    buttonStart.setClickable(true);
-                    buttonStart.setPressed(false);
-                    Toast.makeText(context, "Timer for " + editTextTimerSettings.getText().toString()+ " minutes has stopped", Toast.LENGTH_LONG).show();
+                    editTextTimerSettings.clearFocus();
+                    if (holder.scheduledExecutorService != null && getTimerStatus()) {
+                        holder.scheduledExecutorService.shutdownNow();
+                        buttonStart.setClickable(true);
+                        buttonStart.setPressed(false);
+                        Toast.makeText(context, "Timer for " + getTimerValue() + " minutes has stopped", Toast.LENGTH_SHORT).show();
+                        saveTimerStatus(false);
+                    }
+                    editTextTimerSettings.getText().clear();
                     return;
             }
-
 
             if (isFooter()){
                 return;
@@ -236,6 +276,30 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 toast.show();
             }
         }
+    }
+
+    public void saveTimerStatus(boolean bool){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("status", bool);
+        editor.apply();
+    }
+
+    public void saveTimerValue(String string){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("value", string);
+        editor.apply();
+    }
+
+    public boolean getTimerStatus(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("status", false);
+    }
+
+    public String getTimerValue(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
+        return sharedPreferences.getString("value", "404");
     }
 
     private void saveColors(String col, int color){
