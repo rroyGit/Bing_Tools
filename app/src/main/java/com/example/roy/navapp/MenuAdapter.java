@@ -110,6 +110,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             textView2.setTextColor(Color.WHITE);
             textView3.setTextColor(Color.WHITE);
         }
+        if(color == Color.LTGRAY){
+            textView.setTextColor(Color.BLACK);
+            textView2.setTextColor(Color.BLACK);
+            textView3.setTextColor(Color.BLACK);
+        }
     }
 
 }
