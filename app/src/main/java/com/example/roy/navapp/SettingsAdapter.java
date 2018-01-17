@@ -97,11 +97,6 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
        switch (section){
            case 0:
-//               holder.radioButton.setChecked(false);
-//               holder.radioButton2.setChecked(false);
-//               holder.radioButton3.setChecked(false);
-//               holder.radioButton4.setChecked(false);
-
                holder.radioButton.setText(colorsMap.get(titles.get(0)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(0)).get(1));
                holder.radioButton3.setText(colorsMap.get(titles.get(0)).get(2));
@@ -114,11 +109,6 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                preserveRadioCheckState(section, holder);
                break;
            case 1:
-//               holder.radioButton.setChecked(false);
-//               holder.radioButton2.setChecked(false);
-//               holder.radioButton3.setChecked(false);
-//               holder.radioButton4.setChecked(false);
-
                holder.radioButton.setText(colorsMap.get(titles.get(1)).get(0));
                holder.radioButton2.setText(colorsMap.get(titles.get(1)).get(1));
                holder.radioButton3.setText(colorsMap.get(titles.get(1)).get(2));
@@ -135,6 +125,9 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 if(getTimerStatus()) {
                     holder.buttonStart.setClickable(false);
                     holder.buttonStart.setPressed(true);
+                }else {
+                    holder.buttonStart.setClickable(true);
+                    holder.buttonStart.setPressed(false);
                 }
                 break;
        }
@@ -360,7 +353,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             public void run() {
                 buttonStart.setPressed(true);
             }
-        }, 100);
+        }, 75);
         int temp = 0;
         if(editText.getText().toString().compareTo("") != 0) temp = Integer.parseInt(editText.getText().toString());
         final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
@@ -372,7 +365,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(context, "It has been "+minutes+" minutes", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "It has been "+minutes+" minutes", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                         intent.setAction("android.intent.action.VIEW");
@@ -381,6 +374,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
                         buttonStart.setClickable(true);
                         buttonStart.setPressed(false);
+                        saveTimerStatus(false);
                     }
                 });
 

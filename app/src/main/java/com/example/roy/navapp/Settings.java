@@ -77,9 +77,9 @@ public class Settings extends AppCompatActivity{
         colorsBody.add("Black");
         colorsBody.add("Light Gray");
 
-        titles.add("Card Colors: Meal Time");
-        titles.add("Card Colors: Meal List");
-        titles.add("Auto stop app");
+        titles.add("Change top menu colors");
+        titles.add("Change bottom menu colors");
+        titles.add("Auto launch Bing Tools");
 
         colorsMap.put(titles.get(0), colorsHead);
         colorsMap.put(titles.get(1), colorsBody);
