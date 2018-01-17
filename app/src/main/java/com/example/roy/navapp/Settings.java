@@ -40,6 +40,7 @@ public class Settings extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_settings);
         context = getApplicationContext();
 
@@ -158,7 +159,6 @@ public class Settings extends AppCompatActivity{
             settingsAdapter.saveTimerStatus(false);
             Toast.makeText(context, "Timer has canceled", Toast.LENGTH_LONG).show();
         }
-        settingsAdapter.saveForReset(false);
     }
 
     @Override
