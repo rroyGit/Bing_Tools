@@ -51,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         expandableTextView:maxCollapsedLines="3"
-                        expandableTextView:animDuration="200">
+                        expandableTextView:animDuration="300">
                         <TextView
                             android:id="@id/expandable_text"
                             android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         expandableTextView:maxCollapsedLines="3"
-                        expandableTextView:animDuration="200">
+                        expandableTextView:animDuration="300">
                         <TextView
                             android:id="@id/expandable_text"
                             android:layout_width="match_parent"
@@ -131,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         expandableTextView:maxCollapsedLines="3"
-                        expandableTextView:animDuration="200">
+                        expandableTextView:animDuration="300">
 
                         <TextView
                             android:id="@id/expandable_text"
@@ -147,7 +147,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
-                            android:layout_gravity="right|bottom"
+                            android:layout_gravity="end|bottom"
                             android:layout_weight="1"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/aboutRow2"
+    android:layout_width="match_parent"
     android:background="@color/slight_white"
     android:orientation="vertical"
     android:layout_height="match_parent">
-<ScrollView
-    android:id="@+id/aboutScrollview"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+
+    <com.andexert.library.RippleView
+        android:id="@+id/rippleViewRow2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -15,6 +19,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:id="@+id/title"
             android:text="Title"
@@ -24,11 +29,15 @@
             android:textColor="@color/lightPinkish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
         <LinearLayout
-            android:gravity="right"
+            android:id="@+id/checkLinearLayout"
+            android:gravity="end"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <CheckBox
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:id="@+id/checkbox"
                 android:text="Agree"
                 android:padding="5dp"
@@ -53,7 +62,8 @@
             android:text="Descriptions"
             android:textColor="@color/dark"
             android:textSize="14sp" />
+
     </RelativeLayout>
-</ScrollView>
+    </com.andexert.library.RippleView>
 
 </LinearLayout>

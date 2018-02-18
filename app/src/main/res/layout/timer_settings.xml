@@ -4,17 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:focusableInTouchMode="true"
-    android:background="@color/slight_white">
+    android:background="@color/darkGray">
 
     <EditText
-        android:inputType="number"
-        android:shadowColor="@color/dark"
         android:id="@+id/editTextTimer"
+        android:labelFor="@id/editTextTimer"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/red"/>
+        android:layout_height="wrap_content"
+        android:textColorHint="@drawable/edit_text_hint"
+        android:textColor="@color/white"
+        android:textCursorDrawable="@drawable/edit_text_pipe_color"
+        android:inputType="number"
+        android:backgroundTint="@color/lightPinkish" />
 
+    <com.andexert.library.RippleView
+        android:id="@+id/rippleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <Button
         android:text="+15 Minutes"
         android:textAllCaps="false"
@@ -24,7 +30,14 @@
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
         android:layout_height="55dp" />
+    </com.andexert.library.RippleView>
+
+    <com.andexert.library.RippleView
+        android:id="@+id/rippleView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <Button
+        android:layout_below="@id/rippleView"
         android:text="+30 Minutes"
         android:textAllCaps="false"
         android:id="@+id/button30"
@@ -33,7 +46,14 @@
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
         android:layout_height="55dp" />
+    </com.andexert.library.RippleView>
+
+    <com.andexert.library.RippleView
+        android:id="@+id/rippleView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <Button
+        android:layout_below="@id/rippleView2"
         android:text="START"
         android:id="@+id/buttonStart"
         android:textSize="20sp"
@@ -41,7 +61,14 @@
         android:backgroundTint="@drawable/touch_button"
         android:layout_width="match_parent"
         android:layout_height="55dp" />
+    </com.andexert.library.RippleView>
+
+    <com.andexert.library.RippleView
+        android:id="@+id/rippleView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <Button
+        android:layout_below="@id/rippleView3"
         android:text="STOP"
         android:id="@+id/buttonStop"
         android:textSize="20sp"
@@ -50,5 +77,6 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:paddingBottom="5dp"/>
+    </com.andexert.library.RippleView>
 
 </LinearLayout>

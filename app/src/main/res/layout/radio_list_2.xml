@@ -2,44 +2,58 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="@color/slight_white"
+    android:background="@color/darkGray"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 <RadioGroup
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
         <RadioButton
-            android:buttonTint="@color/dark"
-            android:textColor="@color/dark"
+            android:buttonTint="@color/lightBluish"
+            android:textColor="@color/white"
             android:textSize="17sp"
             android:id="@+id/radio"
             android:layout_width="match_parent"
             android:layout_height="25dp" />
         <RadioButton
-            android:buttonTint="@color/dark"
+            android:buttonTint="@color/lightBluish"
             android:textSize="17sp"
-            android:textColor="@color/dark"
+            android:textColor="@color/white"
             android:id="@+id/radio2"
             android:layout_width="match_parent"
             android:layout_height="25dp" />
         <RadioButton
-            android:buttonTint="@color/dark"
+            android:buttonTint="@color/lightBluish"
             android:textSize="17sp"
-            android:textColor="@color/dark"
+            android:textColor="@color/white"
             android:id="@+id/radio3"
             android:layout_width="match_parent"
             android:layout_height="25dp" />
         <RadioButton
-            android:buttonTint="@color/dark"
+            android:buttonTint="@color/lightBluish"
             android:textSize="17sp"
-            android:textColor="@color/dark"
+            android:textColor="@color/white"
             android:id="@+id/radio4"
             android:layout_width="match_parent"
             android:layout_height="25dp" />
 </RadioGroup>
+        <Button
+            android:id="@+id/colorPicker"
+            android:text="@string/customColor"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:backgroundTint="@drawable/touch_button2"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="55dp" />
+</LinearLayout>
     </ScrollView>
 </LinearLayout>

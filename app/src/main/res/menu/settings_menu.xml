@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group
         android:checkableBehavior="none"
         android:id="@+id/settings_colors">
 
         <item
-            android:orderInCategory="0"
             android:id="@+id/resetColors"
+            android:orderInCategory="0"
             android:checkable="true"
             android:title="Reset Colors" />
+
         <item
             android:id="@+id/action_home"
             android:orderInCategory="1"

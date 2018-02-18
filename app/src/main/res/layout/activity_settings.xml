@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.roy.navapp.Settings">
+    tools:context="com.rroycsdev.bingtools.Settings">
 
     <include
         layout="@layout/nav_action"

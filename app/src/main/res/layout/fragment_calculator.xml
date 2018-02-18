@@ -6,9 +6,9 @@
     android:weightSum="1"
     android:background="@color/gray"
     android:orientation="vertical"
-    android:id="@+id/frag_home"
+    android:id="@+id/calculator_frag"
     android:focusableInTouchMode="true"
-    tools:context="com.example.roy.navapp.CalculatorFragment">
+    tools:context="com.rroycsdev.bingtools.CalculatorFragment">
 
     <ScrollView
         android:id="@+id/scrollViewCalculator"
@@ -100,6 +100,7 @@
                 style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="@string/add"
+                android:textColor="@color/white"
                 android:textAllCaps="false"
                 android:textSize="35sp" />
             <Button
@@ -109,6 +110,7 @@
                 style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="@string/sub"
+                android:textColor="@color/white"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textSize="35sp" />
@@ -120,6 +122,7 @@
                 android:backgroundTint="@drawable/touch_button"
                 android:textSize="35sp"
                 android:text="L"
+                android:textColor="@color/white"
                 android:textAlignment="center"
                 android:textAllCaps="false"/>
             <Button
@@ -130,6 +133,7 @@
                 android:backgroundTint="@drawable/touch_button"
                 android:textSize="35sp"
                 android:text="R"
+                android:textColor="@color/white"
                 android:textAlignment="center"
                 android:textAllCaps="false"/>
         </LinearLayout>
@@ -147,6 +151,7 @@
                 style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="@string/mul"
+                android:textColor="@color/white"
                 android:textAllCaps="false"
                 android:textAlignment="center"
                 android:textSize="35sp" />
@@ -157,6 +162,7 @@
                 style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="@string/div"
+                android:textColor="@color/white"
                 android:textAllCaps="false"
                 android:textAlignment="center"
                 android:textSize="35sp" />
@@ -167,12 +173,14 @@
                 style="?android:attr/button"
                 android:backgroundTint="@drawable/touch_button"
                 android:text="c"
+                android:textColor="@color/white"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textSize="35sp" />
             <Button
                 android:visibility="invisible"
                 android:text="T"
+                android:textColor="@color/white"
                 android:id="@+id/timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

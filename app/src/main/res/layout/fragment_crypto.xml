@@ -1,9 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.roy.navapp.CryptoFragment"
+    tools:context="com.rroycsdev.bingtools.CryptoFragment"
     android:background="@color/gray">
 
     <LinearLayout
@@ -40,12 +39,14 @@
         android:id="@+id/editT"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:padding="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_below="@+id/etherButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/custom_edit_text"
-        android:hint="@string/zero"
+        android:hint="@string/one"
         android:inputType="numberDecimal"
         android:textAlignment="viewStart"
         android:textColor="@color/white"
@@ -104,12 +105,12 @@
 
     <TextView
         android:id="@+id/selectedCrypto"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:gravity="end"
+        android:layout_margin="10dp"
         android:layout_alignBaseline="@+id/timeText"
         android:layout_alignBottom="@+id/timeText"
-        android:layout_toEndOf="@+id/rippleButton"
         android:text="1 Ethereum"
         android:textStyle="bold" />
 
