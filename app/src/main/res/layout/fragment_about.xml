@@ -3,10 +3,10 @@
     android:id="@+id/aboutFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/slight_white"
     tools:context="com.rroycsdev.bingtools.AboutFragment">
 
    <ListView
+       android:background="@color/darkGray2"
        android:longClickable="true"
        android:id="@+id/listView"
        android:divider="@color/colorPrimaryDark"

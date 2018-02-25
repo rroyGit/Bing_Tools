@@ -4,10 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-/**
- * Created by rroy6 on 12/20/2017.
- */
-
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int numTabs;
     private FragmentManager fragmentManager;
@@ -46,11 +42,9 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public HinmanDining getHinmanRefs(){
         return hinmanDining;
     }
-
     public C4Dining getC4Refs(){
         return c4Dining;
     }
-
     public CIWDining getCIWRefs(){
         return ciwDining;
     }

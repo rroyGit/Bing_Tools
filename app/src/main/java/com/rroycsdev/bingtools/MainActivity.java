@@ -21,7 +21,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,18 +64,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(!isTaskRoot()){
-            final Intent intent = getIntent();
-            if(intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(intent.getAction())){
-                finish();
-                return;
-            }
+        //if app launched from Play store, don't create a new instance; bring front previous instance
+        if (!isTaskRoot()){
+            finish();
+            return;
         }
 
         setContentView(R.layout.activity_main);
         activity = this;
         context = this;
-
 
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int width = displayMetrics.widthPixels;
@@ -177,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.nav_drawer_main);
         MenuItem refreshItem = null;
+
         if(!firstRun) refreshItem = menu.findItem(R.id.refresh_Bing);
         String tag = "";
 
@@ -303,17 +303,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             fragmentTransaction.add(R.id.fragmentHolder, chooseFragment, tag).commit();
         }
-        item.setChecked(true);
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                item.setChecked(true);
                 drawer.closeDrawer(GravityCompat.START);
             }
         }, 35);
     }
-
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

@@ -349,4 +349,9 @@ public class CryptoFragment extends Fragment {
         this.menu = menu;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        getActivity().setTitle(R.string.crypto);
+    }
 }

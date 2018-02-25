@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -45,27 +46,36 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        BingDiningMenu bingDiningMenu;
 
         if (id == R.id.action_settings) {
             return false;
         }else if(id == R.id.refresh_Bing){
             switch (tabLayout.getSelectedTabPosition()) {
                 case 0:
-                    bingDiningMenu = pagerAdapter.getHinmanRefs().hinman_hall;
-                    bingDiningMenu.refreshData();
+                    HinmanDining hinmanDining = pagerAdapter.getHinmanRefs();
+                    if(hinmanDining != null) hinmanDining.hinman_hall.refreshData();
+                    else {
+                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+                        viewPager.setAdapter(pagerAdapter);
+                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
+                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
+                        Toast.makeText(getContext(), "Missing ref to BingDining class, got new Hinman ref", Toast.LENGTH_LONG).show();
+                    }
                     return true;
                 case 1:
-                    bingDiningMenu = pagerAdapter.getC4Refs().c4_hall;
-                    bingDiningMenu.refreshData();
+                    C4Dining c4Dining = pagerAdapter.getC4Refs();
+                    if(c4Dining != null) c4Dining.c4_hall.refreshData();
+                    else Toast.makeText(getContext(), "Missing ref to BingDining class", Toast.LENGTH_SHORT).show();
                     return true;
                 case 2:
-                    bingDiningMenu = pagerAdapter.getAppRefs().appalachian_hall;
-                    bingDiningMenu.refreshData();
+                    AppalachianDining appalachianDining = pagerAdapter.getAppRefs();
+                    if(appalachianDining != null) appalachianDining.appalachian_hall.refreshData();
+                    else Toast.makeText(getContext(), "Missing ref to BingDining class", Toast.LENGTH_SHORT).show();
                     return true;
                 case 3:
-                    bingDiningMenu = pagerAdapter.getCIWRefs().ciw_hall;
-                    bingDiningMenu.refreshData();
+                    CIWDining ciwDining = pagerAdapter.getCIWRefs();
+                    if(ciwDining != null) ciwDining.ciw_hall.refreshData();
+                    else Toast.makeText(getContext(), "Missing ref to BingDining class", Toast.LENGTH_SHORT).show();
                     return true;
                     default: return false;
             }
@@ -116,7 +126,6 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         return inflater.inflate(R.layout.bing_dining, container, false);
     }
 
-
     public void onButtonPressed(Uri uri) {
 
     }
@@ -124,6 +133,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        getActivity().setTitle(R.string.bing_dining);
     }
 
     @Override
@@ -147,5 +157,6 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().setTitle(R.string.bing_dining);
     }
 }

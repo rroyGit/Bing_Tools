@@ -123,10 +123,10 @@ public class Settings extends AppCompatActivity{
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_home) {
-            Intent homeIntent = new Intent(Settings.this, MainActivity.class);
-            startActivity(homeIntent);
+            Intent intent = new Intent(Settings.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
         if(id == R.id.resetColors){
             if(getReset()) {

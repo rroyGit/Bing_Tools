@@ -21,10 +21,6 @@ import com.andexert.library.RippleView;
 
 import java.util.ArrayList;
 
-/**
- * Created by rroy6 on 1/10/2018.
- */
-
 public class AboutAdapter extends ArrayAdapter{
 
     ArrayList<String> descriptions;
