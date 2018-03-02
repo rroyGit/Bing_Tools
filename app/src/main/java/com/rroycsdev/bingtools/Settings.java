@@ -157,7 +157,6 @@ public class Settings extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-
         new Thread(new Runnable() {
             @Override
             public void run() {

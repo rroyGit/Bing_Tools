@@ -86,8 +86,6 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle(R.string.bing_dining);
-
 
         tabLayout = (TabLayout) view.findViewById(R.id.tablayout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.hinman));
@@ -154,9 +152,4 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().setTitle(R.string.bing_dining);
-    }
 }

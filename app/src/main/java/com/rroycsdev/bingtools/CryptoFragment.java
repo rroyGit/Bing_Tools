@@ -59,7 +59,6 @@ public class CryptoFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle(R.string.crypto);
 
         context = this.getContext();
         progressBar = (ProgressBar) view.findViewById(R.id.proBar);

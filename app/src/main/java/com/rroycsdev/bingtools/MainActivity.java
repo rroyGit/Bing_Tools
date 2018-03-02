@@ -2,6 +2,7 @@ package com.rroycsdev.bingtools;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Activity activity;
     private Context context;
     private Menu menu;
-    Fragment chooseFragment = null;
+
     Bundle bundle = new Bundle();
     ActionBarDrawerToggle mToggle;
     Toolbar toolBar;
@@ -118,7 +119,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToggle.syncState();
         nView.setNavigationItemSelectedListener(this);
 
-        displaySelectedScreen(R.id.Bing_Dining_Nav, nView.getMenu().findItem(R.id.Bing_Dining_Nav), true);
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragmentManager.getFragments().size() == 0){
+            displaySelectedScreen(R.id.Bing_Dining_Nav, nView.getMenu().findItem(R.id.Bing_Dining_Nav), true);
+        }
     }
 
     private void setToast(String string){
@@ -173,17 +177,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void displaySelectedScreen(int id, final MenuItem item, boolean firstRun) {
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.nav_drawer_main);
         MenuItem refreshItem = null;
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment chooseFragment = null;
 
-        if(!firstRun) refreshItem = menu.findItem(R.id.refresh_Bing);
+        if(!firstRun) {
+            if(menu != null) refreshItem = menu.findItem(R.id.refresh_Bing);
+        }
         String tag = "";
+        int title = 0;
 
         switch (id) {
             case R.id.Timer_Nav:
                 if (refreshItem != null) refreshItem.setVisible(false);
                 tag = "timer";
+                title = R.string.auto_launch;
                 if (item.isChecked()) {
                     drawer.closeDrawer(GravityCompat.START);
                     return;
@@ -192,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.Calculator_Nav:
                 if (refreshItem != null) refreshItem.setVisible(false);
                 tag = "calc";
+                title = R.string.calculator;
                 if (item.isChecked()) {
                     drawer.closeDrawer(GravityCompat.START);
                     return;
@@ -200,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.Crypto_Nav:
                 if(refreshItem != null) refreshItem.setVisible(false);
                 tag = "crypto";
+                title = R.string.crypto;
                 if (item.isChecked()) {
                     drawer.closeDrawer(GravityCompat.START);
                     return;
@@ -207,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.Bing_Dining_Nav:
                 tag = "bing";
+                title = R.string.bing_dining;
                 if(refreshItem != null && !refreshItem.isVisible()) refreshItem.setVisible(true);
                 if (item.isChecked()) {
                     drawer.closeDrawer(GravityCompat.START);
@@ -216,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.About_Nav:
                 if(refreshItem != null) refreshItem.setVisible(false);
                 tag = "about";
+                title = R.string.about;
                 if (item.isChecked()) {
                     drawer.closeDrawer(GravityCompat.START);
                     return;
@@ -225,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(GravityCompat.START);
         }
 
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         switch(tag){
             case "bing":
                 chooseFragment = fragmentManager.findFragmentByTag("calc");
@@ -305,9 +318,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         Handler handler = new Handler();
+        final int finalTitle = title;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                if(finalTitle != 0) setTitle(finalTitle);
                 item.setChecked(true);
                 drawer.closeDrawer(GravityCompat.START);
             }

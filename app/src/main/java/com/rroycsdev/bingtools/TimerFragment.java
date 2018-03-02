@@ -54,7 +54,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle(getString(R.string.auto_launch));
+
         resultTextView = (TextView) view.findViewById(R.id.resultTextView);
         deleteOne = (ImageButton) view.findViewById(R.id.deleteOne);
         deleteAll = (ImageButton) view.findViewById(R.id.deleteAll);
@@ -136,13 +136,12 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        getActivity().setTitle(R.string.auto_launch);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-
     }
 
     @Override
@@ -183,9 +182,8 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                 resultTextView.setText("");
 
                 if(scheduledExecutorService != null && !startFab.isClickable()){
-                    startFab.clearColorFilter();
                     scheduledExecutorService.shutdownNow();
-                    startFab.setPressed(false);
+                    startFab.clearColorFilter();
                     startFab.setClickable(true);
                     scheduledExecutorService = null;
                     Toast.makeText(getContext(), "Timer has been canceled", Toast.LENGTH_SHORT).show();
@@ -292,7 +290,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void run() {
                         startFab.setClickable(true);
-                        startFab.setPressed(false);
+                        startFab.clearColorFilter();
                         Toast.makeText(getContext(), "It has been " + minutes + " minutes", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent();
                         intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);

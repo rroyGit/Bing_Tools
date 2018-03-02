@@ -46,7 +46,6 @@ public class AboutFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getActivity().setTitle(R.string.about);
         listView = view.findViewById(R.id.listView);
 
         ArrayList<String> title = new ArrayList<>();
@@ -100,7 +99,7 @@ public class AboutFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //Toast.makeText(context, "Attach", Toast.LENGTH_SHORT).show();
+        getActivity().setTitle(R.string.about);
     }
 
     @Override
