@@ -15,7 +15,7 @@
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:background="@color/black"
-        tools:context="com.example.roy.navapp.C4Dining">
+        tools:context="com.rroycsdev.bingtools.C4Dining">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycleViewC4"

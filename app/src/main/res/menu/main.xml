@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/refresh_Bing"
+        android:icon="@mipmap/ic_refresh_white_24dp"
+        android:title="Refresh"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title= "@string/settings"

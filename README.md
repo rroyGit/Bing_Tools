@@ -1,6 +1,8 @@
 # Bing_Tools
 ## Bing Tools is an Android application developed using Android Studio.
 
+<a href='https://play.google.com/store/apps/details?id=com.rroycsdev.bingtools&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+
 Bing Tools provide the following:
 
 ### a) Rudimentary calculator

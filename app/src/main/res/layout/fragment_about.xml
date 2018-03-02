@@ -1,16 +1,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/aboutFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGray"
-    tools:context="com.example.roy.navapp.AboutFragment">
+    tools:context="com.rroycsdev.bingtools.AboutFragment">
 
-    <ListView
-        android:id="@+id/listView"
-        android:divider="@color/colorPrimaryDark"
-        android:dividerHeight="0.5dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ListView>
+   <ListView
+       android:background="@color/darkGray2"
+       android:longClickable="true"
+       android:id="@+id/listView"
+       android:divider="@color/colorPrimaryDark"
+       android:dividerHeight="0dp"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+   </ListView>
 
 </FrameLayout>

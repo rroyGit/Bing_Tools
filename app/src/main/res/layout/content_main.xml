@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.roy.navapp.MainActivity"
+    tools:context="com.rroycsdev.bingtools.MainActivity"
     tools:showIn="@layout/nav_action"
     android:weightSum="1"
     android:orientation="vertical"
@@ -13,7 +13,7 @@
     android:background="@color/gray">
 
     <FrameLayout
-        android:id="@+id/fragment"
+        android:id="@+id/fragmentHolder"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
