@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
             return;
         }
-        Log.e("YO", "Main OnCreate");
+
         setContentView(R.layout.activity_main);
         activity = this;
         context = this;
