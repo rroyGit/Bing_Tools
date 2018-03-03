@@ -21,6 +21,7 @@ import java.util.List;
 public class C4Dining extends Fragment {
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
+    private AppCompatTextView toolbarTitle;
 
     public BingDiningMenu c4_hall;
     private String c4Url;
@@ -39,7 +40,7 @@ public class C4Dining extends Fragment {
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
         Context context = this.getContext();
-        AppCompatTextView toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+        toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
 
         List<ListItem> listItems = new ArrayList<>();
@@ -55,6 +56,7 @@ public class C4Dining extends Fragment {
         c4_hall.setAdapter(listItems);
         c4_hall.setToolbar(toolbarTitle);
         c4_hall.makeRequest();
+
 
 
         //set empty adapter due to waiting for data
@@ -118,4 +120,7 @@ public class C4Dining extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    public void setToolbarDate(){
+        if(toolbarTitle != null) toolbarTitle.setText(c4_hall.getWeekDate());
+    }
 }

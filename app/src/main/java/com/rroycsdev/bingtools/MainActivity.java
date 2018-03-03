@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ActionBarDrawerToggle mToggle;
     Toolbar toolBar;
 
+    public NavigationView nView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
             return;
         }
-
+        Log.e("YO", "Main OnCreate");
         setContentView(R.layout.activity_main);
         activity = this;
         context = this;
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.setStatusBarColor(ContextCompat.getColor(context, R.color.darkGray2));
-        NavigationView nView = (NavigationView) findViewById(R.id.nav_menu_view);
+        nView = (NavigationView) findViewById(R.id.nav_menu_view);
         nView.getLayoutParams().width = (int)(width/1.45);
 
         View headerView = nView.getHeaderView(0);
@@ -122,6 +124,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         if(fragmentManager.getFragments().size() == 0){
             displaySelectedScreen(R.id.Bing_Dining_Nav, nView.getMenu().findItem(R.id.Bing_Dining_Nav), true);
+        }else{
+            String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
+            switch (fragmentName){
+                case "timer":
+                    setTitle(getResources().getString(R.string.auto_launch));
+                    break;
+                case "bing":
+                    setTitle(getResources().getString(R.string.bing_dining));
+                    break;
+                case "calc":
+                    setTitle(getResources().getString(R.string.calculator));
+                    break;
+                case "crypto":
+                    setTitle(getResources().getString(R.string.crypto));
+                    break;
+                case "about":
+                    setTitle(getResources().getString(R.string.about));
+                    break;
+            }
         }
     }
 
@@ -295,7 +316,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(fragmentManager.findFragmentByTag(tag) != null) {
             chooseFragment = fragmentManager.findFragmentByTag(tag);
-            fragmentTransaction.show(chooseFragment).commit();
+
+            fragmentTransaction.show(chooseFragment);
+            fragmentTransaction.addToBackStack(tag).commit();
         }else{
             switch (id){
                 case R.id.Bing_Dining_Nav:
@@ -314,7 +337,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     chooseFragment = TimerFragment.newInstance();
                     break;
             }
-            fragmentTransaction.add(R.id.fragmentHolder, chooseFragment, tag).commit();
+
+            fragmentTransaction.add(R.id.fragmentHolder, chooseFragment, tag);
+            fragmentTransaction.addToBackStack(tag).commit();
         }
 
         Handler handler = new Handler();

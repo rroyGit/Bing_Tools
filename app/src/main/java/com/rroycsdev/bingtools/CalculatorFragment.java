@@ -58,6 +58,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         result = (TextView) view.findViewById(R.id.resultB);
         result.setTextIsSelectable(true);
         num1 = (EditText) view.findViewById(R.id.num1);
@@ -368,6 +369,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+
         if(!hidden){
             getActivity().setTitle(R.string.calculator);
             if(menu != null){

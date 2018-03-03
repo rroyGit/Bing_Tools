@@ -22,6 +22,7 @@ public class CIWDining extends Fragment {
     public BingDiningMenu ciw_hall;
     private String ciwUrl;
     private String title;
+    private AppCompatTextView toolbarTitle;
 
     public CIWDining() {
         //empty constructor
@@ -32,7 +33,7 @@ public class CIWDining extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Context context = getContext();
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        AppCompatTextView toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+        toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
 
         List<ListItem> listItems = new ArrayList<>();
 
@@ -108,6 +109,10 @@ public class CIWDining extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setToolbarDate(){
+        if(toolbarTitle != null) toolbarTitle.setText(ciw_hall.getWeekDate());
     }
 
 }

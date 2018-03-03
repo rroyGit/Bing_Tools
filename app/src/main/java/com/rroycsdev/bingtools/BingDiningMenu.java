@@ -63,7 +63,7 @@ public class BingDiningMenu {
 
         //load data from saved storage or from the web
         if(diningDatabase.getDatabaseCount() > 0 && getWeekDate().compareTo("noDate") != 0) {
-            if(toolbarTitle != null) toolbarTitle.setText(getWeekDate());
+            //if(toolbarTitle != null) toolbarTitle.setText(getWeekDate());
             String month1, month2, date1, date2, year1, year2;
             try {
                 if(getWeekDate().compareTo("Sample Menu") == 0){
@@ -269,8 +269,8 @@ public class BingDiningMenu {
         protected Void doInBackground(Boolean... params) {
             final BingDiningMenu bingDiningMenu = activityReference.get();
             if(params.length > 0) updateDatabase = params[0];
+
             if(bingDiningMenu == null){
-                //Log.e("weakRef is ", "null");
                 return null;
             }
             if(pD != null) pD.dismiss();
@@ -350,9 +350,9 @@ public class BingDiningMenu {
             super.onPostExecute(aVoid);
             final BingDiningMenu bingDiningMenu = activityReference.get();
             if(bingDiningMenu == null){
-                Log.e("weakRef is ", "null"); return;
+                return;
             }
-            bingDiningMenu.toolbarTitle.setText(weekStrings[0]);
+            //bingDiningMenu.toolbarTitle.setText(weekStrings[0]);
             bingDiningMenu.saveBingWeekData(weekStrings[0]);
             bingDiningMenu.loadSortedData();
             bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context);
@@ -368,7 +368,7 @@ public class BingDiningMenu {
         sEditor.apply();
     }
 
-    private String getWeekDate(){
+    public String getWeekDate(){
         SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
         return sP.getString("weekDate", "noDate");
     }
@@ -408,7 +408,7 @@ public class BingDiningMenu {
         //clear all previous remnants
         assert listItems != null;
         listItems.clear();
-        int index = findStartIndex() +1;
+        int index = findStartIndex()+1;
 
         Cursor cursor;
         for(int id = index; id <= days.length; id++) {

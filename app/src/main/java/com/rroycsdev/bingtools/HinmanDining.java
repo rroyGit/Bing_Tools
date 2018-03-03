@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
@@ -28,6 +29,7 @@ public class HinmanDining extends Fragment{
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
     public BingDiningMenu hinman_hall;
+    private AppCompatTextView toolbarTitle;
 
     public HinmanDining() {
         //empty constructor
@@ -41,9 +43,9 @@ public class HinmanDining extends Fragment{
     @Override
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Context context = getContext();
+        final Context context = getContext();
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        AppCompatTextView toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+        toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
 
         List<ListItem> listItems = new ArrayList<>();
 
@@ -58,6 +60,25 @@ public class HinmanDining extends Fragment{
         hinman_hall.setAdapter(listItems);
         hinman_hall.setToolbar(toolbarTitle);
         hinman_hall.makeRequest();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                if(hinman_hall.getWeekDate().compareTo("noDate") == 0){
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            setToolbarDate();
+                        }
+                    },2000);
+                }else {
+                    setToolbarDate();
+                }
+            }
+
+        },1900);
 
 
         //set empty adapter due to waiting for data
@@ -128,6 +149,9 @@ public class HinmanDining extends Fragment{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    public void setToolbarDate(){
+        if(toolbarTitle!= null) toolbarTitle.setText(hinman_hall.getWeekDate());
     }
 
 }

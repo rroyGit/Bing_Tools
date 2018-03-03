@@ -104,6 +104,18 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                viewPager.setCurrentItem(tab.getPosition(), true);
+               Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
+
+               if(fragment instanceof C4Dining){
+                   ((C4Dining) fragment).setToolbarDate();
+               }else if(fragment instanceof HinmanDining ){
+                   ((HinmanDining) fragment).setToolbarDate();
+               }else if(fragment instanceof AppalachianDining ){
+                   ((AppalachianDining) fragment).setToolbarDate();
+               }else if(fragment instanceof CIWDining ){
+                   ((CIWDining) fragment).setToolbarDate();
+               }
+
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -147,6 +159,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
+
         if(!hidden){
             getActivity().setTitle(R.string.bing_dining);
         }

@@ -1,5 +1,6 @@
 package com.rroycsdev.bingtools;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,13 +10,17 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -175,7 +180,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                     BigInteger bigInteger = new BigInteger(resultTextView.getText().toString());
                     minutes = bigInteger.intValue();
                     scheduledExecutorService = timer(startFab, resultTextView, minutes);
-                    Toast.makeText(getContext(), "Timer has been set to " + minutes + " minutes", Toast.LENGTH_SHORT).show();
+                    if(minutes > 0) Toast.makeText(getContext(), "Timer has been set to " + minutes + " minute(s)", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.stopFab:
@@ -286,24 +291,44 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
         scheduledExecutorService.schedule(new Runnable() {
             @Override
             public void run() {
+                Intent intent = new Intent();
+                intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                intent.setAction("android.intent.action.VIEW");
+                intent.setComponent(ComponentName.unflattenFromString("com.rroycsdev.bingtools/com.rroycsdev.bingtools.MainActivity"));
+                getActivity().startActivity(intent);
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                Fragment chooseFragment = fragmentManager.findFragmentByTag("calc");
+                if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                chooseFragment = fragmentManager.findFragmentByTag("crypto");
+                if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                chooseFragment = fragmentManager.findFragmentByTag("about");
+                if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                chooseFragment = fragmentManager.findFragmentByTag("bing");
+                if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+
+                chooseFragment = fragmentManager.findFragmentByTag("timer");
+                fragmentTransaction.show(chooseFragment);
+                fragmentTransaction.addToBackStack("timer").commitAllowingStateLoss();
+
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         startFab.setClickable(true);
                         startFab.clearColorFilter();
-                        Toast.makeText(getContext(), "It has been " + minutes + " minutes", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent();
-                        intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                        intent.setAction("android.intent.action.VIEW");
-                        intent.setComponent(ComponentName.unflattenFromString("com.rroycsdev.bingtools/com.rroycsdev.bingtools.MainActivity"));
-                        getActivity().startActivity(intent);
+                        Toast.makeText(getContext(), "It has been " + minutes + " minute(s)", Toast.LENGTH_SHORT).show();
+                        MainActivity mainActivity = (MainActivity) getContext();
+                        mainActivity.nView.getMenu().getItem(1).setChecked(true);
+
                     }
                 });
+
             }
         }, minutes, TimeUnit.MINUTES);
         return scheduledExecutorService;
     }
-
 
 
     /**

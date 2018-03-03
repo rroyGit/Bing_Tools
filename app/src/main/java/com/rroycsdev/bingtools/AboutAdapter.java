@@ -21,7 +21,7 @@ import com.andexert.library.RippleView;
 
 import java.util.ArrayList;
 
-public class AboutAdapter extends ArrayAdapter{
+public class AboutAdapter extends ArrayAdapter<String>{
 
     ArrayList<String> descriptions;
     ArrayList<String> title;
