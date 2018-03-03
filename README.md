@@ -1,5 +1,5 @@
 # Bing_Tools
-## Bing Tools is an Android application developed using Android Studio.
+## Bing Tools, android application, presents Binghamton campus dining menus, crypto tracker, auto-launch, etc.
 
 <a href='https://play.google.com/store/apps/details?id=com.rroycsdev.bingtools&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
 
@@ -17,25 +17,24 @@ Bing Tools provide the following:
 	b4: Data saved on device while app is running; requires fewer https requests
   
 ### c) Binghamton campus dining menu
-	c1: View the campus dining menu in an easy to read and use environment via recylerview and cards with material design. 
-	    Currently only Hinman dining hall is avaliable, other dinning halls to follow.
-	c2: Sort the cards view in relation to the current day; you have the latest card shown first when opening Bing Dining.
+	c1: View the campus dining menu in an easy to read and use environment with material design. 
+	    See menus from all four dining halls in one place updated automatically.
+	c2: Card view is sorted by the current day; you have the latest card shown first when opening Bing Dining.
 	    No longer will you need to swipe/scroll down to see what's on menu for today.
-	c3: Menu data is stored on the device at first launch so https requests require only once per week;less overhead/faster loading.
-	c4: Settings page now gives you the ability to change colors of the cards instantly.
-	    You can change the colors of the expandable text as well as the meal time bar. More colors to be added soon.
-	c5: Added the ability to reset to default colors
+	c3: Menu data are stored on the device via SQLite database so https requests require only once per week. 
+            Less overhead and faster loading.
+	c4: Settings page gives you the ability to change colors of the cards instantly. Choose any of the default colors or pick any 		    from the color picker widget.
   
-### d) Navigation menu displays a new image everyday thanks to Microsoft Bing.
+### d) Navigation menu displays a new image, retrieved from Microsoft Bing homepage, daily.
   
 ### To be added:
-	a) An about page is in works, crediting the original owners of the icons, web data, etc.
-	b) Dynamically change the colors of the cards in Bing Dining.  (COMPLETED)
-	c) Save the bitmap of the navigation image to device. 
+	a) An about page is in works, crediting the original owners of the icons, web data, etc. (DONE)
+	b) Dynamically change the colors of the cards in Bing Dining.  (DONE)
+	c) Save the bitmap of the navigation image to device.
 
 ![Alt text](images/Bing_Dining.png "Bing_Dining")
 
 ![Alt text](images/Bing_Dining2.png "Bing_Dining2")
 
 
-Adding new and cool stuff as time progresses.
+Adding new and cool stuff as time progresses...
