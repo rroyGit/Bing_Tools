@@ -16,12 +16,13 @@ import android.widget.TextView;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> implements Serializable {
+public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     private List<ListItem> listItems;
     private Context context;
@@ -37,15 +38,17 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> im
        return new ViewHolder(v);
     }
 
+
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         ListItem listItem = listItems.get(position);
 
         holder.mealB.setText(listItem.getMealB());
         holder.mealL.setText(listItem.getMealL());
         holder.mealD.setText(listItem.getMealD());
         holder.weekdayImage.setImageResource(listItem.getResInt());
-
 
         String color = getSavedColors("ColorSpace3", context);
         if(!color.equals("error")){
@@ -61,13 +64,15 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> im
         if(!color.equals("error")){
             changeHeaderColors(holder, Integer.parseInt(color));
         }
-
     }
+
 
     @Override
     public int getItemCount() {
         return listItems.size();
     }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         ExpandableTextView mealB;
@@ -81,13 +86,16 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> im
             mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
             mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
             weekdayImage = (ImageView) itemView.findViewById(R.id.dayImage);
+
         }
+
     }
 
     public static String getSavedColors(String key, Context context){
         SharedPreferences sP = context.getSharedPreferences("Colors", MODE_PRIVATE);
         return sP.getString(key, "error");
     }
+
     private void changeExpandTextColors(ViewHolder v, int color){
         ExpandableTextView expandableTextView = v.mealB;
         ExpandableTextView expandableTextView2 = v.mealL;

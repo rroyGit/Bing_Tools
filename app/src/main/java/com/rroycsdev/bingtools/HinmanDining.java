@@ -1,7 +1,6 @@
 package com.rroycsdev.bingtools;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,16 +10,10 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,27 +51,31 @@ public class HinmanDining extends Fragment{
         hinman_hall = new BingDiningMenu(hinmanUrl, title,context, listItems);
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
-        hinman_hall.setToolbar(toolbarTitle);
         hinman_hall.makeRequest();
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
 
-            @Override
-            public void run() {
-                if(hinman_hall.getWeekDate().compareTo("noDate") == 0){
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            setToolbarDate();
-                        }
-                    },2000);
-                }else {
-                    setToolbarDate();
+        if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
+            setToolbarDate();
+        }else{
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                setToolbarDate();
+                            }
+                        },2000);
+                    }else {
+                        setToolbarDate();
+                    }
                 }
-            }
 
-        },1900);
+            },1900);
+        }
 
 
         //set empty adapter due to waiting for data
@@ -151,7 +148,7 @@ public class HinmanDining extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
     public void setToolbarDate(){
-        if(toolbarTitle!= null) toolbarTitle.setText(hinman_hall.getWeekDate());
+        if(toolbarTitle!= null) toolbarTitle.setText(hinman_hall.getBingWeekDate());
     }
 
 }

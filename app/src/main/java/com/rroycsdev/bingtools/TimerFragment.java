@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -99,7 +100,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
             addFab.startAnimation(animBackward);
             startFab.startAnimation(animOpen);
             stopFab.startAnimation(animOpen);
-            if(scheduledExecutorService == null) startFab.setClickable(true);
+            if(startFab.getColorFilter() == null) startFab.setClickable(true);
             stopFab.setClickable(true);
             isOpen = true;
 
@@ -187,11 +188,13 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                 resultTextView.setText("");
 
                 if(scheduledExecutorService != null && !startFab.isClickable()){
-                    scheduledExecutorService.shutdownNow();
+
                     startFab.clearColorFilter();
                     startFab.setClickable(true);
-                    scheduledExecutorService = null;
                     Toast.makeText(getContext(), "Timer has been canceled", Toast.LENGTH_SHORT).show();
+                    scheduledExecutorService.shutdownNow();
+                    scheduledExecutorService = null;
+
                 }
                 break;
             case R.id.zero:
@@ -287,8 +290,8 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
         startFab.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         startFab.setClickable(false);
 
-        final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.schedule(new Runnable() {
+        final ScheduledExecutorService[][] scheduledExecutorService = {{Executors.newSingleThreadScheduledExecutor()}};
+        scheduledExecutorService[0][0].schedule(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent();
@@ -327,7 +330,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
 
             }
         }, minutes, TimeUnit.MINUTES);
-        return scheduledExecutorService;
+        return scheduledExecutorService[0][0];
     }
 
 

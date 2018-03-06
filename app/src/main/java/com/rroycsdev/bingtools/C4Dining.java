@@ -3,6 +3,7 @@ package com.rroycsdev.bingtools;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
@@ -10,9 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
@@ -54,10 +52,30 @@ public class C4Dining extends Fragment {
         c4_hall = new BingDiningMenu(c4Url, title, context, listItems);
         c4_hall.setRecyclerView(recyclerView);
         c4_hall.setAdapter(listItems);
-        c4_hall.setToolbar(toolbarTitle);
         c4_hall.makeRequest();
 
+        if(c4_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
+            setToolbarDate();
+        }else{
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
 
+                @Override
+                public void run() {
+                    if(c4_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                setToolbarDate();
+                            }
+                        },2000);
+                    }else {
+                        setToolbarDate();
+                    }
+                }
+
+            },1900);
+        }
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context);
@@ -77,50 +95,26 @@ public class C4Dining extends Fragment {
         c4_hall.setRecycleAdapter();
     }
     //--------------------------------------------------------------------------------------------//
-    private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        /*
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-        */
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        //mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
     public void setToolbarDate(){
-        if(toolbarTitle != null) toolbarTitle.setText(c4_hall.getWeekDate());
+        if(toolbarTitle != null) toolbarTitle.setText(c4_hall.getBingWeekDate());
     }
 }

@@ -3,6 +3,7 @@ package com.rroycsdev.bingtools;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,8 +46,30 @@ public class AppalachianDining extends Fragment {
         appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems);
         appalachian_hall.setRecyclerView(recyclerView);
         appalachian_hall.setAdapter(listItems);
-        appalachian_hall.setToolbar(toolbarTitle);
         appalachian_hall.makeRequest();
+
+        if(appalachian_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
+            setToolbarDate();
+        }else{
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if(appalachian_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                setToolbarDate();
+                            }
+                        },2000);
+                    }else {
+                        setToolbarDate();
+                    }
+                }
+
+            },1900);
+        }
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context);
@@ -65,51 +88,27 @@ public class AppalachianDining extends Fragment {
         super.onResume();
         appalachian_hall.setRecycleAdapter();
     }
-    //--------------------------------------------------------------------------------------------//
-    private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        /*
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-        */
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
     public void setToolbarDate(){
-        if(toolbarTitle != null) toolbarTitle.setText(appalachian_hall.getWeekDate());
+        if(toolbarTitle != null) toolbarTitle.setText(appalachian_hall.getBingWeekDate());
     }
 }

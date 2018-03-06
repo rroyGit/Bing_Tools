@@ -49,7 +49,7 @@ public class Settings extends AppCompatActivity{
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.darkGray2));
 
 
-        toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
+        toolBar = (Toolbar) findViewById(R.id.setting_toolbar);
         setSupportActionBar(toolBar);
         toolBar.setNavigationIcon(R.mipmap.ic_arrow_back_white_24dp);
         toolBar.setNavigationOnClickListener(new View.OnClickListener() {
