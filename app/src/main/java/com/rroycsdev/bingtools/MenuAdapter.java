@@ -6,12 +6,16 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 
@@ -26,29 +30,88 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     private List<ListItem> listItems;
     private Context context;
+    private SparseBooleanArray collapseBreakfast;
+    private SparseBooleanArray collapseLunch;
+    private SparseBooleanArray collapseDinner;
 
-    public MenuAdapter(List<ListItem> listItems, Context context) {
+    MenuAdapter(List<ListItem> listItems, Context context) {
         this.listItems = listItems;
         this.context = context;
+        this.collapseBreakfast = new SparseBooleanArray();
+        this.collapseLunch = new SparseBooleanArray();
+        this.collapseDinner = new SparseBooleanArray();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
        View v = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
-       return new ViewHolder(v);
+       return new ViewHolder(v, this);
     }
 
+    class ViewHolder extends RecyclerView.ViewHolder{
+        ExpandableTextView mealB;
+        ExpandableTextView mealL;
+        ExpandableTextView mealD;
+        ImageView weekdayImage;
 
+
+        ViewHolder(View itemView, final MenuAdapter adapter) {
+            super(itemView);
+            mealB = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view);
+            mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
+            mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
+            weekdayImage = (ImageView) itemView.findViewById(R.id.dayImage);
+
+
+            mealB.setOnExpandStateChangeListener(new ExpandableTextView.OnExpandStateChangeListener() {
+                @Override
+                public void onExpandStateChanged(TextView textView, boolean isExpanded) {
+                    final int currentPosition = getAdapterPosition();
+                    if(isExpanded){
+                        adapter.collapseBreakfast.put(currentPosition, false);
+                    }else{
+                        adapter.collapseBreakfast.put(currentPosition, true);
+                    }
+                }
+            });
+
+            mealL.setOnExpandStateChangeListener(new ExpandableTextView.OnExpandStateChangeListener() {
+                @Override
+                public void onExpandStateChanged(TextView textView, boolean isExpanded) {
+                    final int currentPosition = getAdapterPosition();
+                    if(isExpanded){
+                        adapter.collapseLunch.put(currentPosition, false);
+                    }else{
+                        adapter.collapseLunch.put(currentPosition, true);
+                    }
+                }
+            });
+
+            mealD.setOnExpandStateChangeListener(new ExpandableTextView.OnExpandStateChangeListener() {
+                @Override
+                public void onExpandStateChanged(TextView textView, boolean isExpanded) {
+                    final int currentPosition = getAdapterPosition();
+                    if(isExpanded){
+                        adapter.collapseDinner.put(currentPosition, false);
+                    }else{
+                        adapter.collapseDinner.put(currentPosition, true);
+                    }
+                }
+            });
+        }
+
+
+    }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         ListItem listItem = listItems.get(position);
 
-        holder.mealB.setText(listItem.getMealB());
-        holder.mealL.setText(listItem.getMealL());
-        holder.mealD.setText(listItem.getMealD());
         holder.weekdayImage.setImageResource(listItem.getResInt());
+        holder.mealB.setText(listItem.getMealB(), collapseBreakfast, position);
+        holder.mealL.setText(listItem.getMealL(), collapseLunch, position);
+        holder.mealD.setText(listItem.getMealD(), collapseDinner, position);
 
         String color = getSavedColors("ColorSpace3", context);
         if(!color.equals("error")){
@@ -64,6 +127,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         if(!color.equals("error")){
             changeHeaderColors(holder, Integer.parseInt(color));
         }
+
     }
 
 
@@ -72,24 +136,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         return listItems.size();
     }
 
-
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        ExpandableTextView mealB;
-        ExpandableTextView mealL;
-        ExpandableTextView mealD;
-        ImageView weekdayImage;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            mealB = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view);
-            mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
-            mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
-            weekdayImage = (ImageView) itemView.findViewById(R.id.dayImage);
-
-        }
-
-    }
 
     public static String getSavedColors(String key, Context context){
         SharedPreferences sP = context.getSharedPreferences("Colors", MODE_PRIVATE);
