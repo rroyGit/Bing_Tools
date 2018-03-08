@@ -15,4 +15,5 @@
     <color name="lightBluish">#507f78</color>
     <color name="dark">#262627</color>
     <color name="lightPinkish">#e80338</color>
+    <color name="default_card">#333333</color>
 </resources>

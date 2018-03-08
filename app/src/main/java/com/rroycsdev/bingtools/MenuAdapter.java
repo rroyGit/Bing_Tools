@@ -143,10 +143,12 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         ListItem listItem = listItems.get(position);
 
         holder.weekdayImage.setImageResource(listItem.getResInt());
+        holder.weekdayImage.setBackgroundColor(333333);
+        holder.weekdayImage.setColorFilter(Color.WHITE);
+
         holder.mealB.setText(listItem.getMealB(), collapseBreakfast, position);
         holder.mealL.setText(listItem.getMealL(), collapseLunch, position);
         holder.mealD.setText(listItem.getMealD(), collapseDinner, position);
@@ -157,6 +159,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             changeExpandTextColors(holder, Integer.parseInt(color));
             return;
         }
+
         color = getSavedColors("ColorSpace1", context);
         if(!color.equals("error")){
             changeExpandTextColors(holder, Integer.parseInt(color));

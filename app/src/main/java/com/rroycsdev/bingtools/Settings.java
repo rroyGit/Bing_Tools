@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -132,11 +133,11 @@ public class Settings extends AppCompatActivity{
             if(getReset()) {
                 Toast.makeText(context, "Colors Reset", Toast.LENGTH_SHORT).show();
                 SharedPreferences colors = getSharedPreferences("Colors", MODE_PRIVATE);
-                colors.edit().clear().apply();
-                recyclerView.setAdapter(settingsAdapter);
+                colors.edit().putString("ColorSpace3", String.valueOf(333333)).apply();
                 item.setChecked(true);
                 settingsAdapter.saveSwitchStatus(false);
                 settingsAdapter.saveForReset(false);
+                recyclerView.getAdapter().notifyDataSetChanged();
             }
         }
         return super.onOptionsItemSelected(item);

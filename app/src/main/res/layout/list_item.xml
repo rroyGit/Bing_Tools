@@ -41,11 +41,11 @@
                         android:text="Breakfast"
                         android:gravity="center_horizontal"
                         android:textColor="@color/white"
-                        android:background="@color/lightBluish"
+                        android:background="@color/default_card"
                         android:padding="6dp"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1" />
                     <com.ms.square.android.expandabletextview.ExpandableTextView
-                        android:background="@color/lightBluish"
+                        android:background="@color/default_card"
                         xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/expand_text_view"
                         android:layout_width="match_parent"
@@ -81,11 +81,11 @@
                         android:text="Lunch"
                         android:gravity="center_horizontal"
                         android:textColor="@color/white"
-                        android:background="@color/lightBluish"
+                        android:background="@color/default_card"
                         android:padding="6dp"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1" />
                     <com.ms.square.android.expandabletextview.ExpandableTextView
-                        android:background="@color/lightBluish"
+                        android:background="@color/default_card"
                         xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/expand_text_view2"
                         android:layout_width="match_parent"
@@ -121,11 +121,11 @@
                         android:text="Dinner"
                         android:gravity="center_horizontal"
                         android:textColor="@color/white"
-                        android:background="@color/lightBluish"
+                        android:background="@color/default_card"
                         android:padding="6dp"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1" />
                     <com.ms.square.android.expandabletextview.ExpandableTextView
-                        android:background="@color/lightBluish"
+                        android:background="@color/default_card"
                         xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/expand_text_view3"
                         android:layout_width="match_parent"

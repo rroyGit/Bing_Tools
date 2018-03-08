@@ -259,15 +259,13 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
                                 saveSwitchStatus(false);
                                 Toast.makeText(context, "Colors Reverted", Toast.LENGTH_SHORT).show();
-                                removeSavedColors("ColorSpace3");
+                                saveColors("ColorSpace3", 333333);
                                 settingsObject.recyclerView.setAdapter(settingsObject.settingsAdapter);
                             }
                         }
                     });
-
                     break;
             }
-
             adapter = myAdapter;
             itemView.setOnClickListener(this);
         }
