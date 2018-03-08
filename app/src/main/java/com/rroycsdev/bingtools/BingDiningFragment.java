@@ -59,23 +59,41 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
                         pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
-                        Toast.makeText(getContext(), "Missing ref to BingDining class, got new Hinman ref", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Getting new Hinman ref", Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 case 1:
                     C4Dining c4Dining = pagerAdapter.getC4Refs();
                     if(c4Dining != null) c4Dining.c4_hall.refreshData();
-                    else Toast.makeText(getContext(), "Missing ref to BingDining class", Toast.LENGTH_SHORT).show();
+                    else {
+                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+                        viewPager.setAdapter(pagerAdapter);
+                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
+                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
+                        Toast.makeText(getContext(), "Getting new C4 ref", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 case 2:
                     AppalachianDining appalachianDining = pagerAdapter.getAppRefs();
                     if(appalachianDining != null) appalachianDining.appalachian_hall.refreshData();
-                    else Toast.makeText(getContext(), "Missing ref to BingDining class", Toast.LENGTH_SHORT).show();
+                    else {
+                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+                        viewPager.setAdapter(pagerAdapter);
+                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
+                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
+                        Toast.makeText(getContext(), "Getting new Appalachian ref", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 case 3:
                     CIWDining ciwDining = pagerAdapter.getCIWRefs();
                     if(ciwDining != null) ciwDining.ciw_hall.refreshData();
-                    else Toast.makeText(getContext(), "Missing ref to BingDining class", Toast.LENGTH_SHORT).show();
+                    else {
+                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+                        viewPager.setAdapter(pagerAdapter);
+                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
+                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
+                        Toast.makeText(getContext(), "Getting new CIW ref", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                     default: return false;
             }

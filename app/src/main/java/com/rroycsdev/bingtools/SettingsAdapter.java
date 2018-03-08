@@ -71,6 +71,10 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         return 1;
     }
 
+    public Switch getColorSwitch(){
+        return colorSwitch;
+    }
+
     @Override
     public void onBindHeaderViewHolder(final MainVH holder, final int section, final boolean expanded) {
 
@@ -258,7 +262,10 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                 }else saveForReset(false);
 
                                 saveSwitchStatus(false);
-                                Toast.makeText(context, "Colors Reverted", Toast.LENGTH_SHORT).show();
+                                //Don't display toast if toast for reset colors is active
+                                if(settingsObject.menu != null && !settingsObject.menu.getItem(0).isChecked()) {
+                                    Toast.makeText(context, "Colors Reverted", Toast.LENGTH_SHORT).show();
+                                }
                                 saveColors("ColorSpace3", 333333);
                                 settingsObject.recyclerView.setAdapter(settingsObject.settingsAdapter);
                             }
@@ -363,9 +370,9 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             public void onClick(View v) {
                 saveColors(saveLocation, color);
                 saveForReset(true);
-                removeSavedColors("ColorSpace3");
                 if(colorSwitch != null) colorSwitch.setChecked(false);
                 saveSwitchStatus(false);
+                removeSavedColors("ColorSpace3");
 
             }
         });
@@ -396,6 +403,11 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                     default:
                         Toast.makeText(context, "Radio Button State Preservation Error", Toast.LENGTH_LONG).show();
                 }
+            }else{
+                holder.radioButton.setChecked(false);
+                holder.radioButton2.setChecked(false);
+                holder.radioButton3.setChecked(false);
+                holder.radioButton4.setChecked(false);
             }
         }
     }
@@ -428,6 +440,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         dialog.show();
     }
 
+    /*
     private void removeUSB() {
         final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";
         final UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
@@ -487,7 +500,6 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         }, 2000);
     }
 
-
-
+*/
 
 }

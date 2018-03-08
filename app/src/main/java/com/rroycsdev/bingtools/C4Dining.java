@@ -54,28 +54,6 @@ public class C4Dining extends Fragment {
         c4_hall.setAdapter(listItems);
         c4_hall.makeRequest();
 
-        if(c4_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
-            setToolbarDate();
-        }else{
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(c4_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                setToolbarDate();
-                            }
-                        },2000);
-                    }else {
-                        setToolbarDate();
-                    }
-                }
-
-            },1900);
-        }
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -115,6 +93,29 @@ public class C4Dining extends Fragment {
     }
 
     public void setToolbarDate(){
-        if(toolbarTitle != null) toolbarTitle.setText(c4_hall.getBingWeekDate());
+        if(toolbarTitle != null) {
+            if(c4_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
+                toolbarTitle.setText(c4_hall.getBingWeekDate());
+            }else{
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if(c4_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarTitle.setText(c4_hall.getBingWeekDate());
+                                }
+                            },2000);
+                        }else {
+                            toolbarTitle.setText(c4_hall.getBingWeekDate());
+                        }
+                    }
+
+                },1900);
+            }
+        }
     }
 }

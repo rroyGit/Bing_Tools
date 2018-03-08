@@ -53,30 +53,9 @@ public class HinmanDining extends Fragment{
         hinman_hall.setAdapter(listItems);
         hinman_hall.makeRequest();
 
-
-        if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
+        if(toolbarTitle.getText().length() ==0){
             setToolbarDate();
-        }else{
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                setToolbarDate();
-                            }
-                        },2000);
-                    }else {
-                        setToolbarDate();
-                    }
-                }
-
-            },1900);
         }
-
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -148,7 +127,30 @@ public class HinmanDining extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
     public void setToolbarDate(){
-        if(toolbarTitle!= null) toolbarTitle.setText(hinman_hall.getBingWeekDate());
+        if(toolbarTitle!= null) {
+            if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
+                toolbarTitle.setText(hinman_hall.getBingWeekDate());
+            }else{
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarTitle.setText(hinman_hall.getBingWeekDate());
+                                }
+                            },2000);
+                        }else {
+                            toolbarTitle.setText(hinman_hall.getBingWeekDate());
+                        }
+                    }
+
+                },1900);
+            }
+        }
     }
 
 }

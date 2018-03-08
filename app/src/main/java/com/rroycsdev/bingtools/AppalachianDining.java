@@ -48,28 +48,6 @@ public class AppalachianDining extends Fragment {
         appalachian_hall.setAdapter(listItems);
         appalachian_hall.makeRequest();
 
-        if(appalachian_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
-            setToolbarDate();
-        }else{
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(appalachian_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                setToolbarDate();
-                            }
-                        },2000);
-                    }else {
-                        setToolbarDate();
-                    }
-                }
-
-            },1900);
-        }
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -109,6 +87,29 @@ public class AppalachianDining extends Fragment {
     }
 
     public void setToolbarDate(){
-        if(toolbarTitle != null) toolbarTitle.setText(appalachian_hall.getBingWeekDate());
+        if(toolbarTitle != null) {
+            if(appalachian_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
+                toolbarTitle.setText(appalachian_hall.getBingWeekDate());
+            }else{
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if(appalachian_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toolbarTitle.setText(appalachian_hall.getBingWeekDate());
+                                }
+                            },2000);
+                        }else {
+                            toolbarTitle.setText(appalachian_hall.getBingWeekDate());
+                        }
+                    }
+
+                },1900);
+            }
+        }
     }
 }

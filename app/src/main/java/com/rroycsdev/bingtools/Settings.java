@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 
+import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -34,9 +35,10 @@ public class Settings extends AppCompatActivity{
     private List<String> titles;
     private List<String> colorsHead;
     private List<String> colorsBody;
-
+    public Menu menu;
     RecyclerView recyclerView;
     SettingsAdapter settingsAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +107,7 @@ public class Settings extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.settings_menu, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -131,13 +134,17 @@ public class Settings extends AppCompatActivity{
         }
         if(id == R.id.resetColors){
             if(getReset()) {
+
                 Toast.makeText(context, "Colors Reset", Toast.LENGTH_SHORT).show();
                 SharedPreferences colors = getSharedPreferences("Colors", MODE_PRIVATE);
                 colors.edit().putString("ColorSpace3", String.valueOf(333333)).apply();
+                colors.edit().remove("ColorSpace0").apply();
+                colors.edit().remove("ColorSpace1").apply();
                 item.setChecked(true);
+                if(settingsAdapter.getColorSwitch() != null) settingsAdapter.getColorSwitch().setChecked(false);
                 settingsAdapter.saveSwitchStatus(false);
                 settingsAdapter.saveForReset(false);
-                recyclerView.getAdapter().notifyDataSetChanged();
+                settingsAdapter.notifyDataSetChanged();
             }
         }
         return super.onOptionsItemSelected(item);
