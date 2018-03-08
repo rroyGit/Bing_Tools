@@ -142,13 +142,13 @@ public class HinmanDining extends Fragment{
                                 public void run() {
                                     toolbarTitle.setText(hinman_hall.getBingWeekDate());
                                 }
-                            },2000);
+                            },2500);
                         }else {
                             toolbarTitle.setText(hinman_hall.getBingWeekDate());
                         }
                     }
 
-                },1900);
+                },2000);
             }
         }
     }

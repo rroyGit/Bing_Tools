@@ -50,8 +50,10 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
     private final static int RADIO_LAYOUT_2 = 1;
     private final static int SAME_COLORS_LAYOUT = 2;
     private Settings settingsObject;
-    Button button;
+
     private Switch colorSwitch;
+    boolean radioClicked = false;
+
 
 
     public SettingsAdapter(HashMap<String, List<String>> colorsMap, List<String> titles, Context context, Settings settings) {
@@ -245,9 +247,10 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                     public void onOk(AmbilWarnaDialog dialog, int color) {
                                         removeSavedColors("ColorSpace0");
                                         removeSavedColors("ColorSpace1");
-                                        settingsObject.recyclerView.setAdapter(settingsObject.settingsAdapter);
+                                        adapter.notifyDataSetChanged();
                                         saveColors("ColorSpace3", color);
                                         saveColors("ColorSpace2", color);
+
                                         saveForReset(true);
                                         saveSwitchStatus(true);
                                     }
@@ -260,7 +263,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                 }, 500);
 
                             }else {
-                                if(!cancel) {
+                                if(!cancel && !radioClicked) {
                                     if (getSavedColor("ColorSpace3").compareTo("error") == 0) {
                                         saveForReset(true);
                                     } else saveForReset(false);
@@ -373,11 +376,22 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveColors(saveLocation, color);
+                if(saveLocation.compareTo("ColorSpace0") ==0){
+                    saveColors(saveLocation, color);
+                    if(getSavedColor("ColorSpace1").compareTo("error") == 0 && getSavedColor("ColorSpace2").compareTo("error") !=0)
+                        saveColors("ColorSpace1", Integer.parseInt(getSavedColor("ColorSpace2")));
+                }else{
+                    saveColors(saveLocation, color);
+                    if(getSavedColor("ColorSpace0").compareTo("error") == 0 && getSavedColor("ColorSpace2").compareTo("error") !=0)
+                        saveColors("ColorSpace0", Integer.parseInt(getSavedColor("ColorSpace2")));
+                }
+
                 saveForReset(true);
+                radioClicked = true;
                 if(colorSwitch != null) colorSwitch.setChecked(false);
                 if(settingsObject.menu != null) settingsObject.menu.getItem(0).setChecked(false);
                 saveSwitchStatus(false);
+
                 removeSavedColors("ColorSpace3");
 
             }
@@ -393,6 +407,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
             if (ret.compareTo("error") != 0) {
                 int colorInt = Integer.parseInt(ret);
+
                 switch (section) {
                     case 0:
                         if (colorInt == Color.RED) holder.radioButton.setChecked(true);
