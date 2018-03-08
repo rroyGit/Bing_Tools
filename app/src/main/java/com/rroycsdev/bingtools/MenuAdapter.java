@@ -175,15 +175,18 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             return;
         }
 
-        color = getSavedColors("ColorSpace1", context);
-        if(!color.equals("error")){
-            changeExpandTextColors(holder, Integer.parseInt(color));
-        }
         color = getSavedColors("ColorSpace0", context);
         if(!color.equals("error")){
             changeHeaderColors(holder, Integer.parseInt(color));
         }
-
+        color = getSavedColors("ColorSpace1", context);
+        if(!color.equals("error")){
+            changeExpandTextColors(holder, Integer.parseInt(color));
+        }
+        color = getSavedColors("ColorSpace2", context);
+        if(!color.equals("error")){
+            holder.linearLayout.setBackgroundColor(Integer.parseInt(color));
+        }
     }
 
 

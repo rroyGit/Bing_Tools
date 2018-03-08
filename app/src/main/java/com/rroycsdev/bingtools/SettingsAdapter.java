@@ -198,11 +198,13 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         RippleView rippleView;
         Toast toast;
         int viewType;
+        boolean cancel = false;
 
 
         private MainVH(View itemView, SettingsAdapter myAdapter, int viewType) {
             super(itemView);
             this.viewType = viewType;
+
 
             switch (viewType){
                 case VIEW_TYPE_HEADER:
@@ -235,7 +237,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
                                     @Override
                                     public void onCancel(AmbilWarnaDialog dialog) {
-                                        saveColors("ColorSpace3", 0);
+                                        cancel = true;
                                         colorSwitch.setChecked(false);
                                     }
 
@@ -245,6 +247,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                         removeSavedColors("ColorSpace1");
                                         settingsObject.recyclerView.setAdapter(settingsObject.settingsAdapter);
                                         saveColors("ColorSpace3", color);
+                                        saveColors("ColorSpace2", color);
                                         saveForReset(true);
                                         saveSwitchStatus(true);
                                     }
@@ -257,17 +260,19 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                 }, 500);
 
                             }else {
-                                if(getSavedColor("ColorSpace3").compareTo("error") == 0){
-                                    saveForReset(true);
-                                }else saveForReset(false);
+                                if(!cancel) {
+                                    if (getSavedColor("ColorSpace3").compareTo("error") == 0) {
+                                        saveForReset(true);
+                                    } else saveForReset(false);
 
-                                saveSwitchStatus(false);
-                                //Don't display toast if toast for reset colors is active
-                                if(settingsObject.menu != null && !settingsObject.menu.getItem(0).isChecked()) {
-                                    Toast.makeText(context, "Colors Reverted", Toast.LENGTH_SHORT).show();
+                                    saveSwitchStatus(false);
+                                    //Don't display toast if toast for reset colors is active
+                                    if (settingsObject.menu != null && !settingsObject.menu.getItem(0).isChecked()) {
+                                        Toast.makeText(context, "Colors Reverted", Toast.LENGTH_SHORT).show();
+                                    }
+                                    saveColors("ColorSpace3", 333333);
+                                    settingsObject.recyclerView.setAdapter(settingsObject.settingsAdapter);
                                 }
-                                saveColors("ColorSpace3", 333333);
-                                settingsObject.recyclerView.setAdapter(settingsObject.settingsAdapter);
                             }
                         }
                     });
@@ -371,6 +376,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 saveColors(saveLocation, color);
                 saveForReset(true);
                 if(colorSwitch != null) colorSwitch.setChecked(false);
+                if(settingsObject.menu != null) settingsObject.menu.getItem(0).setChecked(false);
                 saveSwitchStatus(false);
                 removeSavedColors("ColorSpace3");
 
