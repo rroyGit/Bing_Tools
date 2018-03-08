@@ -79,7 +79,7 @@ public class HinmanDining extends Fragment{
 
 
         //set empty adapter due to waiting for data
-        adapter = new MenuAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
     }
 
@@ -100,7 +100,7 @@ public class HinmanDining extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        hinman_hall.setRecycleAdapter();
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
     //--------------------------------------------------------------------------------------------//
     private OnFragmentInteractionListener mListener;

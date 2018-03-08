@@ -86,7 +86,7 @@ public class BingDiningMenu {
                             @Override
                             public void run() {
                                 loadSortedData();
-                                adapter = new MenuAdapter(listItems, context);
+                                adapter = new MenuAdapter(listItems, context, recyclerView);
                                 recyclerView.setAdapter(adapter);
                                 diningDatabase.close();
                             }
@@ -173,7 +173,7 @@ public class BingDiningMenu {
             diningDataScrapper.execute(false);
             setDayMenuCheck(Integer.parseInt(day.toString()));
         }
-        adapter = new MenuAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
         diningDatabase.close();
     }
@@ -184,7 +184,7 @@ public class BingDiningMenu {
             //Log.e("SetData ", "Must populate listItems before calling setData");
             return false;
         }
-        adapter = new MenuAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
         return true;
     }
@@ -354,7 +354,7 @@ public class BingDiningMenu {
             //bingDiningMenu.toolbarTitle.setText(weekStrings[0]);
             bingDiningMenu.saveBingWeekData(weekStrings[0]);
             bingDiningMenu.loadSortedData();
-            bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context);
+            bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
             bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
             bingDiningMenu.diningDatabase.close();
         }
@@ -386,7 +386,7 @@ public class BingDiningMenu {
     }
 
     public void setAdapter(List<ListItem> listItems){
-       adapter = new MenuAdapter(listItems,context);
+       adapter = new MenuAdapter(listItems,context, recyclerView);
    }
 
     public void makeRequest(){

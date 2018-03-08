@@ -72,7 +72,7 @@ public class AppalachianDining extends Fragment {
         }
 
         //set empty adapter due to waiting for data
-        adapter = new MenuAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
     }
 
@@ -86,7 +86,7 @@ public class AppalachianDining extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        appalachian_hall.setRecycleAdapter();
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     public void onButtonPressed(Uri uri) {

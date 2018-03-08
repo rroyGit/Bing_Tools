@@ -73,7 +73,7 @@ public class CIWDining extends Fragment {
         }
 
         //set empty adapter due to waiting for data
-        adapter = new MenuAdapter(listItems, context);
+        adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
     }
 
@@ -88,7 +88,7 @@ public class CIWDining extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ciw_hall.setRecycleAdapter();
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
 

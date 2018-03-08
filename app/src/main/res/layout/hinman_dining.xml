@@ -18,6 +18,8 @@
         tools:context="com.rroycsdev.bingtools.HinmanDining">
 
         <android.support.v7.widget.RecyclerView
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:id="@+id/recycleViewHinman"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

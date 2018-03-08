@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.icu.text.RelativeDateTimeFormatter;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,18 +37,23 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private SparseBooleanArray collapseBreakfast;
     private SparseBooleanArray collapseLunch;
     private SparseBooleanArray collapseDinner;
+    private RecyclerView recyclerView;
 
-    MenuAdapter(List<ListItem> listItems, Context context) {
+    ScrollView scrollView;
+
+    MenuAdapter(List<ListItem> listItems, Context context, RecyclerView recyclerView) {
         this.listItems = listItems;
         this.context = context;
         this.collapseBreakfast = new SparseBooleanArray();
         this.collapseLunch = new SparseBooleanArray();
         this.collapseDinner = new SparseBooleanArray();
+        this.recyclerView = recyclerView;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
        View v = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
+       scrollView = v.findViewById(R.id.list_item_scrollview);
        return new ViewHolder(v, this);
     }
 
@@ -55,7 +64,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         ImageView weekdayImage;
 
 
-        ViewHolder(View itemView, final MenuAdapter adapter) {
+        ViewHolder(final View itemView, final MenuAdapter adapter) {
             super(itemView);
             mealB = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view);
             mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
@@ -69,6 +78,15 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     final int currentPosition = getAdapterPosition();
                     if(isExpanded){
                         adapter.collapseBreakfast.put(currentPosition, false);
+                        Rect rect = new Rect();
+                        if(mealB.getGlobalVisibleRect(rect)
+                                && mealB.getHeight() == rect.height()
+                                && mealB.getWidth() == rect.width() ) {
+                            //fully visible
+                        }else{
+                            //not fully visible
+                           recyclerView.smoothScrollToPosition(getAdapterPosition());
+                        }
                     }else{
                         adapter.collapseBreakfast.put(currentPosition, true);
                     }
@@ -81,6 +99,16 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     final int currentPosition = getAdapterPosition();
                     if(isExpanded){
                         adapter.collapseLunch.put(currentPosition, false);
+                        Rect rect = new Rect();
+                        if(mealL.getGlobalVisibleRect(rect)
+                                && mealL.getHeight() == rect.height()
+                                && mealL.getWidth() == rect.width() ) {
+                            //fully visible
+                        }else{
+                            //not fully visible
+                            //recyclerView.smoothScrollBy(0, (int) (mealL.getBottom()-rect.height()-recyclerView.getPivotY()));
+                            recyclerView.smoothScrollToPosition(getAdapterPosition());
+                        }
                     }else{
                         adapter.collapseLunch.put(currentPosition, true);
                     }
@@ -93,6 +121,16 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     final int currentPosition = getAdapterPosition();
                     if(isExpanded){
                         adapter.collapseDinner.put(currentPosition, false);
+                        Rect rect = new Rect();
+                        if(mealD.getGlobalVisibleRect(rect)
+                                && mealD.getHeight() == rect.height()
+                                && mealD.getWidth() == rect.width() ) {
+                            //fully visible
+                        }else{
+                            //not fully visible
+                            //recyclerView.smoothScrollBy(0, (int) (mealD.getBottom()-rect.height()-recyclerView.getPivotY())-200);
+                            recyclerView.smoothScrollToPosition(getAdapterPosition());
+                        }
                     }else{
                         adapter.collapseDinner.put(currentPosition, true);
                     }
