@@ -12,7 +12,7 @@
     <Switch
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:text="Assign same color to menu"
+        android:text="@string/cardMenuColor"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textAlignment="textStart"

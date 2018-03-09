@@ -247,9 +247,10 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                     public void onOk(AmbilWarnaDialog dialog, int color) {
                                         removeSavedColors("ColorSpace0");
                                         removeSavedColors("ColorSpace1");
+                                        //after removing 2 colors above, radio button is switched off
                                         adapter.notifyDataSetChanged();
-                                        saveColors("ColorSpace3", color);
                                         saveColors("ColorSpace2", color);
+                                        saveColors("ColorSpace3", color);
 
                                         saveForReset(true);
                                         saveSwitchStatus(true);
@@ -263,6 +264,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                 }, 500);
 
                             }else {
+                                //revert to default colors if toggled off
                                 if(!cancel && !radioClicked) {
                                     if (getSavedColor("ColorSpace3").compareTo("error") == 0) {
                                         saveForReset(true);
@@ -273,8 +275,12 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                     if (settingsObject.menu != null && !settingsObject.menu.getItem(0).isChecked()) {
                                         Toast.makeText(context, "Colors Reverted", Toast.LENGTH_SHORT).show();
                                     }
-                                    saveColors("ColorSpace3", 333333);
-                                    settingsObject.recyclerView.setAdapter(settingsObject.settingsAdapter);
+                                    removeSavedColors("ColorSpace0");
+                                    removeSavedColors("ColorSpace1");
+                                    removeSavedColors("ColorSpace2");
+                                    removeSavedColors("ColorSpace3");
+
+                                    adapter.notifyDataSetChanged();
                                 }
                             }
                         }
@@ -311,29 +317,6 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             }
         }
     }
-
-    /*
-    public void saveTimerStatus(boolean bool) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("status", bool);
-        editor.apply();
-    }
-    public void saveTimerValue(String string) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("value", string);
-        editor.apply();
-    }
-    public boolean getTimerStatus() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
-        return sharedPreferences.getBoolean("status", false);
-    }
-    public String getTimerValue() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("Timer", MODE_PRIVATE);
-        return sharedPreferences.getString("value", "404");
-    }
-    */
 
     private void saveColors(String col, int color) {
         SharedPreferences sP = context.getSharedPreferences("Colors", MODE_PRIVATE);
@@ -378,10 +361,12 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             public void onClick(View v) {
                 if(saveLocation.compareTo("ColorSpace0") ==0){
                     saveColors(saveLocation, color);
+                    //save color to top menu after assigning same color to menu
                     if(getSavedColor("ColorSpace1").compareTo("error") == 0 && getSavedColor("ColorSpace2").compareTo("error") !=0)
                         saveColors("ColorSpace1", Integer.parseInt(getSavedColor("ColorSpace2")));
                 }else{
                     saveColors(saveLocation, color);
+                    //save color to bottom menu after assigning same color to menu
                     if(getSavedColor("ColorSpace0").compareTo("error") == 0 && getSavedColor("ColorSpace2").compareTo("error") !=0)
                         saveColors("ColorSpace0", Integer.parseInt(getSavedColor("ColorSpace2")));
                 }
@@ -445,14 +430,21 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 if(viewType == RADIO_LAYOUT) {
                     saveColors("ColorSpace0", color);
+                    //save color to top menu after assigning same color to menu
+                    if(getSavedColor("ColorSpace1").compareTo("error") == 0 && getSavedColor("ColorSpace2").compareTo("error") !=0)
+                        saveColors("ColorSpace1", Integer.parseInt(getSavedColor("ColorSpace2")));
                 }else {
                     saveColors("ColorSpace1", color);
+                    //save color to bottom menu after assigning same color to menu
+                    if(getSavedColor("ColorSpace0").compareTo("error") == 0 && getSavedColor("ColorSpace2").compareTo("error") !=0)
+                        saveColors("ColorSpace0", Integer.parseInt(getSavedColor("ColorSpace2")));
                 }
                 radioButton.setChecked(false);
                 radioButton2.setChecked(false);
                 radioButton3.setChecked(false);
                 radioButton4.setChecked(false);
                 removeSavedColors("ColorSpace3");
+                radioClicked = true;
                 if(colorSwitch != null) colorSwitch.setChecked(false);
                 saveSwitchStatus(false);
                 saveForReset(true);

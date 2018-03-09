@@ -156,37 +156,77 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ListItem listItem = listItems.get(position);
-
+        String color;
         holder.weekdayImage.setImageResource(listItem.getResInt());
-        holder.weekdayImage.setBackgroundColor(333333);
-        holder.weekdayImage.setColorFilter(Color.WHITE);
-
         holder.mealB.setText(listItem.getMealB(), collapseBreakfast, position);
         holder.mealL.setText(listItem.getMealL(), collapseLunch, position);
         holder.mealD.setText(listItem.getMealD(), collapseDinner, position);
 
-        String color = getSavedColors("ColorSpace3", context);
-        if(!color.equals("error")){
-            holder.weekdayImage.setBackgroundColor(Integer.parseInt(color));
-            if(color.compareTo("333333") != 0) holder.linearLayout.setBackgroundColor(Integer.parseInt(color));
-            else holder.linearLayout.setBackgroundColor(Color.DKGRAY);
-            changeHeaderColors(holder, Integer.parseInt(color));
-            changeExpandTextColors(holder, Integer.parseInt(color));
-            return;
-        }
+        //default colors
+        holder.linearLayout.setBackgroundColor(Color.DKGRAY);
+        holder.weekdayImage.setBackgroundColor(Color.DKGRAY);
+        holder.weekdayImage.setColorFilter(Color.WHITE);
+        changeHeaderColors(holder, Color.DKGRAY);
+        changeExpandViewColors(holder, Color.DKGRAY, true);
 
-        color = getSavedColors("ColorSpace0", context);
-        if(!color.equals("error")){
-            changeHeaderColors(holder, Integer.parseInt(color));
-        }
-        color = getSavedColors("ColorSpace1", context);
-        if(!color.equals("error")){
-            changeExpandTextColors(holder, Integer.parseInt(color));
-        }
-        color = getSavedColors("ColorSpace2", context);
+
+        //ColorSpace 0 --> Color from first Radio Group
+        //ColorSpace 1 --> Color from second Radio Group
+        //ColorSpace 2 --> Color from switch button
+        //ColorSpace 3 --> Color copy of switch button
+        //switch saves ColorSpace 2 and 3
+
+
+        color = getSavedColors("ColorSpace3", context);
         if(!color.equals("error")){
             holder.linearLayout.setBackgroundColor(Integer.parseInt(color));
+            holder.weekdayImage.setBackgroundColor(Integer.parseInt(color));
+            if(isColorDark(Integer.parseInt(color))) {
+                holder.weekdayImage.setColorFilter(Color.WHITE);
+            }else holder.weekdayImage.setColorFilter(Color.BLACK);
+            changeHeaderColors(holder, Integer.parseInt(color));
+            changeExpandViewColors(holder, Integer.parseInt(color), true);
         }
+
+
+        if(getSavedColors("ColorSpace0", context).compareTo("error") != 0 &&
+                getSavedColors("ColorSpace1", context).compareTo("error") != 0){
+
+            holder.linearLayout.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
+            holder.weekdayImage.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
+            if(isColorDark(Integer.parseInt(getSavedColors("ColorSpace2", context)))) {
+                holder.weekdayImage.setColorFilter(Color.WHITE);
+            }else holder.weekdayImage.setColorFilter(Color.BLACK);
+
+            changeHeaderColors(holder, Integer.parseInt(getSavedColors("ColorSpace0", context)));
+            changeExpandViewColors(holder, Integer.parseInt(getSavedColors("ColorSpace1", context)), true);
+        }else{
+            if(getSavedColors("ColorSpace2", context).compareTo("error") !=0 ) {
+                holder.linearLayout.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
+                holder.weekdayImage.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
+
+                if (isColorDark(Integer.parseInt(getSavedColors("ColorSpace2", context)))) {
+                    holder.weekdayImage.setColorFilter(Color.WHITE);
+                } else holder.weekdayImage.setColorFilter(Color.BLACK);
+
+                color = getSavedColors("ColorSpace0", context);
+                if (!color.equals("error")) {
+                    changeHeaderColors(holder, Integer.parseInt(color));
+                    if (getSavedColors("ColorSpace2", context).compareTo("error") != 0) {
+                        changeExpandViewColors(holder, Integer.parseInt(getSavedColors("ColorSpace2", context)), true);
+                    }
+                }
+
+                color = getSavedColors("ColorSpace1", context);
+                if (!color.equals("error")) {
+                    changeExpandViewColors(holder, Integer.parseInt(color), true);
+                    if (getSavedColors("ColorSpace2", context).compareTo("error") != 0) {
+                        changeHeaderColors(holder, Integer.parseInt(getSavedColors("ColorSpace2", context)));
+                    }
+                }
+            }
+        }
+
     }
 
 
@@ -201,7 +241,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         return sP.getString(key, "error");
     }
 
-    private void changeExpandTextColors(ViewHolder v, int color){
+    private void changeExpandViewColors(ViewHolder v, int color, boolean changeArrowColor){
         ExpandableTextView expandableTextView = v.mealB;
         ExpandableTextView expandableTextView2 = v.mealL;
         ExpandableTextView expandableTextView3 = v.mealD;
@@ -220,7 +260,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         int[][] states = new int[][] {
                 new int[] { android.R.attr.state_focused},
         };
-
         int[] colors = new int[] {
                 Color.BLACK,
         };
@@ -230,13 +269,21 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             textView.setTextColor(Color.WHITE);
             textView2.setTextColor(Color.WHITE);
             textView3.setTextColor(Color.WHITE);
+            if(changeArrowColor) {
+                imageButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
+                imageButton1.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
+                imageButton2.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
+            }
+
         }else{
             textView.setTextColor(Color.BLACK);
             textView2.setTextColor(Color.BLACK);
             textView3.setTextColor(Color.BLACK);
-            imageButton.setImageTintList(myList);
-            imageButton1.setImageTintList(myList);
-            imageButton2.setImageTintList(myList);
+            if(changeArrowColor) {
+                imageButton.setColorFilter(Color.argb(255, 0, 0, 1)); // Black? Tint
+                imageButton1.setColorFilter(Color.argb(255, 0, 0, 1)); // Black? Tint
+                imageButton2.setColorFilter(Color.argb(255, 0, 0, 1)); // Black? Tint
+            }
         }
     }
 

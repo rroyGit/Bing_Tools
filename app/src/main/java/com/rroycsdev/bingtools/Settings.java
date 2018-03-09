@@ -137,10 +137,11 @@ public class Settings extends AppCompatActivity{
 
                 Toast.makeText(context, "Colors Reset", Toast.LENGTH_SHORT).show();
                 SharedPreferences colors = getSharedPreferences("Colors", MODE_PRIVATE);
-                colors.edit().putString("ColorSpace3", String.valueOf(333333)).apply();
                 colors.edit().remove("ColorSpace0").apply();
                 colors.edit().remove("ColorSpace1").apply();
                 colors.edit().remove("ColorSpace2").apply();
+                colors.edit().remove("ColorSpace3").apply();
+
                 item.setChecked(true);
                 if(settingsAdapter.getColorSwitch() != null) settingsAdapter.getColorSwitch().setChecked(false);
                 settingsAdapter.saveSwitchStatus(false);

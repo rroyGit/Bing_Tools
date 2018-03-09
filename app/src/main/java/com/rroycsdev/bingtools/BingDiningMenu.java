@@ -50,8 +50,8 @@ public class BingDiningMenu {
         this.title = title;
         this.link = link;
         this.listItems = listItems;
-        diningDatabase = new DiningDatabase(context, title);
-        diningDatabase.createTable(title);
+        this.diningDatabase = new DiningDatabase(context, title);
+        this.diningDatabase.createTable(title);
     }
 
     private void startBingDiningRequest(){

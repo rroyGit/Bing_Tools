@@ -48,7 +48,7 @@ public class HinmanDining extends Fragment{
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        hinman_hall = new BingDiningMenu(hinmanUrl, title,context, listItems);
+        hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems);
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
         hinman_hall.makeRequest();
