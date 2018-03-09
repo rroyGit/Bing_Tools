@@ -192,11 +192,13 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         if(getSavedColors("ColorSpace0", context).compareTo("error") != 0 &&
                 getSavedColors("ColorSpace1", context).compareTo("error") != 0){
 
-            holder.linearLayout.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
-            holder.weekdayImage.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
-            if(isColorDark(Integer.parseInt(getSavedColors("ColorSpace2", context)))) {
-                holder.weekdayImage.setColorFilter(Color.WHITE);
-            }else holder.weekdayImage.setColorFilter(Color.BLACK);
+            if(getSavedColors("ColorSpace2", context).compareTo("error") !=0 ) {
+                holder.linearLayout.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
+                holder.weekdayImage.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
+                if (isColorDark(Integer.parseInt(getSavedColors("ColorSpace2", context)))) {
+                    holder.weekdayImage.setColorFilter(Color.WHITE);
+                } else holder.weekdayImage.setColorFilter(Color.BLACK);
+            }
 
             changeHeaderColors(holder, Integer.parseInt(getSavedColors("ColorSpace0", context)));
             changeExpandViewColors(holder, Integer.parseInt(getSavedColors("ColorSpace1", context)), true);
@@ -208,23 +210,24 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                 if (isColorDark(Integer.parseInt(getSavedColors("ColorSpace2", context)))) {
                     holder.weekdayImage.setColorFilter(Color.WHITE);
                 } else holder.weekdayImage.setColorFilter(Color.BLACK);
+            }
 
-                color = getSavedColors("ColorSpace0", context);
-                if (!color.equals("error")) {
-                    changeHeaderColors(holder, Integer.parseInt(color));
-                    if (getSavedColors("ColorSpace2", context).compareTo("error") != 0) {
-                        changeExpandViewColors(holder, Integer.parseInt(getSavedColors("ColorSpace2", context)), true);
-                    }
-                }
-
-                color = getSavedColors("ColorSpace1", context);
-                if (!color.equals("error")) {
-                    changeExpandViewColors(holder, Integer.parseInt(color), true);
-                    if (getSavedColors("ColorSpace2", context).compareTo("error") != 0) {
-                        changeHeaderColors(holder, Integer.parseInt(getSavedColors("ColorSpace2", context)));
-                    }
+            color = getSavedColors("ColorSpace0", context);
+            if (!color.equals("error")) {
+                changeHeaderColors(holder, Integer.parseInt(color));
+                if (getSavedColors("ColorSpace2", context).compareTo("error") != 0) {
+                    changeExpandViewColors(holder, Integer.parseInt(getSavedColors("ColorSpace2", context)), true);
                 }
             }
+
+            color = getSavedColors("ColorSpace1", context);
+            if (!color.equals("error")) {
+                changeExpandViewColors(holder, Integer.parseInt(color), true);
+                if (getSavedColors("ColorSpace2", context).compareTo("error") != 0) {
+                    changeHeaderColors(holder, Integer.parseInt(getSavedColors("ColorSpace2", context)));
+                }
+            }
+
         }
 
     }
