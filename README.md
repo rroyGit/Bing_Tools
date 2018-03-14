@@ -25,7 +25,7 @@ Bing Tools contains the following:
 ### d) Navigation menu displays a new image, retrieved from Microsoft Bing homepage, daily.
   
 ### To be added:
-	a) An about page is in works, crediting the original owners of the icons, web data, etc (DONE)
+	a) An about page crediting the original owners of the icons, web data, etc (DONE)
 	b) Dynamically change the colors of the cards in Bing Dining  (DONE)
 	c) Save the bitmap of the navigation image to device
 
