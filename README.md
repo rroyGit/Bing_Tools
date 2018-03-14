@@ -22,7 +22,7 @@ Bing Tools contains the following:
 	c3: All menu data are stored on the device via a SQLite database so https requests require only once per week; less overhead 		    and faster loading
 	c4: Settings page gives you the ability to change colors of the cards instantly. Choose any of the default colors or pick any 		    from the color picker widget
   
-### d) Navigation menu displays a new image, retrieved from Microsoft Bing homepage, daily.
+### d) Navigation menu displays a new image, retrieved from Microsoft Bing homepage, daily
   
 ### To be added:
 	a) An about page crediting the original owners of the icons, web data, etc (DONE)
