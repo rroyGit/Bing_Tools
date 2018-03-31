@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 import java.util.List;
 
@@ -37,8 +36,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private SparseBooleanArray collapseDinner;
     private RecyclerView recyclerView;
 
-    ScrollView scrollView;
-
     MenuAdapter(List<ListItem> listItems, Context context, RecyclerView recyclerView) {
         this.listItems = listItems;
         this.context = context;
@@ -51,7 +48,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
        View v = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
-       scrollView = v.findViewById(R.id.list_item_scrollview);
        return new ViewHolder(v, this);
     }
 
@@ -70,7 +66,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
             mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
             weekdayImage = (ImageView) itemView.findViewById(R.id.dayImage);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.cardLayout);
-
 
             mealB.setOnExpandStateChangeListener(new ExpandableTextView.OnExpandStateChangeListener() {
                 @Override
