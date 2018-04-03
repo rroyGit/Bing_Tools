@@ -121,10 +121,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToggle.syncState();
         nView.setNavigationItemSelectedListener(this);
 
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        if(fragmentManager.getFragments().size() == 0){
+
+        //fragmentManager.getFragments().size() == 0
+        if(savedInstanceState == null){
             displaySelectedScreen(R.id.Bing_Dining_Nav, nView.getMenu().findItem(R.id.Bing_Dining_Nav), true);
         }else{
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             switch (fragmentName){
                 case "timer":
@@ -314,9 +316,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             default:
         }
 
-        if(fragmentManager.findFragmentByTag(tag) != null) {
-            chooseFragment = fragmentManager.findFragmentByTag(tag);
-
+        chooseFragment = fragmentManager.findFragmentByTag(tag);
+        if(chooseFragment != null) {
             fragmentTransaction.show(chooseFragment);
             fragmentTransaction.addToBackStack(tag).commit();
         }else{
@@ -441,6 +442,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt("Saved", 1);
     }
 
     public Menu getMenu(){

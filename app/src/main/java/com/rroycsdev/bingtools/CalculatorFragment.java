@@ -81,6 +81,11 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         subB.setOnClickListener(this);
         leftCopyB.setOnClickListener(this);
         rightCopyB.setOnClickListener(this);
+
+        if(savedInstanceState != null){
+            result.setText(savedInstanceState.getString("resultView"));
+        }
+
     }
 
     public static void hideKeyboard(Activity thisActivity, View view){
@@ -332,7 +337,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void run() {
                         scrollView.pageScroll(View.FOCUS_DOWN);
-                        num2.requestFocus();
                     }
                 };
                 handler.postDelayed(runnable, 250);
@@ -340,7 +344,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                    num2.requestFocus();
             }
 
             @Override
@@ -385,4 +389,9 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         this.menu =  menu;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("resultView", result.getText().toString());
+    }
 }

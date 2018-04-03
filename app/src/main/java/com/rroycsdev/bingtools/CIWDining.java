@@ -44,11 +44,20 @@ public class CIWDining extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems);
+        if(savedInstanceState != null){
+            android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
+            if(fragmentName.compareTo("bing") != 0)  ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, false);
+            else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true);
+        }else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true);
+
         ciw_hall.setRecyclerView(recyclerView);
         ciw_hall.setAdapter(listItems);
         ciw_hall.makeRequest();
 
+        if(toolbarTitle.getText().length() ==0){
+            setToolbarDate();
+        }
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -90,23 +99,23 @@ public class CIWDining extends Fragment {
 
     public void setToolbarDate(){
         if(toolbarTitle != null) {
-            if(ciw_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
-                toolbarTitle.setText(ciw_hall.getBingWeekDate());
+            if(ciw_hall.getBingWeekDate(getString(R.string.ciw)).compareTo(BingDiningMenu.NO_DATE) != 0) {
+                toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
             }else{
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
 
                     @Override
                     public void run() {
-                        if(ciw_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                        if(ciw_hall.getBingWeekDate(getString(R.string.ciw)).compareTo(BingDiningMenu.NO_DATE) == 0){
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    toolbarTitle.setText(ciw_hall.getBingWeekDate());
+                                    toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
                                 }
                             },2000);
                         }else {
-                            toolbarTitle.setText(ciw_hall.getBingWeekDate());
+                            toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
                         }
                     }
 
