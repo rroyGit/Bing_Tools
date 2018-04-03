@@ -172,6 +172,86 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            if(fragmentManager.getBackStackEntryCount() == 0) {
+                finish();
+                return;
+            }
+            String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
+            Fragment chooseFragment;
+            switch (fragmentName){
+                case "bing":
+                    setTitle(getResources().getString(R.string.bing_dining));
+                    nView.getMenu().getItem(0).setChecked(true);
+                    chooseFragment = fragmentManager.findFragmentByTag("calc");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("crypto");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("about");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("timer");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag(fragmentName);
+                    if(chooseFragment != null)fragmentTransaction.show(chooseFragment).commit();
+                    break;
+                case "timer":
+                    setTitle(getResources().getString(R.string.auto_launch));
+                    nView.getMenu().getItem(1).setChecked(true);
+                    chooseFragment = fragmentManager.findFragmentByTag("calc");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("crypto");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("about");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("bing");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag(fragmentName);
+                    if(chooseFragment != null)fragmentTransaction.show(chooseFragment).commit();
+                    break;
+                case "calc":
+                    setTitle(getResources().getString(R.string.calculator));
+                    nView.getMenu().getItem(2).setChecked(true);
+                    chooseFragment = fragmentManager.findFragmentByTag("bing");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("crypto");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("about");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("timer");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag(fragmentName);
+                    if(chooseFragment != null)fragmentTransaction.show(chooseFragment).commit();
+                    break;
+                case "crypto":
+                    setTitle(getResources().getString(R.string.crypto));
+                    nView.getMenu().getItem(3).setChecked(true);
+                    chooseFragment = fragmentManager.findFragmentByTag("calc");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("bing");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("about");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("timer");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag(fragmentName);
+                    if(chooseFragment != null)fragmentTransaction.show(chooseFragment).commit();
+                    break;
+                case "about":
+                    setTitle(getResources().getString(R.string.about));
+                    nView.getMenu().getItem(4).setChecked(true);
+                    chooseFragment = fragmentManager.findFragmentByTag("calc");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("crypto");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("bing");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag("timer");
+                    if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
+                    chooseFragment = fragmentManager.findFragmentByTag(fragmentName);
+                    if(chooseFragment != null)fragmentTransaction.show(chooseFragment).commit();
+                    break;
+            }
         }
     }
 

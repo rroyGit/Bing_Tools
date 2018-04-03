@@ -342,6 +342,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                     public void run() {
                         startFab.setClickable(true);
                         startFab.clearColorFilter();
+                        timerStarted = false;
                         Toast.makeText(getContext(), "It has been " + minutes + " minute(s)", Toast.LENGTH_SHORT).show();
                         MainActivity mainActivity = (MainActivity) getContext();
                         mainActivity.nView.getMenu().getItem(1).setChecked(true);
