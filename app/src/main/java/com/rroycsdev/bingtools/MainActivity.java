@@ -50,7 +50,7 @@ import static com.rroycsdev.bingtools.BingDiningMenu.getDeviceInternetStatus;
 import static com.rroycsdev.bingtools.CalculatorFragment.hideKeyboard;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+    public NavigationView nView;
     private ImageView bingImage;
     private Activity activity;
     private Context context;
@@ -59,9 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Bundle bundle = new Bundle();
     ActionBarDrawerToggle mToggle;
     Toolbar toolBar;
-
-    public NavigationView nView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
