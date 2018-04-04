@@ -9,8 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 
-import android.graphics.Color;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -132,7 +130,7 @@ public class Settings extends AppCompatActivity{
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
-        if(id == R.id.resetColors){
+        if(id == R.id.resetSettings){
             if(getReset()) {
 
                 Toast.makeText(context, "Settings Reset", Toast.LENGTH_SHORT).show();

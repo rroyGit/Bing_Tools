@@ -7,15 +7,14 @@
         android:id="@+id/settings_colors">
 
         <item
-            android:id="@+id/resetColors"
+            android:id="@+id/resetSettings"
             android:orderInCategory="0"
             android:checkable="true"
-            android:title="Reset Colors" />
-
+            android:title="@string/resetSettings" />
         <item
             android:id="@+id/action_home"
             android:orderInCategory="1"
-            android:title="Home" />
+            android:title="@string/homeSettings" />
 
     </group>
 

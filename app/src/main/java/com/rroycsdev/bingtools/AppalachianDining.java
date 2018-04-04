@@ -108,11 +108,25 @@ public class AppalachianDining extends Fragment {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
+                                    if(getActivity() != null) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
+                                            }
+                                        });
+                                    }
                                 }
                             },3500);
                         }else {
-                            toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
+                            if(getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
+                                    }
+                                });
+                            }
                         }
                     }
 
