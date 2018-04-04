@@ -1,18 +1,9 @@
 package com.rroycsdev.bingtools;
 
 
-import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
-import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +14,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,9 +24,6 @@ import com.andexert.library.RippleView;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 import static android.content.Context.MODE_PRIVATE;
@@ -51,9 +38,10 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
     private final static int SAME_COLORS_LAYOUT = 2;
     private Settings settingsObject;
 
-    private Switch colorSwitch;
-    boolean radioClicked = false;
-
+    private Switch colorSwitch, autoPositionSwitch;
+    private boolean radioClicked = false;
+    final String COLOR_SWITCH = "color_switch";
+    final String AUTO_POSITION_SWITCH = "auto_position_switch";
 
 
     public SettingsAdapter(HashMap<String, List<String>> colorsMap, List<String> titles, Context context, Settings settings) {
@@ -75,6 +63,10 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
     public Switch getColorSwitch(){
         return colorSwitch;
+    }
+
+    public Switch getAutoPositionSwitch(){
+        return autoPositionSwitch;
     }
 
     @Override
@@ -182,7 +174,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 layout = R.layout.radio_list_2;
                 break;
             case SAME_COLORS_LAYOUT:
-                layout = R.layout.assign_same_colors;
+                layout = R.layout.more_options_settings;
                 break;
             default:
         }
@@ -226,8 +218,26 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
 
                 case SAME_COLORS_LAYOUT:
                     colorSwitch = itemView.findViewById(R.id.colorSwitch);
-                    if(getSwitchStatus()) colorSwitch.setChecked(true);
+                    if(getSwitchStatus(COLOR_SWITCH)) colorSwitch.setChecked(true);
                     else colorSwitch.setChecked(false);
+
+                    autoPositionSwitch = itemView.findViewById(R.id.autoPosition);
+                    if(getSwitchStatus(AUTO_POSITION_SWITCH)) autoPositionSwitch.setChecked(true);
+                    else autoPositionSwitch.setChecked(false);
+
+
+                    autoPositionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                            if (b) {
+                                saveSwitchStatus(AUTO_POSITION_SWITCH, true);
+                            } else {
+                                saveSwitchStatus(AUTO_POSITION_SWITCH, false);
+                                saveForReset(true);
+                            }
+                        }
+                    });
+
 
                     colorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
@@ -253,7 +263,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                         saveColors("ColorSpace3", color);
 
                                         saveForReset(true);
-                                        saveSwitchStatus(true);
+                                        saveSwitchStatus(COLOR_SWITCH,true);
                                     }
                                 });
                                 new Handler().postDelayed(new Runnable() {
@@ -270,7 +280,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                                         saveForReset(true);
                                     } else saveForReset(false);
 
-                                    saveSwitchStatus(false);
+                                    saveSwitchStatus(COLOR_SWITCH,false);
                                     //Don't display toast if toast for reset colors is active
                                     if (settingsObject.menu != null && !settingsObject.menu.getItem(0).isChecked()) {
                                         Toast.makeText(context, "Colors Reverted", Toast.LENGTH_SHORT).show();
@@ -337,16 +347,17 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
         sEditor.apply();
     }
 
-    protected void saveSwitchStatus(boolean checked){
+    protected void saveSwitchStatus(String thisSwitch, boolean checked){
         SharedPreferences sP = context.getSharedPreferences("switch", MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
-        sEditor.putBoolean("status", checked);
+        sEditor.putBoolean(thisSwitch, checked);
         sEditor.apply();
     }
 
-    private boolean getSwitchStatus(){
+    protected boolean getSwitchStatus(String thisSwitch){
         SharedPreferences sP = context.getSharedPreferences("switch", MODE_PRIVATE);
-        return sP.getBoolean("status", false);
+        if(thisSwitch.compareTo(AUTO_POSITION_SWITCH) == 0) return sP.getBoolean(thisSwitch, true);
+        else return sP.getBoolean(thisSwitch, false);
     }
 
 
@@ -375,7 +386,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 radioClicked = true;
                 if(colorSwitch != null) colorSwitch.setChecked(false);
                 if(settingsObject.menu != null) settingsObject.menu.getItem(0).setChecked(false);
-                saveSwitchStatus(false);
+                saveSwitchStatus(COLOR_SWITCH,false);
 
                 removeSavedColors("ColorSpace3");
 
@@ -446,7 +457,7 @@ public class SettingsAdapter extends SectionedRecyclerViewAdapter<SettingsAdapte
                 removeSavedColors("ColorSpace3");
                 radioClicked = true;
                 if(colorSwitch != null) colorSwitch.setChecked(false);
-                saveSwitchStatus(false);
+                saveSwitchStatus(COLOR_SWITCH,false);
                 saveForReset(true);
             }
         });

@@ -117,13 +117,13 @@ public class C4Dining extends Fragment {
                                 public void run() {
                                     toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
                                 }
-                            },2000);
+                            },3500);
                         }else {
                             toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
                         }
                     }
 
-                },1900);
+                },2200);
             }
         }
     }

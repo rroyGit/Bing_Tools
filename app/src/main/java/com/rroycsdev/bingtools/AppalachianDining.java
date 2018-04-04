@@ -110,13 +110,13 @@ public class AppalachianDining extends Fragment {
                                 public void run() {
                                     toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
                                 }
-                            },2000);
+                            },3500);
                         }else {
                             toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
                         }
                     }
 
-                },1900);
+                },2200);
             }
         }
     }

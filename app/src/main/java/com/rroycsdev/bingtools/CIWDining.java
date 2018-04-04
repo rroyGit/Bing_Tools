@@ -113,13 +113,13 @@ public class CIWDining extends Fragment {
                                 public void run() {
                                     toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
                                 }
-                            },2000);
+                            },3500);
                         }else {
                             toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
                         }
                     }
 
-                },1900);
+                },2200);
             }
         }
     }
