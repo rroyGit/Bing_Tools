@@ -10,6 +10,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class HinmanDining extends Fragment{
     @Override
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         final Context context = getContext();
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
@@ -48,7 +50,13 @@ public class HinmanDining extends Fragment{
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems);
+        if(savedInstanceState != null){
+            android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
+            if(fragmentName.compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false);
+            else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true);
+        }else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true);
+
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
         hinman_hall.makeRequest();
@@ -79,7 +87,7 @@ public class HinmanDining extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        recyclerView.getAdapter().notifyDataSetChanged();
+        if(recyclerView != null) recyclerView.getAdapter().notifyDataSetChanged();
     }
     //--------------------------------------------------------------------------------------------//
     private OnFragmentInteractionListener mListener;
@@ -128,29 +136,34 @@ public class HinmanDining extends Fragment{
     }
     public void setToolbarDate(){
         if(toolbarTitle!= null) {
-            if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) != 0) {
-                toolbarTitle.setText(hinman_hall.getBingWeekDate());
+            if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) != 0) {
+                toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
             }else{
                 final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
 
                     @Override
                     public void run() {
-                        if(hinman_hall.getBingWeekDate().compareTo(BingDiningMenu.NO_DATE) == 0){
+                        if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) == 0){
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    toolbarTitle.setText(hinman_hall.getBingWeekDate());
+                                    toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
                                 }
-                            },2500);
+                            },3500);
                         }else {
-                            toolbarTitle.setText(hinman_hall.getBingWeekDate());
+                            toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
                         }
                     }
 
-                },2000);
+                },2200);
             }
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("Saved", 1);
+    }
 }

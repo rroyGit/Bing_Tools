@@ -135,7 +135,7 @@ public class Settings extends AppCompatActivity{
         if(id == R.id.resetColors){
             if(getReset()) {
 
-                Toast.makeText(context, "Colors Reset", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Settings Reset", Toast.LENGTH_SHORT).show();
                 SharedPreferences colors = getSharedPreferences("Colors", MODE_PRIVATE);
                 colors.edit().remove("ColorSpace0").apply();
                 colors.edit().remove("ColorSpace1").apply();
@@ -143,8 +143,14 @@ public class Settings extends AppCompatActivity{
                 colors.edit().remove("ColorSpace3").apply();
 
                 item.setChecked(true);
-                if(settingsAdapter.getColorSwitch() != null) settingsAdapter.getColorSwitch().setChecked(false);
-                settingsAdapter.saveSwitchStatus(false);
+                if(settingsAdapter.getColorSwitch() != null) {
+                    settingsAdapter.getColorSwitch().setChecked(false);
+                    settingsAdapter.saveSwitchStatus(settingsAdapter.COLOR_SWITCH,false);
+                }
+                if(settingsAdapter.getAutoPositionSwitch() != null && !settingsAdapter.getAutoPositionSwitch().isChecked()){
+                    settingsAdapter.getAutoPositionSwitch().setChecked(true);
+                    settingsAdapter.saveSwitchStatus(settingsAdapter.AUTO_POSITION_SWITCH, true);
+                }
                 settingsAdapter.saveForReset(false);
                 settingsAdapter.notifyDataSetChanged();
             }

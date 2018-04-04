@@ -58,8 +58,8 @@ public class AboutFragment extends Fragment {
 
         desc.add("Wallpaper in navigation menu is retrieved from Microsoft Bing homepage");
         desc.add("Binghamton campus dining data are retrieved from Binghamton University Sodexo");
-        desc.add("Crypto currency exchange rate data are retrieved coinmarketcap");
-        desc.add("App icon created using Iconion and icons on navigation menu are retrieved material.io");
+        desc.add("Crypto currency exchange rate data are retrieved from coinmarketcap");
+        desc.add("App icon created using Iconion and icons on navigation menu are retrieved from material.io");
 
         try {
             PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);

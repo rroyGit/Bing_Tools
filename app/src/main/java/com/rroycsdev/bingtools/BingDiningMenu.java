@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -43,42 +44,45 @@ public class BingDiningMenu {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private DiningDatabase diningDatabase;
+    private boolean showProgressDialog;
 
 
-    public BingDiningMenu(String link, String title, Context context, List<ListItem> listItems){
+    public BingDiningMenu(String link, String title, Context context, List<ListItem> listItems, boolean showProgressDialog){
         this.context = context;
         this.title = title;
         this.link = link;
         this.listItems = listItems;
         this.diningDatabase = new DiningDatabase(context, title);
         this.diningDatabase.createTable(title);
+        this.showProgressDialog = showProgressDialog;
     }
 
     private void startBingDiningRequest(){
         //Async Task for getting bing dining data from the web
-        StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
-        loadCurrentDate(month, day, year);
+        StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(), currentYear = new StringBuilder();
+        loadCurrentDate(currentMonth, currentDay, currentYear);
 
         DiningDataScrapper diningDataScrapper;
         StringTokenizer sT;
 
-        //load data from SQLite database
-        if(diningDatabase.getDatabaseCount() > 0 && getBingWeekDate().compareTo(NO_DATE) != 0) {
+        //load data from SQLite database & check if new request needs to be made
+        if(diningDatabase.getDatabaseCount() > 0 && getBingWeekDate(title).compareTo(NO_DATE) != 0) {
 
+            //saved start and end dates per dining menu
             String month1, month2, date1, date2, year1, year2;
             try {
                 //sample menu check
-                if(getBingWeekDate().compareTo(SAMPLE_MENU) == 0){
-                    final int dayInt = Integer.parseInt(day.toString());
+                if(getBingWeekDate(title).compareTo(SAMPLE_MENU) == 0){
+                    final int dayInt = Integer.parseInt(currentDay.toString());
 
-                    //if shared pref for daily menu check is empty, make a new request else record the day checked
-                    //if saved day does not equal current day, make new request
+                    //if shared pref for daily menu check is empty, make a new request else record the currentDay checked
+                    //if saved currentDay does not equal current currentDay, make new request
                     if(getDayMenuCheck() == 404 || dayInt != getDayMenuCheck()) {
                         new CheckForNewMenu(BingDiningMenu.this).execute(link);
                         setDayMenuCheck(dayInt);
                     }
 
-                    if(getBingWeekDate().compareTo(SAMPLE_MENU) != 0){
+                    if(getBingWeekDate(title).compareTo(SAMPLE_MENU) != 0){
                         diningDataScrapper = new DiningDataScrapper(this);
                         diningDataScrapper.execute(true);
                     }else {
@@ -107,7 +111,7 @@ public class BingDiningMenu {
                     }
                     return;
                 }else {
-                    sT = new StringTokenizer(getBingWeekDate(), " ");
+                    sT = new StringTokenizer(getBingWeekDate(title), " ");
                     String firstDate = sT.nextToken();
                     sT.nextToken();
                     String secDate = sT.nextToken();
@@ -128,18 +132,14 @@ public class BingDiningMenu {
                 return;
             }
 
-            //if current day does not fall in saved dates then make new request
-            if(Integer.parseInt(month.toString()) < Integer.parseInt(month1) || Integer.parseInt(month.toString()) > Integer.parseInt(month2)) {
-
+            //if current currentDay does not fall in saved dates then make new request
+            if(Integer.parseInt(currentMonth.toString()) > Integer.parseInt(month2)) {
                 diningDataScrapper = new DiningDataScrapper(this);
                 diningDataScrapper.execute(true);
-            }else if (((month.toString().equals(month1)) && (Integer.parseInt(day.toString()) < Integer.parseInt(date1))) ||
-                    ((month.toString().equals(month2)) && (Integer.parseInt(day.toString()) > Integer.parseInt(date2)))) {
-
+            }else if (((currentMonth.toString().equals(month2)) && (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))) {
                 diningDataScrapper = new DiningDataScrapper(this);
                 diningDataScrapper.execute(true);
-            }else if (Integer.parseInt(year.toString()) < Integer.parseInt(year1) || Integer.parseInt(year.toString()) > Integer.parseInt(year2)) {
-
+            }else if (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) {
                 diningDataScrapper = new DiningDataScrapper(this);
                 diningDataScrapper.execute(true);
             }else {
@@ -171,7 +171,7 @@ public class BingDiningMenu {
             }
             diningDataScrapper = new DiningDataScrapper(this);
             diningDataScrapper.execute(false);
-            setDayMenuCheck(Integer.parseInt(day.toString()));
+            setDayMenuCheck(Integer.parseInt(currentDay.toString()));
         }
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
@@ -188,11 +188,6 @@ public class BingDiningMenu {
         recyclerView.setAdapter(adapter);
         return true;
     }
-
-    public void setRecycleAdapter(){
-        recyclerView.setAdapter(adapter);
-    }
-
 
     private static class CheckForNewMenu extends AsyncTask<String, Void, Void> {
         private String weekString;
@@ -245,6 +240,7 @@ public class BingDiningMenu {
         private ProgressDialog pD;
         private Boolean updateDatabase = false;
 
+
         //weak reference
         private WeakReference <BingDiningMenu> activityReference;
         DiningDataScrapper(BingDiningMenu context){
@@ -255,8 +251,7 @@ public class BingDiningMenu {
         protected void onPreExecute() {
             BingDiningMenu bingDiningMenu = activityReference.get();
 
-            if(bingDiningMenu.title.compareTo(bingDiningMenu.context.getString(R.string.c4)) == 0 ||
-                    bingDiningMenu.title.compareTo(bingDiningMenu.context.getString(R.string.ciw)) == 0) {
+            if(bingDiningMenu.showProgressDialog) {
                 pD = new ProgressDialog(bingDiningMenu.context);
                 pD.setCancelable(false);
                 pD.setMessage("Loading, please wait...");
@@ -266,13 +261,14 @@ public class BingDiningMenu {
 
         @Override
         protected Void doInBackground(Boolean... params) {
+
             final BingDiningMenu bingDiningMenu = activityReference.get();
             if(params.length > 0) updateDatabase = params[0];
 
             if(bingDiningMenu == null){
                 return null;
             }
-            if(pD != null) pD.dismiss();
+
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -342,6 +338,7 @@ public class BingDiningMenu {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if(pD != null) pD.dismiss();
             return null;
         }
         @Override
@@ -351,7 +348,7 @@ public class BingDiningMenu {
             if(bingDiningMenu == null){
                 return;
             }
-            //bingDiningMenu.toolbarTitle.setText(weekStrings[0]);
+
             bingDiningMenu.saveBingWeekData(weekStrings[0]);
             bingDiningMenu.loadSortedData();
             bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
@@ -367,7 +364,7 @@ public class BingDiningMenu {
         sEditor.apply();
     }
 
-    public String getBingWeekDate(){
+    public String getBingWeekDate(String title){
         SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
         return sP.getString("weekDate", "noDate");
     }
@@ -394,7 +391,7 @@ public class BingDiningMenu {
     }
 
     public void refreshData(){
-        Toast.makeText(context, "Refreshing "+title+ " Menu", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Refreshing "+title+" Menu", Toast.LENGTH_SHORT).show();
         new DiningDataScrapper(this).execute(true);
     }
 

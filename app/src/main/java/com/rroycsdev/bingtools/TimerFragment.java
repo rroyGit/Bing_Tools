@@ -5,9 +5,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +35,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,11 +56,18 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     private Animation animClose, animOpen, animForward, animBackward;
     private boolean isOpen = false;
     private ScheduledExecutorService scheduledExecutorService = null;
+    private boolean timerStarted = false;
 
     public TimerFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+    }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -84,6 +95,19 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
         addFab.setOnClickListener(this);
         startFab.setOnClickListener(this);
         stopFab.setOnClickListener(this);
+
+        if(savedInstanceState != null){
+            String textResult = savedInstanceState.getString("textView");
+            resultTextView.setText(textResult);
+            timerStarted = savedInstanceState.getBoolean("timerStarted");
+
+            if(timerStarted) {
+                startFab.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+                startFab.setClickable(false);
+                startFab.callOnClick();
+            }
+
+        }
 
     }
 
@@ -114,12 +138,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -131,6 +150,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+
 
     }
 
@@ -182,13 +202,14 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                     minutes = bigInteger.intValue();
                     scheduledExecutorService = timer(startFab, resultTextView, minutes);
                     if(minutes > 0) Toast.makeText(getContext(), "Timer has been set to " + minutes + " minute(s)", Toast.LENGTH_SHORT).show();
+                    timerStarted = true;
                 }
                 break;
             case R.id.stopFab:
                 resultTextView.setText("");
 
                 if(scheduledExecutorService != null && !startFab.isClickable()){
-
+                    timerStarted = false;
                     startFab.clearColorFilter();
                     startFab.setClickable(true);
                     Toast.makeText(getContext(), "Timer has been canceled", Toast.LENGTH_SHORT).show();
@@ -321,6 +342,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                     public void run() {
                         startFab.setClickable(true);
                         startFab.clearColorFilter();
+                        timerStarted = false;
                         Toast.makeText(getContext(), "It has been " + minutes + " minute(s)", Toast.LENGTH_SHORT).show();
                         MainActivity mainActivity = (MainActivity) getContext();
                         mainActivity.nView.getMenu().getItem(1).setChecked(true);
@@ -349,4 +371,10 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
         void onFragmentInteraction(Uri uri);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("textView", resultTextView.getText().toString());
+        outState.putBoolean("timerStarted",timerStarted);
+    }
 }

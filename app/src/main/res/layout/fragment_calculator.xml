@@ -20,20 +20,25 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical">
 
             <EditText
                 android:id="@+id/num1"
                 android:layout_width="170dp"
                 android:layout_height="wrap_content"
-
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/linearLayout"
+
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="46dp"
                 android:background="@drawable/custom_edit_text"
                 android:hint="@string/zero"
                 android:inputType="numberDecimal"
+                android:nextFocusLeft="@id/num1"
+                android:nextFocusUp="@id/num1"
                 android:textColor="@color/white"
                 android:textColorHint="@color/red"
                 android:textCursorDrawable="@drawable/edit_text_pipe_color"
@@ -43,13 +48,15 @@
                 android:id="@+id/num2"
                 android:layout_width="170dp"
                 android:layout_height="wrap_content"
-
                 android:layout_alignBaseline="@+id/num1"
                 android:layout_alignBottom="@+id/num1"
+
                 android:layout_alignEnd="@+id/linearLayout"
                 android:background="@drawable/custom_edit_text"
                 android:hint="@string/zero"
                 android:inputType="numberDecimal"
+                android:nextFocusLeft="@id/num2"
+                android:nextFocusUp="@id/num2"
                 android:textColor="@color/white"
                 android:textColorHint="@color/red"
                 android:textCursorDrawable="@drawable/edit_text_pipe_color"
@@ -68,128 +75,138 @@
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:paddingTop="16dp">
-            <ScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/resultB"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
 
-                    android:gravity="center"
-                    android:hint="@string/Result"
-                    android:textColor="?android:attr/textColorHint"
-                    android:textColorHint="@color/red"
-                    android:textSize="40sp" />
-            </ScrollView>
+                <ScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/resultB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:gravity="center"
+                        android:hint="@string/Result"
+                        android:textColor="?android:attr/textColorHint"
+                        android:textColorHint="@color/red"
+                        android:textSize="40sp" />
+                </ScrollView>
             </LinearLayout>
 
-        <LinearLayout
-            android:gravity="center_horizontal"
-            android:id="@+id/firstRow"
-            android:layout_marginTop="5dp"
-            android:layout_below="@id/num1"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/firstRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/num1"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/addB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/button"
-                android:backgroundTint="@drawable/touch_button"
-                android:text="@string/add"
-                android:textColor="@color/white"
-                android:textAllCaps="false"
-                android:textSize="35sp" />
-            <Button
-                android:id="@+id/minusB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/button"
-                android:backgroundTint="@drawable/touch_button"
-                android:text="@string/sub"
-                android:textColor="@color/white"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textSize="35sp" />
-            <Button
-                android:id="@+id/leftCopy"
-                style="?android:attr/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@drawable/touch_button"
-                android:textSize="35sp"
-                android:text="L"
-                android:textColor="@color/white"
-                android:textAlignment="center"
-                android:textAllCaps="false"/>
-            <Button
-                android:id="@+id/rightCopy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/button"
-                android:backgroundTint="@drawable/touch_button"
-                android:textSize="35sp"
-                android:text="R"
-                android:textColor="@color/white"
-                android:textAlignment="center"
-                android:textAllCaps="false"/>
-        </LinearLayout>
+                <Button
+                    android:id="@+id/addB"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="@string/add"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
 
-        <LinearLayout
-            android:id="@+id/secondRow"
-            android:gravity="center_horizontal"
-            android:layout_below="@id/firstRow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/mulB"
-                android:layout_width="wrap_content"
+                <Button
+                    android:id="@+id/minusB"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="@string/sub"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
+
+                <Button
+                    android:id="@+id/leftCopy"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="L"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
+
+                <Button
+                    android:id="@+id/rightCopy"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="R"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/secondRow"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="?android:attr/button"
-                android:backgroundTint="@drawable/touch_button"
-                android:text="@string/mul"
-                android:textColor="@color/white"
-                android:textAllCaps="false"
-                android:textAlignment="center"
-                android:textSize="35sp" />
-            <Button
-                android:id="@+id/divB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/button"
-                android:backgroundTint="@drawable/touch_button"
-                android:text="@string/div"
-                android:textColor="@color/white"
-                android:textAllCaps="false"
-                android:textAlignment="center"
-                android:textSize="35sp" />
-            <Button
-                android:id="@+id/clear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/button"
-                android:backgroundTint="@drawable/touch_button"
-                android:text="c"
-                android:textColor="@color/white"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textSize="35sp" />
-            <Button
-                android:visibility="invisible"
-                android:text="T"
-                android:textColor="@color/white"
-                android:id="@+id/timer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?android:attr/button"
-                android:backgroundTint="@drawable/touch_button"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textSize="35sp" />
-        </LinearLayout>
+                android:layout_below="@id/firstRow"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/mulB"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="@string/mul"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
+
+                <Button
+                    android:id="@+id/divB"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="@string/div"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
+
+                <Button
+                    android:id="@+id/mod"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="%"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
+
+                <Button
+                    android:id="@+id/clear"
+                    style="?android:attr/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@drawable/touch_button"
+                    android:text="c"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="35sp" />
+
+
+            </LinearLayout>
 
         </RelativeLayout>
     </ScrollView>

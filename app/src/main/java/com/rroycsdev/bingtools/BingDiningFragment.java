@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -58,8 +59,14 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
-                        Toast.makeText(getContext(), "Getting new Hinman ref", Toast.LENGTH_SHORT).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(pagerAdapter.getHinmanRefs() != null && pagerAdapter.getHinmanRefs().hinman_hall != null)
+                                    pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
+                            }
+                        },100);
+
                     }
                     return true;
                 case 1:
@@ -69,8 +76,14 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
-                        Toast.makeText(getContext(), "Getting new C4 ref", Toast.LENGTH_SHORT).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(pagerAdapter.getC4Refs() != null && pagerAdapter.getC4Refs().c4_hall != null)
+                                    pagerAdapter.getC4Refs().c4_hall.refreshData();
+                            }
+                        },100);
+
                     }
                     return true;
                 case 2:
@@ -80,8 +93,14 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
-                        Toast.makeText(getContext(), "Getting new Appalachian ref", Toast.LENGTH_SHORT).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(pagerAdapter.getAppRefs() != null && pagerAdapter.getAppRefs().appalachian_hall != null)
+                                    pagerAdapter.getAppRefs().appalachian_hall.refreshData();
+                            }
+                        }, 100);
+
                     }
                     return true;
                 case 3:
@@ -91,8 +110,13 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
-                        Toast.makeText(getContext(), "Getting new CIW ref", Toast.LENGTH_SHORT).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(pagerAdapter.getCIWRefs() != null && pagerAdapter.getCIWRefs().ciw_hall != null)
+                                    pagerAdapter.getCIWRefs().ciw_hall.refreshData();
+                            }
+                        }, 100);
                     }
                     return true;
                     default: return false;
@@ -113,7 +137,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         viewPager = (ViewPager) view.findViewById(R.id.pager);
-        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+        pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
 
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -121,30 +145,29 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-               viewPager.setCurrentItem(tab.getPosition(), true);
-               Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
-
-               if(fragment instanceof C4Dining){
-                   ((C4Dining) fragment).setToolbarDate();
-               }else if(fragment instanceof HinmanDining ){
-                   ((HinmanDining) fragment).setToolbarDate();
-               }else if(fragment instanceof AppalachianDining ){
-                   ((AppalachianDining) fragment).setToolbarDate();
-               }else if(fragment instanceof CIWDining ){
-                   ((CIWDining) fragment).setToolbarDate();
-               }
-
+                viewPager.setCurrentItem(tab.getPosition(), true);
+                Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
+                if (fragment instanceof C4Dining) {
+                    ((C4Dining) fragment).setToolbarDate();
+                } else if (fragment instanceof HinmanDining) {
+                    ((HinmanDining) fragment).setToolbarDate();
+                } else if (fragment instanceof AppalachianDining) {
+                    ((AppalachianDining) fragment).setToolbarDate();
+                } else if (fragment instanceof CIWDining) {
+                    ((CIWDining) fragment).setToolbarDate();
+                }
             }
+
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
 
             }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
         });
-
     }
 
     @Override
@@ -172,6 +195,12 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("Saved", 1);
     }
 
     @Override

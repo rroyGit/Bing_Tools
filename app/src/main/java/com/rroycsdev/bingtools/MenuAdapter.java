@@ -35,6 +35,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     private SparseBooleanArray collapseLunch;
     private SparseBooleanArray collapseDinner;
     private RecyclerView recyclerView;
+    private final String AUTO_POSITION_SWITCH = "auto_position_switch";
 
     MenuAdapter(List<ListItem> listItems, Context context, RecyclerView recyclerView) {
         this.listItems = listItems;
@@ -73,14 +74,17 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     final int currentPosition = getAdapterPosition();
                     if(isExpanded){
                         adapter.collapseBreakfast.put(currentPosition, false);
-                        Rect rect = new Rect();
-                        if(mealB.getGlobalVisibleRect(rect)
-                                && mealB.getHeight() == rect.height()
-                                && mealB.getWidth() == rect.width() ) {
-                            //fully visible
-                        }else{
-                            //not fully visible
-                           recyclerView.smoothScrollToPosition(getAdapterPosition());
+                        //auto-position textView
+                        if(getAutoPostionStatus()) {
+                            Rect rect = new Rect();
+                            if (mealB.getGlobalVisibleRect(rect)
+                                    && mealB.getHeight() == rect.height()
+                                    && mealB.getWidth() == rect.width()) {
+                                //fully visible
+                            } else {
+                                //not fully visible
+                                recyclerView.smoothScrollToPosition(getAdapterPosition());
+                            }
                         }
                     }else{
                         adapter.collapseBreakfast.put(currentPosition, true);
@@ -94,14 +98,17 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     final int currentPosition = getAdapterPosition();
                     if(isExpanded){
                         adapter.collapseLunch.put(currentPosition, false);
-                        Rect rect = new Rect();
-                        if(mealL.getGlobalVisibleRect(rect)
-                                && mealL.getHeight() == rect.height()
-                                && mealL.getWidth() == rect.width() ) {
-                            //fully visible
-                        }else{
-                            //not fully visible
-                            recyclerView.smoothScrollToPosition(getAdapterPosition());
+                        //auto-position textView
+                        if(getAutoPostionStatus()) {
+                            Rect rect = new Rect();
+                            if (mealL.getGlobalVisibleRect(rect)
+                                    && mealL.getHeight() == rect.height()
+                                    && mealL.getWidth() == rect.width()) {
+                                //fully visible
+                            } else {
+                                //not fully visible
+                                recyclerView.smoothScrollToPosition(getAdapterPosition());
+                            }
                         }
                     }else{
                         adapter.collapseLunch.put(currentPosition, true);
@@ -115,28 +122,31 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                     final int currentPosition = getAdapterPosition();
                     if(isExpanded){
                         adapter.collapseDinner.put(currentPosition, false);
-                        Rect rect = new Rect();
-                        if(mealD.findViewById(R.id.expandable_text).getGlobalVisibleRect(rect)
-                                && mealD.findViewById(R.id.expandable_text).getHeight() == rect.height()
-                                && mealD.findViewById(R.id.expandable_text).getWidth() == rect.width() ) {
-                            //fully visible
-                        }else{
-                            //not fully visible
-                            recyclerView.smoothScrollToPosition(getAdapterPosition());
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Rect rect = new Rect();
-                                    if(mealD.findViewById(R.id.expandable_text).getGlobalVisibleRect(rect) && rect.height() ==mealD.findViewById(R.id.expandable_text).getHeight()
-                                            && rect.width() == mealD.findViewById(R.id.expandable_text).getWidth()){
-                                        //fully visible
-                                    }else{
-                                        //not fully visible
-                                        recyclerView.smoothScrollToPosition(getAdapterPosition());
+                        //auto-position textView
+                        if(getAutoPostionStatus()) {
+                            Rect rect = new Rect();
+                            if (mealD.findViewById(R.id.expandable_text).getGlobalVisibleRect(rect)
+                                    && mealD.findViewById(R.id.expandable_text).getHeight() == rect.height()
+                                    && mealD.findViewById(R.id.expandable_text).getWidth() == rect.width()) {
+                                //fully visible
+                            } else {
+                                //not fully visible
+                                recyclerView.smoothScrollToPosition(getAdapterPosition());
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Rect rect = new Rect();
+                                        if (mealD.findViewById(R.id.expandable_text).getGlobalVisibleRect(rect) && rect.height() == mealD.findViewById(R.id.expandable_text).getHeight()
+                                                && rect.width() == mealD.findViewById(R.id.expandable_text).getWidth()) {
+                                            //fully visible
+                                        } else {
+                                            //not fully visible
+                                            recyclerView.smoothScrollToPosition(getAdapterPosition());
+                                        }
                                     }
-                                }
-                            }, 500);
+                                }, 500);
+                            }
                         }
                     }else{
                         adapter.collapseDinner.put(currentPosition, true);
@@ -237,6 +247,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     public static String getSavedColors(String key, Context context){
         SharedPreferences sP = context.getSharedPreferences("Colors", MODE_PRIVATE);
         return sP.getString(key, "error");
+    }
+
+    public boolean getAutoPostionStatus(){
+        SharedPreferences sP = context.getSharedPreferences("switch", MODE_PRIVATE);
+        return sP.getBoolean(AUTO_POSITION_SWITCH, true);
     }
 
     private void changeExpandViewColors(ViewHolder v, int color, boolean changeArrowColor){

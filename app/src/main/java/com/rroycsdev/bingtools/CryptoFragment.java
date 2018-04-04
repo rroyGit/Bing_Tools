@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -73,33 +74,56 @@ public class CryptoFragment extends Fragment {
         etherText.setMaxLines(2);
         etherText.setTextIsSelectable(true);
 
-
-        if(getSavedEther("Ether") == 4.04){
-            if(getDeviceInternetStatus(context) != null){
-                etherText.setText("");
-                etherText.setHint("");
-                new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ethereum/", "0");
-                currentCryptoVal = getSavedEther("Ether");
-            }else {
-                progressBar.setVisibility(View.GONE);
-                progressBar2.setVisibility(View.GONE);
-                Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
-            }
-        }else{
-
+        if(savedInstanceState != null){
             progressBar.setVisibility(View.GONE);
             progressBar2.setVisibility(View.GONE);
-            currentCryptoVal = getSavedEther("Ether");
-            etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", currentCryptoVal)));
-            String ret = "Last updated: " + getSavedDate();
-            timeText.setText(ret);
+            selectedCryptoText.setText(savedInstanceState.getString("selectCryptoView"));
+            timeText.setText(savedInstanceState.getString("lastUpdated"));
+            final double res = savedInstanceState.getDouble("resultView");
+            currentCryptoVal = res;
+            //must wait for config changes such as orientation change
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    double res2;
+                    if(editT.getText().toString().compareTo("") == 0) res2 = res;
+                    else res2 = res * Integer.parseInt(editT.getText().toString());
+                    NumberFormat.getInstance().format(res2);
+                    final String result = String.format("%s%s", '$', String.format(Locale.US, "%.2f",res2));
+                    etherText.setText(result);
+                }
+            }, 200);
+
+        }else {
+            if (getSavedEther("Ether") == 4.04) {
+                if (getDeviceInternetStatus(context) != null) {
+                    etherText.setText("");
+                    etherText.setHint("");
+                    new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ethereum/", "0");
+                    currentCryptoVal = getSavedEther("Ether");
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    progressBar2.setVisibility(View.GONE);
+                    Toast.makeText(context, "Could not connect to the Internet", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+
+                progressBar.setVisibility(View.GONE);
+                progressBar2.setVisibility(View.GONE);
+                currentCryptoVal = getSavedEther("Ether");
+                etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", currentCryptoVal)));
+                String ret = "Last updated: " + getSavedDate();
+                timeText.setText(ret);
+            }
         }
+
 
         etherButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 if(getDeviceInternetStatus(context) != null) {
                     timeText.setText("Last updated: ");
+                    currentCryptoVal = -1;
                     etherText.setText("");
                     etherText.setHint("");
                     progressBar.setVisibility(View.VISIBLE);
@@ -119,6 +143,7 @@ public class CryptoFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(getDeviceInternetStatus(context) != null) {
+                    currentCryptoVal = -1;
                     etherText.setText("");
                     etherText.setHint("");
                     timeText.setText("Last updated: ");
@@ -139,6 +164,7 @@ public class CryptoFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(getDeviceInternetStatus(context) != null) {
+                    currentCryptoVal = -1;
                     etherText.setText("");
                     etherText.setHint("");
                     timeText.setText("Last updated: ");
@@ -172,14 +198,15 @@ public class CryptoFragment extends Fragment {
                     if(editT.getText().toString().charAt(0) == '.' && editT.getText().length() == 1) res = 1;
                     else if(editT.getText().toString().charAt(0) == '.' && editT.getText().length() > 1){
                         res = Double.parseDouble(editT.getText().toString());
-                    }
-                    else res = Double.parseDouble(editT.getText().toString());
+                    } else res = Double.parseDouble(editT.getText().toString());
+
                     res = res * currentCryptoVal;
                     NumberFormat.getInstance().format(res);
 
                     String result = String.format("%s%s", '$', String.format(Locale.US, "%.2f",res));
                     etherText.setText(result);
                     etherText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+
                     String currentString = selectedCryptoText.getText().toString();
                     if(currentString.contains("Bitcoin")){
                         currentString = editT.getText().toString() + " Bitcoin";
@@ -193,7 +220,8 @@ public class CryptoFragment extends Fragment {
                     }
 
                 }else{
-                    etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", currentCryptoVal)));
+                    if(currentCryptoVal == -1) etherText.setText("");
+                    else etherText.setText(String.format("%s%s", '$', String.format(Locale.US, "%.2f", currentCryptoVal)));
                     if(selectedCryptoText.getText().toString().contains("Bitcoin")) {
                         if (editT.getText().toString().isEmpty()) {
                             String currentString = "1 Bitcoin";
@@ -239,6 +267,11 @@ public class CryptoFragment extends Fragment {
         }
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
         protected Void doInBackground(String... strings) {
             try {
                 cryptoType = Integer.parseInt(strings[1]);
@@ -275,6 +308,9 @@ public class CryptoFragment extends Fragment {
                             break;
                         case 1:
                             cryptoFragment.saveCryptoData("Bitcoin", cryptoVal);
+                            break;
+                        case 2:
+                            cryptoFragment.saveCryptoData("Ripple", cryptoVal);
                             break;
                     }
 
@@ -352,5 +388,13 @@ public class CryptoFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         getActivity().setTitle(R.string.crypto);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putDouble("resultView", currentCryptoVal);
+        outState.putString("selectCryptoView", selectedCryptoText.getText().toString());
+        outState.putString("lastUpdated", timeText.getText().toString());
     }
 }
