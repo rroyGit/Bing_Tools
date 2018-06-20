@@ -115,11 +115,25 @@ public class C4Dining extends Fragment {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
+                                    if(getActivity() != null) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
+                                            }
+                                        });
+                                    }
                                 }
                             },3500);
                         }else {
-                            toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
+                            if(getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
+                                    }
+                                });
+                            }
                         }
                     }
 

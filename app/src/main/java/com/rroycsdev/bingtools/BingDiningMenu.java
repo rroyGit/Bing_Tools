@@ -353,6 +353,7 @@ public class BingDiningMenu {
             bingDiningMenu.loadSortedData();
             bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
             bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
+            bingDiningMenu.adapter.notifyDataSetChanged();
             bingDiningMenu.diningDatabase.close();
         }
     }
@@ -391,8 +392,12 @@ public class BingDiningMenu {
     }
 
     public void refreshData(){
-        Toast.makeText(context, "Refreshing "+title+" Menu", Toast.LENGTH_SHORT).show();
-        new DiningDataScrapper(this).execute(true);
+        if(getDeviceInternetStatus(context) == null){
+            Toast.makeText(context,"No Internet", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(context, "Refreshing " + title + " Menu", Toast.LENGTH_SHORT).show();
+            new DiningDataScrapper(this).execute(true);
+        }
     }
 
     private void loadSortedData(){

@@ -14,10 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class HinmanDining extends Fragment{
     public RecyclerView recyclerView;
@@ -37,8 +37,8 @@ public class HinmanDining extends Fragment{
     @Override
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         final Context context = getContext();
+
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
 
@@ -61,7 +61,8 @@ public class HinmanDining extends Fragment{
         hinman_hall.setAdapter(listItems);
         hinman_hall.makeRequest();
 
-        if(toolbarTitle.getText().length() ==0){
+
+        if(toolbarTitle.getText().length() == 0){
             setToolbarDate();
         }
 
@@ -110,8 +111,6 @@ public class HinmanDining extends Fragment{
                     + " must implement OnFragmentInteractionListener");
         }
         */
-
-
     }
 
     @Override
@@ -148,11 +147,25 @@ public class HinmanDining extends Fragment{
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+                                    if(getActivity() != null) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+                                            }
+                                        });
+                                    }
                                 }
                             },3500);
                         }else {
-                            toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+                            if(getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+                                    }
+                                });
+                            }
                         }
                     }
 

@@ -28,6 +28,8 @@
 
     <string name="cardMenuColor">Change card menu color</string>
     <string name="autoPosition">Auto position on card expand</string>
+    <string name="resetSettings">Reset Settings</string>
+    <string name="homeSettings">Home</string>
 
     <string name="appalachianUrl">https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/appalachian.html</string>
     <string name="c4Url">https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/index.html</string>

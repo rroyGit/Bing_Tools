@@ -111,11 +111,23 @@ public class CIWDining extends Fragment {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
+                                    if(getActivity() != null) {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
+                                            }
+                                        });
+                                    }
                                 }
                             },3500);
                         }else {
-                            toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
+                            getActivity().runOnUiThread(new Runnable(){
+                                @Override
+                                public void run() {
+                                    toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
+                                }
+                            });
                         }
                     }
 
@@ -123,5 +135,4 @@ public class CIWDining extends Fragment {
             }
         }
     }
-
 }
