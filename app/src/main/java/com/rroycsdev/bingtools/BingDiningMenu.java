@@ -239,6 +239,7 @@ public class BingDiningMenu {
         private String weekStrings[] = new String[2];
         private ProgressDialog pD;
         private Boolean updateDatabase = false;
+        private Boolean loadEmptyMenu = false;
 
 
         //weak reference
@@ -329,6 +330,7 @@ public class BingDiningMenu {
 
                     }catch(IOException e){
                         e.printStackTrace();
+                        loadEmptyMenu = true;
                     }
                 }
             });
@@ -349,12 +351,16 @@ public class BingDiningMenu {
                 return;
             }
 
-            bingDiningMenu.saveBingWeekData(weekStrings[0]);
-            bingDiningMenu.loadSortedData();
-            bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
-            bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
-            bingDiningMenu.adapter.notifyDataSetChanged();
-            bingDiningMenu.diningDatabase.close();
+            if(loadEmptyMenu){
+                Toast.makeText(activityReference.get().context,"No data found on server", Toast.LENGTH_SHORT).show();
+            }else {
+                bingDiningMenu.saveBingWeekData(weekStrings[0]);
+                bingDiningMenu.loadSortedData();
+                bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
+                bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
+                bingDiningMenu.adapter.notifyDataSetChanged();
+                bingDiningMenu.diningDatabase.close();
+            }
         }
     }
 

@@ -53,10 +53,8 @@ public class AppalachianDining extends Fragment {
         appalachian_hall.setRecyclerView(recyclerView);
         appalachian_hall.setAdapter(listItems);
         appalachian_hall.makeRequest();
+        setToolbarDate();
 
-        if(toolbarTitle.getText().length() ==0){
-            setToolbarDate();
-        }
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
@@ -82,7 +80,6 @@ public class AppalachianDining extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     @Override
@@ -95,43 +92,47 @@ public class AppalachianDining extends Fragment {
     }
 
     public void setToolbarDate(){
-        if(toolbarTitle != null) {
-            if(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) != 0) {
-                toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
-            }else{
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        if(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) == 0){
+        if(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) != 0) {
+            if(toolbarTitle != null) toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
+        }else{
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if(isAdded()) {
+                        if (appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) == 0) {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(getActivity() != null) {
+                                    if (getActivity() != null && isAdded()) {
                                         getActivity().runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
+                                                if(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) == 0) {
+                                                    toolbarTitle.setText("No Menu Found");
+                                                }else toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
                                             }
                                         });
                                     }
                                 }
-                            },3500);
-                        }else {
-                            if(getActivity() != null) {
+                            }, 3500);
+                        } else {
+                            if (getActivity() != null && isAdded()) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
+                                        if(toolbarTitle != null) toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
                                     }
                                 });
                             }
                         }
                     }
+                }
 
-                },2200);
-            }
+            },2200);
         }
     }
+
 }

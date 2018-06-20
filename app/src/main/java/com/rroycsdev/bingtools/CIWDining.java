@@ -54,10 +54,8 @@ public class CIWDining extends Fragment {
         ciw_hall.setRecyclerView(recyclerView);
         ciw_hall.setAdapter(listItems);
         ciw_hall.makeRequest();
+        setToolbarDate();
 
-        if(toolbarTitle.getText().length() ==0){
-            setToolbarDate();
-        }
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -98,41 +96,46 @@ public class CIWDining extends Fragment {
     }
 
     public void setToolbarDate(){
-        if(toolbarTitle != null) {
-            if(ciw_hall.getBingWeekDate(getString(R.string.ciw)).compareTo(BingDiningMenu.NO_DATE) != 0) {
-                toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
-            }else{
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        if(ciw_hall.getBingWeekDate(getString(R.string.ciw)).compareTo(BingDiningMenu.NO_DATE) == 0){
+        if(ciw_hall.getBingWeekDate(getString(R.string.ciw)).compareTo(BingDiningMenu.NO_DATE) != 0) {
+            if(toolbarTitle != null) toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
+        }else{
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(isAdded()) {
+                        if (ciw_hall.getBingWeekDate(getString(R.string.ciw)).compareTo(BingDiningMenu.NO_DATE) == 0) {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(getActivity() != null) {
+                                    if (getActivity() != null && isAdded()) {
                                         getActivity().runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
+                                                if(ciw_hall.getBingWeekDate(getString(R.string.ciw)).compareTo(BingDiningMenu.NO_DATE) == 0) {
+                                                    toolbarTitle.setText("No Menu Found");
+                                                }else toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
                                             }
                                         });
                                     }
                                 }
-                            },3500);
-                        }else {
-                            getActivity().runOnUiThread(new Runnable(){
-                                @Override
-                                public void run() {
-                                    toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
-                                }
-                            });
+                            }, 3500);
+                        } else {
+                            if(getActivity() != null && isAdded()) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if(toolbarTitle != null) toolbarTitle.setText(ciw_hall.getBingWeekDate(getString(R.string.ciw)));
+                                    }
+                                });
+                            }
                         }
                     }
+                }
 
-                },2200);
-            }
+            },2200);
         }
     }
+
 }

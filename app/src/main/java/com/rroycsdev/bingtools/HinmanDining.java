@@ -60,11 +60,8 @@ public class HinmanDining extends Fragment{
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
         hinman_hall.makeRequest();
+        setToolbarDate();
 
-
-        if(toolbarTitle.getText().length() == 0){
-            setToolbarDate();
-        }
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -103,6 +100,7 @@ public class HinmanDining extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         /*
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -134,43 +132,48 @@ public class HinmanDining extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
     public void setToolbarDate(){
-        if(toolbarTitle!= null) {
-            if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) != 0) {
-                toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
-            }else{
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) == 0){
+        if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) != 0) {
+            if(toolbarTitle != null) toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+        }else{
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    if(isAdded()) {
+                        if (hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) == 0) {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(getActivity() != null) {
+                                    if (getActivity() != null && !isAdded()) {
                                         getActivity().runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+                                                if(toolbarTitle != null) {
+                                                    if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) == 0) {
+                                                        toolbarTitle.setText("No Menu Found");
+                                                    }else toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+                                                }
                                             }
                                         });
                                     }
                                 }
-                            },3500);
-                        }else {
-                            if(getActivity() != null) {
+                            }, 3500);
+                        } else {
+                            if (getActivity() != null && isAdded()) {
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
+                                        if(toolbarTitle != null) toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
                                     }
                                 });
                             }
                         }
                     }
+                }
 
-                },2200);
-            }
+            },2200);
         }
     }
 
