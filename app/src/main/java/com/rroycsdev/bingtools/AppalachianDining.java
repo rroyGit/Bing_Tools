@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,8 +25,15 @@ public class AppalachianDining extends Fragment {
     private String appalachianUrl;
     private String title;
     private AppCompatTextView toolbarTitle;
+
     public AppalachianDining() {
         //empty constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -53,7 +61,7 @@ public class AppalachianDining extends Fragment {
         appalachian_hall.setRecyclerView(recyclerView);
         appalachian_hall.setAdapter(listItems);
         appalachian_hall.makeRequest();
-        setToolbarDate();
+
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -92,47 +100,6 @@ public class AppalachianDining extends Fragment {
     }
 
     public void setToolbarDate(){
-
-        if(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) != 0) {
-            if(toolbarTitle != null) toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
-        }else{
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(isAdded()) {
-                        if (appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) == 0) {
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (getActivity() != null && isAdded()) {
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)).compareTo(BingDiningMenu.NO_DATE) == 0) {
-                                                    toolbarTitle.setText("No Menu Found");
-                                                }else toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
-                                            }
-                                        });
-                                    }
-                                }
-                            }, 3500);
-                        } else {
-                            if (getActivity() != null && isAdded()) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if(toolbarTitle != null) toolbarTitle.setText(appalachian_hall.getBingWeekDate(getString(R.string.appalachian)));
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-
-            },2200);
-        }
+        appalachian_hall.setToolbar(toolbarTitle);
     }
-
 }

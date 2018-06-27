@@ -68,7 +68,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         modB = (Button) view.findViewById(R.id.mod);
         scrollView = (ScrollView) view.findViewById(R.id.scrollViewCalculator);
 
-        positionEditText();
+        //positionEditText();
         modB.setOnClickListener(this);
         clearB.setOnClickListener(this);
         mulB.setOnClickListener(this);
@@ -276,13 +276,12 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
     }
 
     private void doMod(){
-        double number1, number2, result;
-        if(num1EditView.getText().toString().compareTo("") != 0 && num2EditView.getText().toString().compareTo("") != 0) {
-            number1 = Double.parseDouble(num1EditView.getText().toString());
-            number2 = Double.parseDouble(num2EditView.getText().toString());
-            result = number1 % number2;
 
-            resultView.setText(String.valueOf(result));
+        if(num1EditView.getText().toString().compareTo("") != 0 && num2EditView.getText().toString().compareTo("") != 0) {
+            n1 = Double.parseDouble(num1EditView.getText().toString());
+            n2 = Double.parseDouble(num2EditView.getText().toString());
+            res_num = n1 % n2;
+            resultView.setText(NumberFormat.getInstance().format(res_num));
         }
     }
 

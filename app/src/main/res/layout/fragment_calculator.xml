@@ -25,50 +25,13 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/num1"
-                android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/linearLayout"
-
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="46dp"
-                android:background="@drawable/custom_edit_text"
-                android:hint="@string/zero"
-                android:inputType="numberDecimal"
-                android:nextFocusLeft="@id/num1"
-                android:nextFocusUp="@id/num1"
-                android:textColor="@color/white"
-                android:textColorHint="@color/red"
-                android:textCursorDrawable="@drawable/edit_text_pipe_color"
-                android:textSize="25sp" />
-
-            <EditText
-                android:id="@+id/num2"
-                android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/num1"
-                android:layout_alignBottom="@+id/num1"
-
-                android:layout_alignEnd="@+id/linearLayout"
-                android:background="@drawable/custom_edit_text"
-                android:hint="@string/zero"
-                android:inputType="numberDecimal"
-                android:nextFocusLeft="@id/num2"
-                android:nextFocusUp="@id/num2"
-                android:textColor="@color/white"
-                android:textColorHint="@color/red"
-                android:textCursorDrawable="@drawable/edit_text_pipe_color"
-                android:textSize="25sp" />
-
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/textResult"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
 
                 android:background="@drawable/round_layout"
                 android:paddingBottom="16dp"
@@ -94,11 +57,52 @@
             </LinearLayout>
 
             <LinearLayout
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:id="@+id/editTexts"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textResult">
+
+                <EditText
+                    android:id="@+id/num1"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+
+                    android:background="@drawable/custom_edit_text"
+                    android:hint="@string/zero"
+                    android:inputType="numberDecimal"
+                    android:nextFocusLeft="@id/num1"
+                    android:nextFocusUp="@id/num1"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/red"
+                    android:textCursorDrawable="@drawable/edit_text_pipe_color"
+                    android:textSize="25sp" />
+
+                <EditText
+                    android:id="@+id/num2"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+
+                    android:background="@drawable/custom_edit_text"
+                    android:hint="@string/zero"
+                    android:inputType="numberDecimal"
+                    android:nextFocusLeft="@id/num2"
+                    android:nextFocusUp="@id/num2"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/red"
+                    android:textCursorDrawable="@drawable/edit_text_pipe_color"
+                    android:textSize="25sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/firstRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/num1"
-                android:layout_marginTop="5dp"
+                android:layout_below="@id/editTexts"
+                android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
@@ -204,9 +208,11 @@
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="35sp" />
-
-
             </LinearLayout>
+
+
+
+
 
         </RelativeLayout>
     </ScrollView>

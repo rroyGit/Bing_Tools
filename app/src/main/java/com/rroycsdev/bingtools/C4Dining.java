@@ -62,7 +62,7 @@ public class C4Dining extends Fragment {
         c4_hall.setRecyclerView(recyclerView);
         c4_hall.setAdapter(listItems);
         c4_hall.makeRequest();
-        setToolbarDate();
+
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -102,47 +102,7 @@ public class C4Dining extends Fragment {
     }
 
     public void setToolbarDate(){
-
-        if(c4_hall.getBingWeekDate(getString(R.string.c4)).compareTo(BingDiningMenu.NO_DATE) != 0) {
-            if(toolbarTitle != null) toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
-        }else{
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(isAdded()) {
-                        if (c4_hall.getBingWeekDate(getString(R.string.c4)).compareTo(BingDiningMenu.NO_DATE) == 0) {
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (getActivity() != null && isAdded()) {
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if(c4_hall.getBingWeekDate(getString(R.string.c4)).compareTo(BingDiningMenu.NO_DATE) == 0) {
-                                                    toolbarTitle.setText("No Menu Found");
-                                                }else toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
-                                            }
-                                        });
-                                    }
-                                }
-                            }, 3500);
-                        } else {
-                            if (getActivity() != null && isAdded()) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if(toolbarTitle != null) toolbarTitle.setText(c4_hall.getBingWeekDate(getString(R.string.c4)));
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-
-            },2200);
-        }
+        c4_hall.setToolbar(toolbarTitle);
     }
 
     @Override

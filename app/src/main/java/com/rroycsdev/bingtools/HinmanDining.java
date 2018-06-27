@@ -24,7 +24,8 @@ public class HinmanDining extends Fragment{
     public RecyclerView.Adapter adapter;
     public BingDiningMenu hinman_hall;
     private AppCompatTextView toolbarTitle;
-
+    private Context context;
+    private String title;
     public HinmanDining() {
         //empty constructor
     }
@@ -32,12 +33,13 @@ public class HinmanDining extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final Context context = getContext();
+        context = getContext();
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
@@ -45,7 +47,7 @@ public class HinmanDining extends Fragment{
         List<ListItem> listItems = new ArrayList<>();
 
         String hinmanUrl = getString(R.string.hinmanUrl);
-        String title = getString(R.string.hinman);
+        title = getString(R.string.hinman);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewHinman);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -55,12 +57,14 @@ public class HinmanDining extends Fragment{
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             if(fragmentName.compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false);
             else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true);
-        }else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true);
+        }else {
+            hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true);
+            setToolbarDate();
+        }
 
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
         hinman_hall.makeRequest();
-        setToolbarDate();
 
 
         //set empty adapter due to waiting for data
@@ -132,7 +136,9 @@ public class HinmanDining extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
     public void setToolbarDate(){
+        hinman_hall.setToolbar(toolbarTitle);
 
+        /*
         if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) != 0) {
             if(toolbarTitle != null) toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
         }else{
@@ -175,6 +181,7 @@ public class HinmanDining extends Fragment{
 
             },2200);
         }
+        */
     }
 
     @Override

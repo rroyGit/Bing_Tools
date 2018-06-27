@@ -65,7 +65,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                         pagerAdapter.getHinmanRefs().setToolbarDate();
                     }
                     else {
-                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
+                        pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
                         viewPager.setAdapter(pagerAdapter);
                         viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
                         new Handler().postDelayed(new Runnable() {
@@ -164,6 +164,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

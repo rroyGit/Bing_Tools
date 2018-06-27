@@ -9,7 +9,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -35,7 +34,7 @@ public class BingDiningMenu {
                                   R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
     private static final String SAMPLE_MENU = "Sample Menu";
     public static final String NO_DATE = "noDate";
-
+    public static final String FAILED_MENU_DATE = "failedMenuDate";
 
     private String title, link;
     private List<ListItem> listItems;
@@ -45,6 +44,7 @@ public class BingDiningMenu {
     private RecyclerView.Adapter adapter;
     private DiningDatabase diningDatabase;
     private boolean showProgressDialog;
+    private AppCompatTextView toolbar;
 
 
     public BingDiningMenu(String link, String title, Context context, List<ListItem> listItems, boolean showProgressDialog){
@@ -189,12 +189,32 @@ public class BingDiningMenu {
         return true;
     }
 
+    public void setToolbar(AppCompatTextView toolbar) {
+        String textToSet;
+        if(getBingWeekDate(title).compareTo(NO_DATE) == 0)
+            toolbar.setText("");
+        else if(getBingWeekDate(title).compareTo(FAILED_MENU_DATE) == 0){
+            textToSet = "No Menu Found";
+            toolbar.setText(textToSet);
+        }else{
+            toolbar.setText(getBingWeekDate(title));
+        }
+
+        this.toolbar = toolbar;
+    }
+
+    public AppCompatTextView getToolbar() {
+        return toolbar;
+    }
+
+    //check if a new menu is available by checking on the week date of the menu
     private static class CheckForNewMenu extends AsyncTask<String, Void, Void> {
         private String weekString;
         WeakReference<BingDiningMenu> weakReference;
         CheckForNewMenu(BingDiningMenu context){
             weakReference = new WeakReference<>(context);
         }
+        boolean updatePassed = true;
 
         @Override
         protected Void doInBackground(String ... strings) {
@@ -206,6 +226,7 @@ public class BingDiningMenu {
                 weekUrl = doc.getElementsByClass("accordionBody");
             } catch (IOException e) {
                 e.printStackTrace();
+                updatePassed = false;
             }
             //get updated links to Bing dining data
             assert weekUrl != null;
@@ -219,17 +240,21 @@ public class BingDiningMenu {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             BingDiningMenu bingDiningMenu = weakReference.get();
-            assert (weekString != null);
-            if(weekString.compareTo("Sample Menu") != 0){
-                bingDiningMenu.saveBingWeekData(weekString);
-                DiningDataScrapper diningDataScrapper = new DiningDataScrapper(bingDiningMenu);
-                diningDataScrapper.execute(true);
-            }else {
-                Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
-            }
+            if(updatePassed) {
+
+                assert (weekString != null);
+                if (weekString.compareTo("Sample Menu") != 0) {
+                    bingDiningMenu.saveBingWeekData(weekString);
+                    DiningDataScrapper diningDataScrapper = new DiningDataScrapper(bingDiningMenu);
+                    diningDataScrapper.execute(true);
+                } else {
+                    Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
+                }
+            }else Toast.makeText(bingDiningMenu.context, "No data found on server", Toast.LENGTH_SHORT).show();
         }
     }
-
+    //make async web request using Jsoup
+    //first parameter (Boolean), if true update database - if false insert into database
     private static class DiningDataScrapper extends AsyncTask<Boolean, Void, Void> {
         private StringBuilder stringBuilderBreakfast = new StringBuilder();
         private StringBuilder stringBuilderLunch = new StringBuilder();
@@ -347,14 +372,19 @@ public class BingDiningMenu {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             final BingDiningMenu bingDiningMenu = activityReference.get();
-            if(bingDiningMenu == null){
-                return;
-            }
+            if(bingDiningMenu == null) return;
+
 
             if(loadEmptyMenu){
                 Toast.makeText(activityReference.get().context,"No data found on server", Toast.LENGTH_SHORT).show();
+                bingDiningMenu.saveBingWeekData(FAILED_MENU_DATE);
+                if(bingDiningMenu.getToolbar() != null) {
+                    String textToSet = "No Menu Found";
+                    bingDiningMenu.getToolbar().setText(textToSet);
+                }
             }else {
                 bingDiningMenu.saveBingWeekData(weekStrings[0]);
+                if(bingDiningMenu.getToolbar() != null) bingDiningMenu.getToolbar().setText(weekStrings[0]);
                 bingDiningMenu.loadSortedData();
                 bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
                 bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
