@@ -275,7 +275,8 @@ public class CryptoFragment extends Fragment {
         protected Void doInBackground(String... strings) {
             try {
                 cryptoType = Integer.parseInt(strings[1]);
-                Document doc = Jsoup.connect(strings[0]).get();
+                //timeout for 10 s
+                Document doc = Jsoup.connect(strings[0]).timeout(10*1000).get();
                 words = doc.select("span#quote_price").text();
             }catch(IOException e){
                 e.printStackTrace();

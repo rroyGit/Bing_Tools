@@ -12,6 +12,7 @@
     <string name="div">/</string>
     <string name="clear">c</string>
 
+    <string name="refresh">Refresh</string>
     <string name="error">Error</string>
     <string name="error2">Undefined</string>
     <string name="error3">Too large </string>
@@ -25,6 +26,7 @@
     <string name="c4">C4</string>
     <string name="ciw">CIW</string>
     <string name="appalachian">Appalachian</string>
+
 
     <string name="cardMenuColor">Change card menu color</string>
     <string name="autoPosition">Auto position on card expand</string>

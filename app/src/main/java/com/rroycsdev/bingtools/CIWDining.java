@@ -25,6 +25,7 @@ public class CIWDining extends Fragment {
     private String ciwUrl;
     private String title;
     private AppCompatTextView toolbarTitle;
+    private View view;
 
     public CIWDining() {
         //empty constructor
@@ -54,9 +55,9 @@ public class CIWDining extends Fragment {
         if(savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(fragmentName.compareTo("bing") != 0)  ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, false);
-            else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true);
-        }else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true);
+            if(fragmentName.compareTo("bing") != 0)  ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, false, view);
+            else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
+        }else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
 
         ciw_hall.setRecyclerView(recyclerView);
         ciw_hall.setAdapter(listItems);
@@ -73,7 +74,8 @@ public class CIWDining extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.ciw_dining, container, false);
+        view = inflater.inflate(R.layout.ciw_dining, container, false);
+        return view;
     }
 
     @Override

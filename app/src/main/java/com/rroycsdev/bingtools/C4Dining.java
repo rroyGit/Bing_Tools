@@ -25,6 +25,7 @@ public class C4Dining extends Fragment {
     public BingDiningMenu c4_hall;
     private String c4Url;
     private String title;
+    private View view;
 
     public C4Dining() {
         //empty constructor
@@ -55,9 +56,9 @@ public class C4Dining extends Fragment {
         if(savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(fragmentName.compareTo("bing") != 0) c4_hall = new BingDiningMenu(c4Url, title, context, listItems, false);
-            else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true);
-        }else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true);
+            if(fragmentName.compareTo("bing") != 0) c4_hall = new BingDiningMenu(c4Url, title, context, listItems, false, view);
+            else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
+        }else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
 
         c4_hall.setRecyclerView(recyclerView);
         c4_hall.setAdapter(listItems);
@@ -73,7 +74,8 @@ public class C4Dining extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.c4_dining, container, false);
+        view = inflater.inflate(R.layout.c4_dining, container, false);
+        return view;
     }
 
     @Override

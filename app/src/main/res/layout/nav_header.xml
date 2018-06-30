@@ -7,14 +7,16 @@
     tools:context="com.rroycsdev.bingtools.MainActivity">
 
     <ImageView
-        android:elevation="3dp"
         android:id="@+id/DailyImage"
+        android:elevation="3dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"/>
 </RelativeLayout>
 
 

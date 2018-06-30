@@ -4,13 +4,23 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.zip.Inflater;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -45,9 +56,10 @@ public class BingDiningMenu {
     private DiningDatabase diningDatabase;
     private boolean showProgressDialog;
     private AppCompatTextView toolbar;
+    private View diningMenuView;
 
 
-    public BingDiningMenu(String link, String title, Context context, List<ListItem> listItems, boolean showProgressDialog){
+    public BingDiningMenu(String link, String title, Context context, List<ListItem> listItems, boolean showProgressDialog, View view){
         this.context = context;
         this.title = title;
         this.link = link;
@@ -55,6 +67,7 @@ public class BingDiningMenu {
         this.diningDatabase = new DiningDatabase(context, title);
         this.diningDatabase.createTable(title);
         this.showProgressDialog = showProgressDialog;
+        this.diningMenuView = view;
     }
 
     private void startBingDiningRequest(){
@@ -163,15 +176,17 @@ public class BingDiningMenu {
                 }
             }
         }else{
-        //make a new http request to grab data from web
+            //load default image and toast when to internet
             if(getDeviceInternetStatus(context) == null){
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
-                diningDatabase.close();
+                diningMenuView.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
                 return;
             }
+            //make a new http request to grab data from web
             diningDataScrapper = new DiningDataScrapper(this);
             diningDataScrapper.execute(false);
             setDayMenuCheck(Integer.parseInt(currentDay.toString()));
+            diningDatabase.close();
         }
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
@@ -195,6 +210,7 @@ public class BingDiningMenu {
             toolbar.setText("");
         else if(getBingWeekDate(title).compareTo(FAILED_MENU_DATE) == 0){
             textToSet = "No Menu Found";
+
             toolbar.setText(textToSet);
         }else{
             toolbar.setText(getBingWeekDate(title));
@@ -222,7 +238,8 @@ public class BingDiningMenu {
             Document doc;
             Elements weekUrl = null;
             try {
-                doc = Jsoup.connect(url).get();
+                //timeout for 10s
+                doc = Jsoup.connect(url).timeout(10*1000).get();
                 weekUrl = doc.getElementsByClass("accordionBody");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -250,7 +267,10 @@ public class BingDiningMenu {
                 } else {
                     Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
                 }
-            }else Toast.makeText(bingDiningMenu.context, "No data found on server", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(bingDiningMenu.context, "No data found on server", Toast.LENGTH_SHORT).show();
+                bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
+            }
         }
     }
     //make async web request using Jsoup
@@ -299,6 +319,13 @@ public class BingDiningMenu {
                 @Override
                 public void run() {
                     try {
+                        //test for connection
+                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(15*1000).execute();
+                        if (response.statusCode() != 200) {
+                           loadEmptyMenu = true;
+                            return;
+                        }
+
                         Document doc = Jsoup.connect(bingDiningMenu.link).get();
                         Elements weekUrl = doc.getElementsByClass("accordionBody");
 
@@ -313,7 +340,13 @@ public class BingDiningMenu {
                             }
                         }
 
+
                         String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
+                        response = Jsoup.connect(firstUrl).timeout(15*1000).execute();
+                        if (response.statusCode() != 200) {
+                            loadEmptyMenu = true;
+                            return;
+                        }
                         Document doc2 = Jsoup.connect(firstUrl).get();
                         String stringToAppend;
                         int index;
@@ -377,6 +410,8 @@ public class BingDiningMenu {
 
             if(loadEmptyMenu){
                 Toast.makeText(activityReference.get().context,"No data found on server", Toast.LENGTH_SHORT).show();
+                bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
+
                 bingDiningMenu.saveBingWeekData(FAILED_MENU_DATE);
                 if(bingDiningMenu.getToolbar() != null) {
                     String textToSet = "No Menu Found";

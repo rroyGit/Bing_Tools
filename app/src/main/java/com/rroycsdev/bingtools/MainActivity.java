@@ -1,10 +1,12 @@
 package com.rroycsdev.bingtools;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -12,6 +14,7 @@ import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -22,7 +25,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,8 +42,16 @@ import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
 import org.json.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import static com.rroycsdev.bingtools.BingDiningMenu.getDeviceInternetStatus;
 import static com.rroycsdev.bingtools.CalculatorFragment.hideKeyboard;
@@ -52,10 +62,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Activity activity;
     private Context context;
     private Menu menu;
+    private String saveImagePath;
+
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
     Bundle bundle = new Bundle();
     ActionBarDrawerToggle mToggle;
     Toolbar toolBar;
+    Bitmap bitmapWallpaper;
+    private String TAG = "YO";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setContentView(R.layout.activity_main);
         activity = this;
-        context = this;
+        context = getApplicationContext();
 
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int width = displayMetrics.widthPixels;
@@ -87,14 +103,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                clearCryptoData();
-                setBingWall();
+        if(ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if(getShowStoragePermission()) ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            else {
+                makeBingWallRequest(false);
             }
-        }).start();
+        }else{
+            createImageDir();
+            makeBingWallRequest(true);
+        }
+
+        clearCryptoData();
         setSupportActionBar(toolBar);
+
 
         final DrawerLayout dLayout;
         dLayout = (DrawerLayout) findViewById(R.id.nav_drawer_main);
@@ -139,6 +162,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     setTitle(getResources().getString(R.string.about));
                     break;
             }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    createImageDir();
+
+                    makeBingWallRequest(true);
+                    setShowStoragePermission(false);
+                } else {
+                    setShowStoragePermission(false);
+                    makeBingWallRequest(false);
+                    setToast("Permission Denied: Unable to save image to storage");
+                }
+            }
+        }
+    }
+
+    private void setShowStoragePermission(boolean permission){
+        SharedPreferences sharedPreferences  = getSharedPreferences("storagePermission", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("permission", permission).apply();
+    }
+
+    private boolean getShowStoragePermission(){
+        SharedPreferences sharedPreferences  = getSharedPreferences("storagePermission", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("permission", true);
+    }
+
+
+    private void createImageDir(){
+        String dataPath = "/storage/emulated/0/Android/data/";
+
+        String dirPath = dataPath + File.separator + getPackageName();
+        File packageDir = new File(dirPath);
+
+        boolean packageDirSuccess = true;
+        if (!packageDir.exists()) packageDirSuccess = packageDir.mkdirs();
+        if(packageDirSuccess){
+            String dirPathImage = dirPath + File.separator + "Image";
+            File imageDir = new File(dirPathImage);
+            if (!imageDir.exists()) packageDirSuccess = imageDir.mkdirs();
+            if(!packageDirSuccess) {
+                setToast("Unable to create file");
+                return;
+            }
+            saveImagePath = dirPathImage;
         }
     }
 
@@ -252,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main_toolbar, menu);
         this.menu = menu;
         return true;
     }
@@ -436,8 +512,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    Bitmap wallpaper;
-    private static class BingWallpaper extends AsyncTask<Void, Void, Void> {
+
+    private static class BingWallpaper extends AsyncTask<Boolean, Void, Void> {
         StringRequest stringRequest;
         final String URL_DATA = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US";
         private WeakReference<MainActivity> reference;
@@ -448,7 +524,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Boolean... params) {
+            final boolean storagePermission = params[0];
             final MainActivity mainActivity = reference.get();
             stringRequest = new StringRequest(Request.Method.GET, URL_DATA, new Response.Listener<String>() {
 
@@ -465,7 +542,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             @Override
                             public void run() {
                                 try {
-                                    mainActivity.wallpaper = Picasso.with(mainActivity.context).load(retVal).get();
+                                    mainActivity.bitmapWallpaper = Picasso.with(mainActivity.context).load(retVal).get();
+                                    if(storagePermission) mainActivity.saveBitmap();
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -495,23 +573,114 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void clearCryptoData(){
-        SharedPreferences sP = this.getSharedPreferences("Crypto", MODE_PRIVATE);
-        sP.edit().remove("Crypto").clear().apply();
-    }
+    private void saveBitmap(){
+        if(bitmapWallpaper == null || saveImagePath == null){
+            return;
+        }
 
-    private void setBingWall(){
-        if(getDeviceInternetStatus(context) == null){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    setToast("Device offline");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmapWallpaper.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+
+
+        //create a new file if one does not exist already
+        File imageFile = new File(saveImagePath + File.separator + "savedBingImage.jpg");
+        if(!imageFile.exists()) {
+            try {
+                if (!imageFile.createNewFile()) {
+                    setToast("Could not create new file");
+                    return;
                 }
-            });
-        }else {
-            new BingWallpaper(MainActivity.this).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //write the bytes in file
+        FileOutputStream fo = null;
+        try {
+            fo = new FileOutputStream(imageFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (fo != null) {
+                fo.write(bytes.toByteArray());
+            }else{
+                setToast("Could not write to file");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //close file FileOutput
+        try {
+            if (fo != null) {
+                fo.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+    private void loadBitmap(){
+        String path = "/storage/emulated/0/Android/data/" + getPackageName() + "/Image" + File.separator + "savedBingImage.jpg";
+
+        File file = new File(path);
+        int size  = (int)(int)file.length();
+        byte[] b = new byte[size];
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            try {
+               int bytesRead =  fileInputStream.read(b);
+                if(BuildConfig.DEBUG && !(bytesRead>0)){
+                    throw new AssertionError();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Bitmap bitMap = BitmapFactory.decodeByteArray(b, 0, b.length);
+            bingImage.setImageBitmap(bitMap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void makeBingWallRequest(boolean storagePermission){
+        if(getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
+            bingImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
+            return;
+        }
+        if(!storagePermission){
+           new BingWallpaper(MainActivity.this).execute(false);
+        }else {
+            Calendar now = Calendar.getInstance(TimeZone.getDefault());
+            int day = now.get(Calendar.DAY_OF_MONTH);
+            if (day != getBingWallDay()) {
+                saveBingWallDay();
+                new BingWallpaper(MainActivity.this).execute(true);
+            } else {
+                loadBitmap();
+            }
+        }
+    }
+
+
+    private void saveBingWallDay(){
+        SharedPreferences sharedPreferences = getSharedPreferences("bingWall", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Calendar now = Calendar.getInstance(TimeZone.getDefault());
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        editor.putInt("dayInt", day);
+        editor.apply();
+    }
+
+    private int getBingWallDay(){
+        SharedPreferences sharedPreferences = getSharedPreferences("bingWall", MODE_PRIVATE);
+        return sharedPreferences.getInt("dayInt", 0);
+    }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
@@ -523,4 +692,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return menu;
     }
 
+    private void clearCryptoData(){
+        SharedPreferences sP = this.getSharedPreferences("Crypto", MODE_PRIVATE);
+        sP.edit().remove("Crypto").clear().apply();
+    }
 }

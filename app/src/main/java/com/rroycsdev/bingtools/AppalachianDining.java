@@ -25,6 +25,8 @@ public class AppalachianDining extends Fragment {
     private String appalachianUrl;
     private String title;
     private AppCompatTextView toolbarTitle;
+    private View view;
+
 
     public AppalachianDining() {
         //empty constructor
@@ -54,9 +56,9 @@ public class AppalachianDining extends Fragment {
         if(savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(fragmentName.compareTo("bing") != 0)  appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, false);
-            else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true);
-        }else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true);
+            if(fragmentName.compareTo("bing") != 0)  appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, false, view);
+            else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
+        }else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
 
         appalachian_hall.setRecyclerView(recyclerView);
         appalachian_hall.setAdapter(listItems);
@@ -72,7 +74,8 @@ public class AppalachianDining extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.appalachian_dining, container, false);
+        view = inflater.inflate(R.layout.appalachian_dining, container, false);
+        return view;
     }
 
     @Override

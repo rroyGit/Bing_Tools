@@ -1,11 +1,13 @@
 package com.rroycsdev.bingtools;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +28,9 @@ public class HinmanDining extends Fragment{
     private AppCompatTextView toolbarTitle;
     private Context context;
     private String title;
+    View view;
+
+
     public HinmanDining() {
         //empty constructor
     }
@@ -55,15 +60,16 @@ public class HinmanDining extends Fragment{
         if(savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(fragmentName.compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false);
-            else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true);
+            if(fragmentName.compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false, view);
+            else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
         }else {
-            hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true);
+            hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
             setToolbarDate();
         }
 
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
+
         hinman_hall.makeRequest();
 
 
@@ -77,7 +83,8 @@ public class HinmanDining extends Fragment{
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.hinman_dining, container, false);
+        view = inflater.inflate(R.layout.hinman_dining, container, false);
+        return view;
     }
 
     @Override
@@ -137,6 +144,7 @@ public class HinmanDining extends Fragment{
     }
     public void setToolbarDate(){
         hinman_hall.setToolbar(toolbarTitle);
+        //view.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
 
         /*
         if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) != 0) {
