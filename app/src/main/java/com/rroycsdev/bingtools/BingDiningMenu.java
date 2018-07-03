@@ -4,20 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.jsoup.Connection;
@@ -33,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
-import java.util.zip.Inflater;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -44,8 +36,8 @@ public class BingDiningMenu {
     private static final int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
                                   R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
     private static final String SAMPLE_MENU = "Sample Menu";
-    public static final String NO_DATE = "noDate";
-    public static final String FAILED_MENU_DATE = "failedMenuDate";
+    private static final String NO_DATE = "noDate";
+    private static final String FAILED_MENU_DATE = "failedMenuDate";
 
     private String title, link;
     private List<ListItem> listItems;
@@ -78,11 +70,12 @@ public class BingDiningMenu {
         DiningDataScrapper diningDataScrapper;
         StringTokenizer sT;
 
-        //load data from SQLite database & check if new request needs to be made
-        if(diningDatabase.getDatabaseCount() > 0 && getBingWeekDate(title).compareTo(NO_DATE) != 0) {
+        //load data from SQLite database and check if a new menu is found, if yes then load new menu
+        if(diningDatabase.getDatabaseCount() > 0 && (getBingWeekDate(title).compareTo(NO_DATE) !=0 || getBingWeekDate(title).compareTo(FAILED_MENU_DATE) !=0)) {
 
             //saved start and end dates per dining menu
-            String month1, month2, date1, date2, year1, year2;
+            String month2, date2, year2;
+
             try {
                 //sample menu check
                 if(getBingWeekDate(title).compareTo(SAMPLE_MENU) == 0){
@@ -91,105 +84,74 @@ public class BingDiningMenu {
                     //if shared pref for daily menu check is empty, make a new request else record the currentDay checked
                     //if saved currentDay does not equal current currentDay, make new request
                     if(getDayMenuCheck() == 404 || dayInt != getDayMenuCheck()) {
-                        new CheckForNewMenu(BingDiningMenu.this).execute(link);
+                        new MakeNewMenuRequest(BingDiningMenu.this).execute(link);
                         setDayMenuCheck(dayInt);
+                    }else{
+                        loadSortedData();
+                        adapter = new MenuAdapter(listItems, context, recyclerView);
+                        recyclerView.setAdapter(adapter);
                     }
-
-                    if(getBingWeekDate(title).compareTo(SAMPLE_MENU) != 0){
-                        diningDataScrapper = new DiningDataScrapper(this);
-                        diningDataScrapper.execute(true);
-                    }else {
-                        final Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                loadSortedData();
-                                adapter = new MenuAdapter(listItems, context, recyclerView);
-                                recyclerView.setAdapter(adapter);
-                                diningDatabase.close();
-                            }
-                        });
-                        thread.start();
-
-                        assert listItems != null;
-                        if (listItems.isEmpty()) {
-                            try {
-                                thread.join();
-                                if (BuildConfig.DEBUG && !setData()) {
-                                    Toast.makeText(context, "Data was not set", Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (InterruptedException e2) {
-                                e2.printStackTrace();
-                            }
-                        }
-                    }
-                    return;
                 }else {
                     sT = new StringTokenizer(getBingWeekDate(title), " ");
-                    String firstDate = sT.nextToken();
-                    sT.nextToken();
-                    String secDate = sT.nextToken();
-
-                    sT = new StringTokenizer(firstDate, "/");
-                    month1 = sT.nextToken();
-                    date1 = sT.nextToken();
-                    year1 = sT.nextToken();
+                    sT.nextToken(); //first date
+                    sT.nextToken(); //hyphen
+                    String secDate = sT.nextToken(); //second date
 
                     sT = new StringTokenizer(secDate, "/");
                     month2 = sT.nextToken();
                     date2 = sT.nextToken();
                     year2 = sT.nextToken();
-                }
-            } catch (Exception e){
-                Toast.makeText(context, "Error parsing week date " + e.toString(), Toast.LENGTH_SHORT).show();
-                diningDatabase.close();
-                return;
-            }
 
-            //if current currentDay does not fall in saved dates then make new request
-            if(Integer.parseInt(currentMonth.toString()) > Integer.parseInt(month2)) {
-                diningDataScrapper = new DiningDataScrapper(this);
-                diningDataScrapper.execute(true);
-            }else if (((currentMonth.toString().equals(month2)) && (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))) {
-                diningDataScrapper = new DiningDataScrapper(this);
-                diningDataScrapper.execute(true);
-            }else if (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) {
-                diningDataScrapper = new DiningDataScrapper(this);
-                diningDataScrapper.execute(true);
-            }else {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadSortedData();
-                    }
-                });
-                thread.start();
-                assert listItems != null;
-                if(listItems.isEmpty()){
-                    try {
-                        thread.join();
-                        if(BuildConfig.DEBUG && !setData()){
-                            Toast.makeText(context,"Data was not set",Toast.LENGTH_SHORT).show();
+                    //if current currentDay does not fall in saved dates then make new request
+                    if(Integer.parseInt(currentMonth.toString()) > Integer.parseInt(month2)) {
+                        diningDataScrapper = new DiningDataScrapper(this);
+                        diningDataScrapper.execute(true);
+                    }else if (((currentMonth.toString().equals(month2)) && (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))) {
+                        diningDataScrapper = new DiningDataScrapper(this);
+                        diningDataScrapper.execute(true);
+                    }else if (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) {
+                        diningDataScrapper = new DiningDataScrapper(this);
+                        diningDataScrapper.execute(true);
+                    }else {
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loadSortedData();
+                            }
+                        });
+                        thread.start();
+                        assert listItems != null;
+                        if(listItems.isEmpty()){
+                            try {
+                                thread.join();
+                                if(BuildConfig.DEBUG && !setData()){
+                                    Toast.makeText(context,"Data was not set",Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (InterruptedException e3) {
+                                e3.printStackTrace();
+                            }
                         }
-                    } catch (InterruptedException e3) {
-                        e3.printStackTrace();
                     }
                 }
+
+            } catch (Exception e){
+                Toast.makeText(context, "Error parsing " + e.toString(), Toast.LENGTH_SHORT).show();
+                diningDatabase.close();
             }
-        }else{
-            //load default image and toast when to internet
+        }else { //nothing stored in database so make http request
+
+            //load default image and toast when no internet
             if(getDeviceInternetStatus(context) == null){
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                 diningMenuView.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
-                return;
+            }else {
+                //make a new http request to grab data from web
+                diningDataScrapper = new DiningDataScrapper(this);
+                diningDataScrapper.execute(false);
+                setDayMenuCheck(Integer.parseInt(currentDay.toString()));
             }
-            //make a new http request to grab data from web
-            diningDataScrapper = new DiningDataScrapper(this);
-            diningDataScrapper.execute(false);
-            setDayMenuCheck(Integer.parseInt(currentDay.toString()));
-            diningDatabase.close();
         }
-        adapter = new MenuAdapter(listItems, context, recyclerView);
-        recyclerView.setAdapter(adapter);
+        //close database connection
         diningDatabase.close();
     }
 
@@ -224,10 +186,10 @@ public class BingDiningMenu {
     }
 
     //check if a new menu is available by checking on the week date of the menu
-    private static class CheckForNewMenu extends AsyncTask<String, Void, Void> {
+    private static class MakeNewMenuRequest extends AsyncTask<String, Void, Void> {
         private String weekString;
         WeakReference<BingDiningMenu> weakReference;
-        CheckForNewMenu(BingDiningMenu context){
+        MakeNewMenuRequest(BingDiningMenu context){
             weakReference = new WeakReference<>(context);
         }
         boolean updatePassed = true;
@@ -236,20 +198,28 @@ public class BingDiningMenu {
         protected Void doInBackground(String ... strings) {
             final String url = strings[0];
             Document doc;
-            Elements weekUrl = null;
+            Elements weekUrl;
             try {
                 //timeout for 10s
+                Connection.Response response = Jsoup.connect(url).timeout(10*1000).execute();
+                if (response.statusCode() != 200) {
+                    updatePassed = false;
+                    return null;
+                }
+
                 doc = Jsoup.connect(url).timeout(10*1000).get();
                 weekUrl = doc.getElementsByClass("accordionBody");
+
+                //get updated links to Bing dining data
+                Element link = weekUrl.first();
+                Elements f = link.getElementsByTag("a");
+                weekString = f.first().text();
+
             } catch (IOException e) {
                 e.printStackTrace();
                 updatePassed = false;
             }
-            //get updated links to Bing dining data
-            assert weekUrl != null;
-            Element link = weekUrl.first();
-            Elements f = link.getElementsByTag("a");
-            weekString = f.first().text();
+
             return null;
         }
 
@@ -258,14 +228,16 @@ public class BingDiningMenu {
             super.onPostExecute(aVoid);
             BingDiningMenu bingDiningMenu = weakReference.get();
             if(updatePassed) {
-
-                assert (weekString != null);
                 if (weekString.compareTo("Sample Menu") != 0) {
                     bingDiningMenu.saveBingWeekData(weekString);
                     DiningDataScrapper diningDataScrapper = new DiningDataScrapper(bingDiningMenu);
                     diningDataScrapper.execute(true);
                 } else {
                     Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
+                    bingDiningMenu.loadSortedData();
+                    bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
+                    bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
+                    bingDiningMenu.diningDatabase.close();
                 }
             }else {
                 Toast.makeText(bingDiningMenu.context, "No data found on server", Toast.LENGTH_SHORT).show();
