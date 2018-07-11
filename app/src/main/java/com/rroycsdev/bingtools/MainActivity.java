@@ -64,13 +64,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Menu menu;
     private String saveImagePath;
 
-    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int BING_IMAGE_RESET_HOUR_IN_24 = 16;
+    private static final String TAG = "MainActivity";
 
     Bundle bundle = new Bundle();
     ActionBarDrawerToggle mToggle;
     Toolbar toolBar;
     Bitmap bitmapWallpaper;
-    private String TAG = "YO";
 
 
     @Override
@@ -139,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nView.setNavigationItemSelectedListener(this);
 
 
-        //fragmentManager.getFragments().size() == 0
         if(savedInstanceState == null){
             displaySelectedScreen(R.id.Bing_Dining_Nav, nView.getMenu().findItem(R.id.Bing_Dining_Nav), true);
         }else{
@@ -173,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    createImageDir();
 
+                    createImageDir();
                     makeBingWallRequest(true);
                     setShowStoragePermission(false);
                 } else {
@@ -648,6 +648,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void makeBingWallRequest(boolean storagePermission){
+
         if(getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
             bingImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
             return;
@@ -658,11 +659,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Calendar now = Calendar.getInstance(TimeZone.getDefault());
             int day = now.get(Calendar.DAY_OF_MONTH);
             if (day != getBingWallDay()) {
-                saveBingWallDay();
-                new BingWallpaper(MainActivity.this).execute(true);
-            } else {
-                loadBitmap();
-            }
+                //Microsoft Bing image resets at specific time of day (around 4AM EST - 16 in 24 hour)
+                //if current time is past 3AM then make new request
+                int hourIn24 = now.get(Calendar.HOUR_OF_DAY);
+                if(hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24){
+                    saveBingWallDay();
+                    new BingWallpaper(MainActivity.this).execute(true);
+                }else loadBitmap();
+            } else loadBitmap();
         }
     }
 

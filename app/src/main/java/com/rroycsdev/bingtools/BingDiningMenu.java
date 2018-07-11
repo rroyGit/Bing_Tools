@@ -38,6 +38,7 @@ public class BingDiningMenu {
     private static final String SAMPLE_MENU = "Sample Menu";
     private static final String NO_DATE = "noDate";
     private static final String FAILED_MENU_DATE = "failedMenuDate";
+    private static final int MENU_CHECK_ERROR_CODE = 404;
 
     private String title, link;
     private List<ListItem> listItems;
@@ -83,7 +84,7 @@ public class BingDiningMenu {
 
                     //if shared pref for daily menu check is empty, make a new request else record the currentDay checked
                     //if saved currentDay does not equal current currentDay, make new request
-                    if(getDayMenuCheck() == 404 || dayInt != getDayMenuCheck()) {
+                    if(getDayMenuCheck() == MENU_CHECK_ERROR_CODE || dayInt != getDayMenuCheck()) {
                         new MakeNewMenuRequest(BingDiningMenu.this).execute(link);
                         setDayMenuCheck(dayInt);
                     }else{
@@ -272,7 +273,7 @@ public class BingDiningMenu {
             if(bingDiningMenu.showProgressDialog) {
                 pD = new ProgressDialog(bingDiningMenu.context);
                 pD.setCancelable(false);
-                pD.setMessage("Loading, please wait...");
+                pD.setMessage("Loading menu, please wait.");
                 pD.show();
             }
         }
@@ -287,7 +288,7 @@ public class BingDiningMenu {
                 return null;
             }
 
-            Thread thread = new Thread(new Runnable() {
+            final Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -370,12 +371,14 @@ public class BingDiningMenu {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(pD != null) pD.dismiss();
+
             return null;
         }
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if(pD != null) pD.dismiss();
+
             final BingDiningMenu bingDiningMenu = activityReference.get();
             if(bingDiningMenu == null) return;
 
@@ -419,7 +422,7 @@ public class BingDiningMenu {
     }
     private int getDayMenuCheck(){
         SharedPreferences sharedPreferences = context.getSharedPreferences("menuCounter", MODE_PRIVATE);
-        return sharedPreferences.getInt("day", 404);
+        return sharedPreferences.getInt("day", MENU_CHECK_ERROR_CODE);
     }
 
     public void setRecyclerView(RecyclerView recyclerView){
