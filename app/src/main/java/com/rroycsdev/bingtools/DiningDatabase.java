@@ -76,7 +76,7 @@ public class DiningDatabase extends SQLiteOpenHelper {
         contentValues.put(MENU_COLUMN_BREAKFAST, breakfast);
         contentValues.put(MENU_COLUMN_LUNCH, lunch);
         contentValues.put(MENU_COLUMN_DINNER, dinner);
-        sqLiteDatabase.update(MENU_TABLE_NAME, contentValues, MENU_COLUMN_ID + " = ?", new String[] {Integer.toString(id)});
+        sqLiteDatabase.update(MENU_TABLE_NAME, contentValues, MENU_COLUMN_ID + "= ?", new String[] {Integer.toString(id)});
         sqLiteDatabase.close();
         return true;
     }
@@ -105,9 +105,17 @@ public class DiningDatabase extends SQLiteOpenHelper {
 
     public Integer deleteItem(Integer id){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        Integer ret = sqLiteDatabase.delete(MENU_TABLE_NAME, "WHERE " + MENU_COLUMN_ID + "=?", new String[]{Integer.toString(id)});
+        String query = "WHERE " + MENU_COLUMN_ID + "= ?";
+        Integer ret = sqLiteDatabase.delete(MENU_TABLE_NAME, query, new String[]{Integer.toString(id)});
         sqLiteDatabase.close();
         return ret;
+    }
+
+    public int deleteAllItems(){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        int numItems = sqLiteDatabase.delete(MENU_TABLE_NAME,null, null);
+        sqLiteDatabase.close();
+        return numItems;
     }
 
     public int getDatabaseCount(){

@@ -63,8 +63,7 @@ public class BingDiningMenu {
         this.diningMenuView = view;
     }
 
-    private void startBingDiningRequest(){
-        //Async Task for getting bing dining data from the web
+    private void makeBingDiningRequest(){
         StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(), currentYear = new StringBuilder();
         loadCurrentDate(currentMonth, currentDay, currentYear);
 
@@ -72,12 +71,13 @@ public class BingDiningMenu {
         StringTokenizer sT;
 
         //load data from SQLite database and check if a new menu is found, if yes then load new menu
-        if(diningDatabase.getDatabaseCount() > 0 && (getBingWeekDate(title).compareTo(NO_DATE) !=0 || getBingWeekDate(title).compareTo(FAILED_MENU_DATE) !=0)) {
+        if(diningDatabase.getDatabaseCount() > 0 && getBingWeekDate(title).compareTo(NO_DATE) !=0 && getBingWeekDate(title).compareTo(FAILED_MENU_DATE) !=0) {
 
             //saved start and end dates per dining menu
             String month2, date2, year2;
 
             try {
+                Toast.makeText(context, "bingWeekDate "+getBingWeekDate(title), Toast.LENGTH_LONG).show();
                 //sample menu check
                 if(getBingWeekDate(title).compareTo(SAMPLE_MENU) == 0){
                     final int dayInt = Integer.parseInt(currentDay.toString());
@@ -136,7 +136,7 @@ public class BingDiningMenu {
                 }
 
             } catch (Exception e){
-                Toast.makeText(context, "Error parsing " + e.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Error parsing: " + e.toString(), Toast.LENGTH_SHORT).show();
                 diningDatabase.close();
             }
         }else { //nothing stored in database so make http request
@@ -146,6 +146,9 @@ public class BingDiningMenu {
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                 diningMenuView.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
             }else {
+                //delete old contents in respective table in database
+                diningDatabase.deleteAllItems();
+
                 //make a new http request to grab data from web
                 diningDataScrapper = new DiningDataScrapper(this);
                 diningDataScrapper.execute(false);
@@ -173,7 +176,6 @@ public class BingDiningMenu {
             toolbar.setText("");
         else if(getBingWeekDate(title).compareTo(FAILED_MENU_DATE) == 0){
             textToSet = "No Menu Found";
-
             toolbar.setText(textToSet);
         }else{
             toolbar.setText(getBingWeekDate(title));
@@ -292,8 +294,8 @@ public class BingDiningMenu {
                 @Override
                 public void run() {
                     try {
-                        //test for connection
-                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(15*1000).execute();
+                        //test for valid connection
+                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(10*1000).execute();
                         if (response.statusCode() != 200) {
                            loadEmptyMenu = true;
                             return;
@@ -313,9 +315,10 @@ public class BingDiningMenu {
                             }
                         }
 
-
+                        //test for valid connection
                         String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
-                        response = Jsoup.connect(firstUrl).timeout(15*1000).execute();
+                        response = Jsoup.connect(firstUrl).timeout(10*1000).execute();
+
                         if (response.statusCode() != 200) {
                             loadEmptyMenu = true;
                             return;
@@ -434,7 +437,7 @@ public class BingDiningMenu {
    }
 
     public void makeRequest(){
-        startBingDiningRequest();
+        makeBingDiningRequest();
     }
 
     public void refreshData(){

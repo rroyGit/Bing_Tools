@@ -58,14 +58,15 @@ import static com.rroycsdev.bingtools.CalculatorFragment.hideKeyboard;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public NavigationView nView;
-    private ImageView bingImage;
+    private ImageView bingImageView;
     private Activity activity;
     private Context context;
     private Menu menu;
     private String saveImagePath;
 
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int BING_IMAGE_RESET_HOUR_IN_24 = 16;
+    private static final int BING_IMAGE_RESET_HOUR_IN_24 = 4;
+    private static final int FIRST_RUN_BING_IMAGE = 0;
     private static final String TAG = "MainActivity";
 
     Bundle bundle = new Bundle();
@@ -101,17 +102,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         View headerView = nView.getHeaderView(0);
         headerView.getLayoutParams().height = (int)(height/3.2);
-        bingImage = (ImageView) headerView.findViewById(R.id.DailyImage);
+        bingImageView = (ImageView) headerView.findViewById(R.id.DailyImage);
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
 
-        if(ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if(getShowStoragePermission()) ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-            else {
+        if(context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            if(getShowStoragePermission()) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            } else {
                 makeBingWallRequest(false);
             }
         }else{
+            //storage permission granted manually from app settings or from dialog request
             createImageDir();
             makeBingWallRequest(true);
         }
@@ -180,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 } else {
                     setShowStoragePermission(false);
                     makeBingWallRequest(false);
-                    setToast("Permission Denied: Unable to save image to storage");
+                    setToast("Permission Denied: Unable to save image to storage", Toast.LENGTH_SHORT);
                 }
             }
         }
@@ -211,15 +215,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             File imageDir = new File(dirPathImage);
             if (!imageDir.exists()) packageDirSuccess = imageDir.mkdirs();
             if(!packageDirSuccess) {
-                setToast("Unable to create file");
+                setToast("Unable to create file", Toast.LENGTH_SHORT);
                 return;
             }
             saveImagePath = dirPathImage;
         }
     }
 
-    private void setToast(String string){
-        if(string != null) Toast.makeText(context, string, Toast.LENGTH_LONG).show();
+    private void setToast(String string, int length){
+        if(string != null) Toast.makeText(context, string, length).show();
     }
 
     @Override
@@ -536,8 +540,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         JSONArray array = jsonObject.getJSONArray("images");
                         JSONObject urlObj = array.getJSONObject(0);
                         retVal = "https://www.bing.com/"+ urlObj.getString("url");
-                        assert (mainActivity.bingImage != null);
-                        Picasso.with(mainActivity.context).load(retVal).fit().into(mainActivity.bingImage);
+                        assert (mainActivity.bingImageView != null);
+                        Picasso.with(mainActivity.context).load(retVal).fit().into(mainActivity.bingImageView);
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -581,13 +585,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmapWallpaper.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
 
-
         //create a new file if one does not exist already
         File imageFile = new File(saveImagePath + File.separator + "savedBingImage.jpg");
         if(!imageFile.exists()) {
             try {
                 if (!imageFile.createNewFile()) {
-                    setToast("Could not create new file");
+                    setToast("Could not create new file", Toast.LENGTH_SHORT);
                     return;
                 }
             } catch (IOException e) {
@@ -606,7 +609,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (fo != null) {
                 fo.write(bytes.toByteArray());
             }else{
-                setToast("Could not write to file");
+                setToast("Could not write to file", Toast.LENGTH_SHORT);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -625,6 +628,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String path = "/storage/emulated/0/Android/data/" + getPackageName() + "/Image" + File.separator + "savedBingImage.jpg";
 
         File file = new File(path);
+        if(!file.exists()){
+            setToast("Saved image not found, loading default image", Toast.LENGTH_SHORT);
+            bingImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
+            return;
+        }
+
         int size  = (int)(int)file.length();
         byte[] b = new byte[size];
 
@@ -640,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             Bitmap bitMap = BitmapFactory.decodeByteArray(b, 0, b.length);
-            bingImage.setImageBitmap(bitMap);
+            bingImageView.setImageBitmap(bitMap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -650,7 +659,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void makeBingWallRequest(boolean storagePermission){
 
         if(getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
-            bingImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
+            bingImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
             return;
         }
         if(!storagePermission){
@@ -658,14 +667,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else {
             Calendar now = Calendar.getInstance(TimeZone.getDefault());
             int day = now.get(Calendar.DAY_OF_MONTH);
-            if (day != getBingWallDay()) {
-                //Microsoft Bing image resets at specific time of day (around 4AM EST - 16 in 24 hour)
-                //if current time is past 3AM then make new request
+
+
+            if(getBingWallDay() == FIRST_RUN_BING_IMAGE){
+                saveBingWallDay();
+                new BingWallpaper(MainActivity.this).execute(true);
+                //every other run
+            }else if (day != getBingWallDay()) {
+                //Microsoft Bing image resets at specific time of day (around 4AM EST - 4 in 24hour)
+                //make new image request if current time does NOT fall between 12AM and 4AM EST
                 int hourIn24 = now.get(Calendar.HOUR_OF_DAY);
-                if(hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24){
+                int am0_1PM = now.get(Calendar.AM_PM);
+
+                setToast("hour24" + hourIn24, Toast.LENGTH_LONG);
+                if((am0_1PM == 0 && hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24) || (am0_1PM == 1)){
+                    setToast("Making new bing request after 4AM", Toast.LENGTH_LONG);
                     saveBingWallDay();
                     new BingWallpaper(MainActivity.this).execute(true);
-                }else loadBitmap();
+                } else loadBitmap();
             } else loadBitmap();
         }
     }
