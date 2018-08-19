@@ -27,7 +27,7 @@ Bing Tools contains the following:
 ### To be added:
 	a) An about page crediting the original owners of the icons, web data, etc (DONE)
 	b) Dynamically change the colors of the cards in Bing Dining  (DONE)
-	c) Save the bitmap of the navigation image to device
+	c) Save the bitmap of the navigation image to device (DONE)
 
 ![Alt text](images/Bing_Dining.png "Bing_Dining")
 
