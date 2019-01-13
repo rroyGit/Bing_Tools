@@ -33,11 +33,12 @@
     <string name="resetSettings">Reset Settings</string>
     <string name="homeSettings">Home</string>
 
-    <string name="appalachianUrl">https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/appalachian.html</string>
+    <string name="appalachianUrl">https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/app.html</string>
     <string name="c4Url">https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/index.html</string>
     <string name="ciwUrl">https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/ciw.html</string>
-    <string name="hinmanUrl">https://binghamton.sodexomyway.com/dining-choices/resident/residentrestaurants/hinman.html</string>
+    <string name="hinmanUrl">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=1205&amp;locationId=74015007&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/hinman-dining-center</string>
 
+    <string name="easternTimeZone">America/New_York</string>
     <string name="customColor">Custom Color</string>
 
 

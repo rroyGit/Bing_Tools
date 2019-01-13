@@ -665,9 +665,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(!storagePermission){
            new BingWallpaper(MainActivity.this).execute(false);
         }else {
-            Calendar now = Calendar.getInstance(TimeZone.getDefault());
+            Calendar now = Calendar.getInstance();
+            now.setTimeZone(TimeZone.getTimeZone(getResources().getString(R.string.easternTimeZone)));
             int day = now.get(Calendar.DAY_OF_MONTH);
-
 
             if(getBingWallDay() == FIRST_RUN_BING_IMAGE){
                 saveBingWallDay();
@@ -679,9 +679,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 int hourIn24 = now.get(Calendar.HOUR_OF_DAY);
                 int am0_1PM = now.get(Calendar.AM_PM);
 
-                setToast("hour24" + hourIn24, Toast.LENGTH_LONG);
                 if((am0_1PM == 0 && hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24) || (am0_1PM == 1)){
-                    setToast("Making new bing request after 4AM", Toast.LENGTH_LONG);
                     saveBingWallDay();
                     new BingWallpaper(MainActivity.this).execute(true);
                 } else loadBitmap();

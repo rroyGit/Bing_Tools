@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -77,7 +78,7 @@ public class BingDiningMenu {
             String month2, date2, year2;
 
             try {
-                Toast.makeText(context, "bingWeekDate "+getBingWeekDate(title), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "bingWeekDate " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
                 //sample menu check
                 if(getBingWeekDate(title).compareTo(SAMPLE_MENU) == 0){
                     final int dayInt = Integer.parseInt(currentDay.toString());
@@ -245,6 +246,7 @@ public class BingDiningMenu {
             }else {
                 Toast.makeText(bingDiningMenu.context, "No data found on server", Toast.LENGTH_SHORT).show();
                 bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
+                bingDiningMenu.saveBingWeekData(FAILED_MENU_DATE);
             }
         }
     }
@@ -295,59 +297,70 @@ public class BingDiningMenu {
                 public void run() {
                     try {
                         //test for valid connection
-                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(10*1000).execute();
+                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(9000).execute();
                         if (response.statusCode() != 200) {
                            loadEmptyMenu = true;
-                            return;
+                           return;
                         }
 
-                        Document doc = Jsoup.connect(bingDiningMenu.link).get();
-                        Elements weekUrl = doc.getElementsByClass("accordionBody");
+//                        Document doc = Jsoup.connect(bingDiningMenu.link).get();
+//                        Elements weekUrl = doc.getElementsByClass("accordionBody");
+//
+//                        //get updated links to Bing dining data
+//                        int i = 0;
+//                        for (Element link : weekUrl) {
+//                            Elements f = link.getElementsByTag("a");
+//                            for(Element a: f) {
+//                                urlStrings[i] = a.attr("href");
+//                                weekStrings[i] = a.text();
+//                                i++;
+//                            }
+//                        }
 
-                        //get updated links to Bing dining data
-                        int i = 0;
-                        for (Element link : weekUrl) {
-                            Elements f = link.getElementsByTag("a");
-                            for(Element a: f) {
-                                urlStrings[i] = a.attr("href");
-                                weekStrings[i] = a.text();
-                                i++;
-                            }
-                        }
+                        Log.d("Yooo", "hi ");
+                        Document doc2 = Jsoup.connect(bingDiningMenu.link).get();
+                        Element body = doc2.body();
+                        Element menuDiv = body.getElementById("bite-menu");
+                        String menuActive = menuDiv.getElementById("bite-calc").select("p").text();
 
-                        //test for valid connection
-                        String firstUrl = "https://binghamton.sodexomyway.com"+urlStrings[0];
-                        response = Jsoup.connect(firstUrl).timeout(10*1000).execute();
-
-                        if (response.statusCode() != 200) {
+                        if(menuActive.equals("Sorry, no menu found")){
                             loadEmptyMenu = true;
                             return;
                         }
-                        Document doc2 = Jsoup.connect(firstUrl).get();
-                        String stringToAppend;
-                        int index;
-                        for(i = 0; i < 7; i++) {
-                            Elements B = doc2.getElementById(days[i]).select("tr.brk").select("span.ul");
-                            Elements L = doc2.getElementById(days[i]).select("tr.lun").select("span.ul");
-                            Elements D = doc2.getElementById(days[i]).select("tr.din").select("span.ul");
 
+                        Elements menuAll = menuDiv.select("div[id~=menuid-\\d+-day]");
+
+                        String stringToAppend;
+                        int index, i;
+
+                        for(i = 0; i < menuAll.size(); i++) {
+                            Elements B = menuAll.get(i).select("div.accordion-block breakfast");
+                            Elements L = menuAll.get(i).select("div.accordion-block lunch");
+                            Elements D = menuAll.get(i).select("div[class~=accordion-block dinner]");
                             index = 1;
-                            for (Element e : B) {
-                                stringToAppend = ((index < 10)? "0"+index:index) +". "+ e.text()+'\n';
-                                stringBuilderBreakfast.append(stringToAppend);
-                                index++;
+
+                            if (B.size() > 0) {
+                                for (Element e : B.get(0).select("a[data-fooditemname]")) {
+                                    stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
+                                    stringBuilderBreakfast.append(stringToAppend);
+                                    index++;
+                                }
                             }
                             index = 1;
-                            for (Element e : L) {
-                                stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
-                                stringBuilderLunch.append(stringToAppend);
-                                index++;
+                            if (L.size() > 0) {
+                              for (Element e : L.get(0).select("a[data-fooditemname]")) {
+                                  stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
+                                  stringBuilderLunch.append(stringToAppend);
+                                  index++;
+                              }
                             }
                             index = 1;
-                            for (Element e : D) {
-                                stringToAppend = ((index < 10)? "0"+index:index)+". "+ e.text()+'\n';
-                                stringBuilderDinner.append(stringToAppend);
-                                index++;
+                            if(D.size() > 0) {
+                              for (Element e : D.get(0).select("a[data-fooditemname]")) {
+                                  stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
+                                  stringBuilderDinner.append(stringToAppend);
+                                  index++;
+                              }
                             }
 
                             stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");

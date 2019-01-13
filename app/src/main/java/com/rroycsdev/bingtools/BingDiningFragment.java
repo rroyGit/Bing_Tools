@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -22,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import static com.rroycsdev.bingtools.BingDiningMenu.getDeviceInternetStatus;
 
@@ -54,7 +56,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         if (id == R.id.action_settings) {
             return false;
         }else if(id == R.id.refresh_Bing){
-            if(getDeviceInternetStatus(getContext()) == null){
+            if(getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null){
                 Toast.makeText(getContext(),"No Internet", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -150,7 +152,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         tabLayout = (TabLayout) view.findViewById(R.id.tablayout);
@@ -170,7 +172,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(getDeviceInternetStatus(getContext()) == null) return;
+                if(getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null) return;
 
                 viewPager.setCurrentItem(tab.getPosition(), true);
                 Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
@@ -198,7 +200,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.bing_dining, container, false);
@@ -211,7 +213,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        getActivity().setTitle(R.string.bing_dining);
+        Objects.requireNonNull(getActivity()).setTitle(R.string.bing_dining);
     }
 
     @Override
@@ -225,7 +227,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("Saved", 1);
     }
@@ -235,7 +237,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         super.onHiddenChanged(hidden);
 
         if(!hidden){
-            getActivity().setTitle(R.string.bing_dining);
+            Objects.requireNonNull(getActivity()).setTitle(R.string.bing_dining);
         }
     }
 

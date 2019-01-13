@@ -72,7 +72,6 @@ public class HinmanDining extends Fragment{
 
         hinman_hall.makeRequest();
 
-
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
@@ -144,52 +143,6 @@ public class HinmanDining extends Fragment{
     }
     public void setToolbarDate(){
         hinman_hall.setToolbar(toolbarTitle);
-        //view.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
-
-        /*
-        if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) != 0) {
-            if(toolbarTitle != null) toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
-        }else{
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    if(isAdded()) {
-                        if (hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) == 0) {
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (getActivity() != null && !isAdded()) {
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if(toolbarTitle != null) {
-                                                    if(hinman_hall.getBingWeekDate(getString(R.string.hinman)).compareTo(BingDiningMenu.NO_DATE) == 0) {
-                                                        toolbarTitle.setText("No Menu Found");
-                                                    }else toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            }, 3500);
-                        } else {
-                            if (getActivity() != null && isAdded()) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if(toolbarTitle != null) toolbarTitle.setText(hinman_hall.getBingWeekDate(getString(R.string.hinman)));
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-
-            },2200);
-        }
-        */
     }
 
     @Override
