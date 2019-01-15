@@ -23,10 +23,12 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -78,7 +80,7 @@ public class BingDiningMenu {
             String month2, date2, year2;
 
             try {
-                Toast.makeText(context, "bingWeekDate " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
+
                 //sample menu check
                 if(getBingWeekDate(title).compareTo(SAMPLE_MENU) == 0){
                     final int dayInt = Integer.parseInt(currentDay.toString());
@@ -104,16 +106,20 @@ public class BingDiningMenu {
                     date2 = sT.nextToken();
                     year2 = sT.nextToken();
 
+
                     //if current currentDay does not fall in saved dates then make new request
                     if(Integer.parseInt(currentMonth.toString()) > Integer.parseInt(month2)) {
                         diningDataScrapper = new DiningDataScrapper(this);
                         diningDataScrapper.execute(true);
+                        Toast.makeText(context, "bingWeekDate " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
                     }else if (((currentMonth.toString().equals(month2)) && (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))) {
                         diningDataScrapper = new DiningDataScrapper(this);
                         diningDataScrapper.execute(true);
+                        Toast.makeText(context, "bingWeekDate2 " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
                     }else if (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) {
                         diningDataScrapper = new DiningDataScrapper(this);
                         diningDataScrapper.execute(true);
+                        Toast.makeText(context, "bingWeekDate3 " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
                     }else {
                         Thread thread = new Thread(new Runnable() {
                             @Override
@@ -147,7 +153,7 @@ public class BingDiningMenu {
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                 diningMenuView.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
             }else {
-                //delete old contents in respective table in database
+                //delete old contents in database
                 diningDatabase.deleteAllItems();
 
                 //make a new http request to grab data from web
@@ -257,8 +263,7 @@ public class BingDiningMenu {
         private StringBuilder stringBuilderLunch = new StringBuilder();
         private StringBuilder stringBuilderDinner = new StringBuilder();
 
-        private String urlStrings[] = new String[2];
-        private String weekStrings[] = new String[2];
+        private String weekString;
         private ProgressDialog pD;
         private Boolean updateDatabase = false;
         private Boolean loadEmptyMenu = false;
@@ -296,28 +301,13 @@ public class BingDiningMenu {
                 @Override
                 public void run() {
                     try {
-                        //test for valid connection
+                        // test for valid connection
                         Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(9000).execute();
                         if (response.statusCode() != 200) {
                            loadEmptyMenu = true;
                            return;
                         }
 
-//                        Document doc = Jsoup.connect(bingDiningMenu.link).get();
-//                        Elements weekUrl = doc.getElementsByClass("accordionBody");
-//
-//                        //get updated links to Bing dining data
-//                        int i = 0;
-//                        for (Element link : weekUrl) {
-//                            Elements f = link.getElementsByTag("a");
-//                            for(Element a: f) {
-//                                urlStrings[i] = a.attr("href");
-//                                weekStrings[i] = a.text();
-//                                i++;
-//                            }
-//                        }
-
-                        Log.d("Yooo", "hi ");
                         Document doc2 = Jsoup.connect(bingDiningMenu.link).get();
                         Element body = doc2.body();
                         Element menuDiv = body.getElementById("bite-menu");
@@ -328,14 +318,62 @@ public class BingDiningMenu {
                             return;
                         }
 
+                        Elements daysAll = menuDiv.select("div[id~=menuid-\\d+$]");
                         Elements menuAll = menuDiv.select("div[id~=menuid-\\d+-day]");
+
+                        List<String> dayNames = new ArrayList<>();
+                        String startDay = null, endDay = "";
+
+                        for (Element e: daysAll) {
+                            String shortDay = e.text().substring(0, 3);
+
+                            if (startDay == null) startDay = e.text().substring(4);
+                            endDay = e.text().substring(4);
+
+                            switch (shortDay) {
+                                case "Mon": dayNames.add("monday");
+                                    break;
+                                case "Tue": dayNames.add("tuesday");
+                                    break;
+                                case "Wed": dayNames.add("wednesday");
+                                    break;
+                                case "Thu": dayNames.add("thursday");
+                                    break;
+                                case "Fri": dayNames.add("friday");
+                                    break;
+                                case "Sat": dayNames.add("saturday");
+                                    break;
+                                case "Sun": dayNames.add("sunday");
+                                    break;
+                            }
+                        }
+
+                        StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(), currentYear = new StringBuilder();
+                        loadCurrentDate(currentMonth, currentDay, currentYear);
+
+                        // "1/10/2019 - 1/21/2019"
+                        if (Integer.parseInt(startDay) < Integer.parseInt(endDay)) {
+                            weekString = currentMonth.toString() + "/" + startDay + "/" + currentYear.toString() + " - " +
+                                    currentMonth.toString() + "/" + endDay + "/" + currentYear.toString();
+
+                        } else {
+                            String nextMonth = String.valueOf(Integer.parseInt(currentMonth.toString()) + 1);
+                            weekString = currentMonth.toString() + "/" + startDay + "/" + currentYear.toString() + " - " +
+                                    nextMonth + "/" + endDay + "/" + currentYear.toString();
+                        }
+
+                        // let's skip year check yo
+
+                        currentMonth.delete(0, currentMonth.length());
+                        currentDay.delete(0, currentDay.length());
+                        currentYear.delete(0, currentYear.length());
 
                         String stringToAppend;
                         int index, i;
 
-                        for(i = 0; i < menuAll.size(); i++) {
-                            Elements B = menuAll.get(i).select("div.accordion-block breakfast");
-                            Elements L = menuAll.get(i).select("div.accordion-block lunch");
+                        for(i = 0; i < daysAll.size(); i++) {
+                            Elements B = menuAll.get(i).select("div[class~=accordion-block breakfast]");
+                            Elements L = menuAll.get(i).select("div[class~=accordion-block lunch]");
                             Elements D = menuAll.get(i).select("div[class~=accordion-block dinner]");
                             index = 1;
 
@@ -367,14 +405,16 @@ public class BingDiningMenu {
                             stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
                             stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
 
-                            if(updateDatabase) bingDiningMenu.diningDatabase.updateMenuItem(i+1,days[i],stringBuilderBreakfast.toString(),stringBuilderLunch.toString(),stringBuilderDinner.toString());
-                            else bingDiningMenu.diningDatabase.insertMenuItem(days[i],stringBuilderBreakfast.toString(), stringBuilderLunch.toString(),stringBuilderDinner.toString());
+                            if(updateDatabase) bingDiningMenu.diningDatabase.updateMenuItem(i+1,dayNames.get(i), stringBuilderBreakfast.toString(),
+                                    stringBuilderLunch.toString(), stringBuilderDinner.toString());
+                            else bingDiningMenu.diningDatabase.insertMenuItem(dayNames.get(i), stringBuilderBreakfast.toString(),
+                                    stringBuilderLunch.toString(), stringBuilderDinner.toString());
 
                             stringBuilderBreakfast.delete(0, stringBuilderBreakfast.length());
                             stringBuilderLunch.delete(0, stringBuilderLunch.length());
                             stringBuilderDinner.delete(0, stringBuilderDinner.length());
                         }
-
+                        dayNames.clear();
                     }catch(IOException e){
                         e.printStackTrace();
                         loadEmptyMenu = true;
@@ -409,8 +449,8 @@ public class BingDiningMenu {
                     bingDiningMenu.getToolbar().setText(textToSet);
                 }
             }else {
-                bingDiningMenu.saveBingWeekData(weekStrings[0]);
-                if(bingDiningMenu.getToolbar() != null) bingDiningMenu.getToolbar().setText(weekStrings[0]);
+                bingDiningMenu.saveBingWeekData(weekString);
+                if(bingDiningMenu.getToolbar() != null) bingDiningMenu.getToolbar().setText(weekString);
                 bingDiningMenu.loadSortedData();
                 bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
                 bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
@@ -467,7 +507,7 @@ public class BingDiningMenu {
         //clear all previous remnants
         assert listItems != null;
         listItems.clear();
-        int index = findStartIndex()+1;
+        int index = findStartIndex();
 
         Cursor cursor;
         for(int id = index; id <= days.length; id++) {
@@ -499,6 +539,8 @@ public class BingDiningMenu {
         int index = 0;
         Date date =  new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("E", Locale.US);
+        dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT-5"));
+
         String dayWeek = dateFormatter.format(date);
         StringBuilder day_3char = new StringBuilder();
 
@@ -506,9 +548,9 @@ public class BingDiningMenu {
             String first_char = String.valueOf(day.charAt(0));
             day_3char.append(first_char.toUpperCase());
             day_3char.append(day.substring(1,3));
-            if(dayWeek.compareTo(day_3char.toString()) == 0){
+            if(dayWeek.compareTo(day_3char.toString()) == 0) {
                 return index;
-            }else day_3char.delete(0, day_3char.length());
+            } else day_3char.delete(0, day_3char.length());
             index++;
         }
         return index;
@@ -517,6 +559,7 @@ public class BingDiningMenu {
     public static void loadCurrentDate(StringBuilder... strings){
         Date dateNow = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.US);
+        dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT-5"));
         StringTokenizer sT = new StringTokenizer(dateFormatter.format(dateNow), "-");
 
         strings[0].append(sT.nextToken());
