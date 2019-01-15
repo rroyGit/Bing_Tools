@@ -196,50 +196,37 @@ public class BingDiningMenu {
     }
 
     //check if a new menu is available by checking on the week date of the menu
-    private static class MakeNewMenuRequest extends AsyncTask<String, Void, Void> {
-        private String weekString;
+    private static class MakeNewMenuRequest extends AsyncTask<String, Void, Boolean> {
+        private String weekString = "Not Sample Menu";
         WeakReference<BingDiningMenu> weakReference;
         MakeNewMenuRequest(BingDiningMenu context){
             weakReference = new WeakReference<>(context);
         }
-        boolean updatePassed = true;
 
         @Override
-        protected Void doInBackground(String ... strings) {
+        protected Boolean doInBackground(String ... strings) {
             final String url = strings[0];
-            Document doc;
-            Elements weekUrl;
+
             try {
-                //timeout for 10s
-                Connection.Response response = Jsoup.connect(url).timeout(10*1000).execute();
+                // check for valid connection
+                Connection.Response response = Jsoup.connect(url).timeout(2000).execute();
                 if (response.statusCode() != 200) {
-                    updatePassed = false;
-                    return null;
+                   return false;
                 }
-
-                doc = Jsoup.connect(url).timeout(10*1000).get();
-                weekUrl = doc.getElementsByClass("accordionBody");
-
-                //get updated links to Bing dining data
-                Element link = weekUrl.first();
-                Elements f = link.getElementsByTag("a");
-                weekString = f.first().text();
 
             } catch (IOException e) {
                 e.printStackTrace();
-                updatePassed = false;
+                return false;
             }
-
-            return null;
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Boolean updatePassed) {
+            super.onPostExecute(updatePassed);
             BingDiningMenu bingDiningMenu = weakReference.get();
             if(updatePassed) {
                 if (weekString.compareTo("Sample Menu") != 0) {
-                    bingDiningMenu.saveBingWeekData(weekString);
                     DiningDataScrapper diningDataScrapper = new DiningDataScrapper(bingDiningMenu);
                     diningDataScrapper.execute(true);
                 } else {
@@ -256,7 +243,7 @@ public class BingDiningMenu {
             }
         }
     }
-    //make async web request using Jsoup
+    //make async web request using JSOUP
     //first parameter (Boolean), if true update database - if false insert into database
     private static class DiningDataScrapper extends AsyncTask<Boolean, Void, Void> {
         private StringBuilder stringBuilderBreakfast = new StringBuilder();
@@ -302,7 +289,7 @@ public class BingDiningMenu {
                 public void run() {
                     try {
                         // test for valid connection
-                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(9000).execute();
+                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(5000).execute();
                         if (response.statusCode() != 200) {
                            loadEmptyMenu = true;
                            return;
@@ -507,7 +494,8 @@ public class BingDiningMenu {
         //clear all previous remnants
         assert listItems != null;
         listItems.clear();
-        int index = findStartIndex();
+        // add one for database access with id starting @ 1
+        int index = findStartIndex() + 1;
 
         Cursor cursor;
         for(int id = index; id <= days.length; id++) {
