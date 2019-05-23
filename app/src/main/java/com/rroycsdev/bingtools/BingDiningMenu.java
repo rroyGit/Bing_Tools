@@ -254,6 +254,7 @@ public class BingDiningMenu {
         private ProgressDialog pD;
         private Boolean updateDatabase = false;
         private Boolean loadEmptyMenu = false;
+        private String errorMessage = "";
 
 
         //weak reference
@@ -305,7 +306,7 @@ public class BingDiningMenu {
                             return;
                         }
 
-                        Elements daysAll = menuDiv.select("div[id~=menuid-\\d+$]");
+                        Elements daysAll = menuDiv.select("li[id~=menuid-\\d+$]");
                         Elements menuAll = menuDiv.select("div[id~=menuid-\\d+-day]");
 
                         List<String> dayNames = new ArrayList<>();
@@ -402,7 +403,16 @@ public class BingDiningMenu {
                             stringBuilderDinner.delete(0, stringBuilderDinner.length());
                         }
                         dayNames.clear();
-                    }catch(IOException e){
+                    } catch(IOException e){
+                        errorMessage = "Error occurred while processing data - most likely no data on server";
+                        e.printStackTrace();
+                        loadEmptyMenu = true;
+                    } catch (NumberFormatException e) {
+                        errorMessage = "Web data has changed on backend - dev will push an update soon";
+                        e.printStackTrace();
+                        loadEmptyMenu = true;
+                    } catch (Exception e) {
+                        errorMessage = "Unknown error has occurred - dev will push an update soon";
                         e.printStackTrace();
                         loadEmptyMenu = true;
                     }
@@ -427,7 +437,7 @@ public class BingDiningMenu {
 
 
             if(loadEmptyMenu){
-                Toast.makeText(activityReference.get().context,"No data found on server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
                 bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
                 bingDiningMenu.saveBingWeekData(FAILED_MENU_DATE);
