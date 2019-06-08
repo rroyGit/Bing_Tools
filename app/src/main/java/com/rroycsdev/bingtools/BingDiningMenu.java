@@ -35,8 +35,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class BingDiningMenu {
 
-    private static final String days[] = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
-    private static final int resImg[] = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
+    private static final String[] days = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"};
+    private static final int[] resImg = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday, R.drawable.thursday,
                                   R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
     private static final String SAMPLE_MENU = "Sample Menu";
     private static final String NO_DATE = "noDate";
@@ -111,15 +111,15 @@ public class BingDiningMenu {
                     if(Integer.parseInt(currentMonth.toString()) > Integer.parseInt(month2)) {
                         diningDataScrapper = new DiningDataScrapper(this);
                         diningDataScrapper.execute(true);
-                        Toast.makeText(context, "bingWeekDate " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
+
                     }else if (((currentMonth.toString().equals(month2)) && (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))) {
                         diningDataScrapper = new DiningDataScrapper(this);
                         diningDataScrapper.execute(true);
-                        Toast.makeText(context, "bingWeekDate2 " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
+
                     }else if (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) {
                         diningDataScrapper = new DiningDataScrapper(this);
                         diningDataScrapper.execute(true);
-                        Toast.makeText(context, "bingWeekDate3 " + getBingWeekDate(title), Toast.LENGTH_LONG).show();
+
                     }else {
                         Thread thread = new Thread(new Runnable() {
                             @Override
@@ -153,8 +153,6 @@ public class BingDiningMenu {
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                 diningMenuView.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
             }else {
-                //delete old contents in database
-                diningDatabase.deleteAllItems();
 
                 //make a new http request to grab data from web
                 diningDataScrapper = new DiningDataScrapper(this);
@@ -254,6 +252,7 @@ public class BingDiningMenu {
         private ProgressDialog pD;
         private Boolean updateDatabase = false;
         private Boolean loadEmptyMenu = false;
+        private String errorMessage = "";
 
 
         //weak reference
@@ -302,10 +301,11 @@ public class BingDiningMenu {
 
                         if(menuActive.equals("Sorry, no menu found")){
                             loadEmptyMenu = true;
+                            errorMessage = "Dining hall is closed, no menu found";
                             return;
                         }
 
-                        Elements daysAll = menuDiv.select("div[id~=menuid-\\d+$]");
+                        Elements daysAll = menuDiv.select("li[id~=menuid-\\d+$]");
                         Elements menuAll = menuDiv.select("div[id~=menuid-\\d+-day]");
 
                         List<String> dayNames = new ArrayList<>();
@@ -402,7 +402,16 @@ public class BingDiningMenu {
                             stringBuilderDinner.delete(0, stringBuilderDinner.length());
                         }
                         dayNames.clear();
-                    }catch(IOException e){
+                    } catch(IOException e){
+                        errorMessage = "Error occurred while processing data - most likely no data on server";
+                        e.printStackTrace();
+                        loadEmptyMenu = true;
+                    } catch (NumberFormatException e) {
+                        errorMessage = "Web data has changed on backend - dev will push an update soon";
+                        e.printStackTrace();
+                        loadEmptyMenu = true;
+                    } catch (Exception e) {
+                        errorMessage = "Unknown error has occurred - dev will push an update soon";
                         e.printStackTrace();
                         loadEmptyMenu = true;
                     }
@@ -427,7 +436,7 @@ public class BingDiningMenu {
 
 
             if(loadEmptyMenu){
-                Toast.makeText(activityReference.get().context,"No data found on server", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
                 bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
                 bingDiningMenu.saveBingWeekData(FAILED_MENU_DATE);
