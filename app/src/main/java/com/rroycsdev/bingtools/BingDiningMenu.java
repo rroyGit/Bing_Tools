@@ -437,16 +437,22 @@ public class BingDiningMenu {
 
             if(loadEmptyMenu){
                 Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
+
+                bingDiningMenu.diningDatabase.deleteAllItems();
+                bingDiningMenu.recyclerView.setAdapter(null);
+                bingDiningMenu.adapter.notifyDataSetChanged();
+
                 bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
                 bingDiningMenu.saveBingWeekData(FAILED_MENU_DATE);
-                if(bingDiningMenu.getToolbar() != null) {
+                if (bingDiningMenu.getToolbar() != null) {
                     String textToSet = "No Menu Found";
                     bingDiningMenu.getToolbar().setText(textToSet);
                 }
             }else {
                 bingDiningMenu.saveBingWeekData(weekString);
-                if(bingDiningMenu.getToolbar() != null) bingDiningMenu.getToolbar().setText(weekString);
+                if (bingDiningMenu.getToolbar() != null) bingDiningMenu.getToolbar().setText(weekString);
+                
                 bingDiningMenu.loadSortedData();
                 bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
                 bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
