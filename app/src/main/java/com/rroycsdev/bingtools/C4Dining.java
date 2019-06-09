@@ -81,7 +81,7 @@ public class C4Dining extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(recyclerView != null) recyclerView.getAdapter().notifyDataSetChanged();
+        if(recyclerView != null && recyclerView.getAdapter() != null) recyclerView.getAdapter().notifyDataSetChanged();
     }
     //--------------------------------------------------------------------------------------------//
 

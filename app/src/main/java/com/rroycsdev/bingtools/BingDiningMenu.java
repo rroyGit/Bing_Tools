@@ -301,7 +301,7 @@ public class BingDiningMenu {
 
                         if(menuActive.equals("Sorry, no menu found")){
                             loadEmptyMenu = true;
-                            errorMessage = "Dining hall is closed, no menu found";
+                            errorMessage = "One or more dining halls are closed, no menu found";
                             return;
                         }
 

@@ -81,7 +81,7 @@ public class CIWDining extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        recyclerView.getAdapter().notifyDataSetChanged();
+        if(recyclerView != null && recyclerView.getAdapter() != null) recyclerView.getAdapter().notifyDataSetChanged();
     }
 
 
