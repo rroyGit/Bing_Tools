@@ -1,7 +1,6 @@
 package com.rroycsdev.bingtools;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -84,14 +82,6 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     }
 
-    public static void hideKeyboard(Activity thisActivity, View view){
-        if(view != null) {
-            InputMethodManager imm;
-            imm = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            assert imm != null;
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -129,7 +119,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
 
@@ -137,7 +127,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         double b = Double.parseDouble(num2EditView.getText().toString());
         if (a > Integer.MAX_VALUE || b > Integer.MAX_VALUE) {
             resultView.setText(R.string.error3);
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
 
@@ -147,7 +137,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
         if (res < 0 || res > Integer.MAX_VALUE) {
             resultView.setText(R.string.error3);
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
 
@@ -159,7 +149,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
 
@@ -167,7 +157,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         double b = Double.parseDouble(num2EditView.getText().toString());
         if (a > Integer.MAX_VALUE || b > Integer.MAX_VALUE) {
             resultView.setText(R.string.error3);
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
 
         }
@@ -176,7 +166,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         n2 = Double.parseDouble(num2EditView.getText().toString());
         if (n2 == 0) {
             resultView.setText(getString(R.string.error2));
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
         res_num = n1 / n2;
@@ -187,21 +177,21 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
         double a = Double.parseDouble(num1EditView.getText().toString());
         double b = Double.parseDouble(num2EditView.getText().toString());
         if (a > Integer.MAX_VALUE || b > Integer.MAX_VALUE) {
             resultView.setText(R.string.error3);
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
         n1 = Double.parseDouble(num1EditView.getText().toString());
         n2 = Double.parseDouble(num2EditView.getText().toString());
         if (n1 > Double.MAX_VALUE - n2) {
             resultView.setText(getString(R.string.error3));
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
         res_num = n1 + n2;
@@ -212,19 +202,19 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
         double a = Double.parseDouble(num1EditView.getText().toString());
         double b = Double.parseDouble(num2EditView.getText().toString());
         if (a > Integer.MAX_VALUE || b > Integer.MAX_VALUE) {
             resultView.setText(R.string.error3);
-            hideKeyboard(getActivity(), getView());
+            CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
         if (n1 > Double.MAX_VALUE - n2) {
             resultView.setText(getString(R.string.error3));
-            hideKeyboard(getActivity(), getView());
+           CommonUtilities.hideKeyboard(getActivity(), getView());
             return;
         }
         n1 = Double.parseDouble(num1EditView.getText().toString());
@@ -314,7 +304,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
                 break;
             default:
         }
-        hideKeyboard(getActivity(), getView());
+        CommonUtilities.hideKeyboard(getActivity(), getView());
     }
 
     @Override

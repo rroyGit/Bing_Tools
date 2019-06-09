@@ -32,8 +32,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.rroycsdev.bingtools.BingDiningMenu.getDeviceInternetStatus;
-import static com.rroycsdev.bingtools.BingDiningMenu.loadCurrentDate;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -96,7 +95,7 @@ public class CryptoFragment extends Fragment {
 
         }else {
             if (getSavedEther("Ether") == 4.04) {
-                if (getDeviceInternetStatus(context) != null) {
+                if (CommonUtilities.getDeviceInternetStatus(context) != null) {
                     etherText.setText("");
                     etherText.setHint("");
                     new getEther(CryptoFragment.this).execute("https://coinmarketcap.com/currencies/ethereum/", "0");
@@ -121,7 +120,7 @@ public class CryptoFragment extends Fragment {
         etherButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                if(getDeviceInternetStatus(context) != null) {
+                if(CommonUtilities.getDeviceInternetStatus(context) != null) {
                     timeText.setText("Last updated: ");
                     currentCryptoVal = -1;
                     etherText.setText("");
@@ -142,7 +141,7 @@ public class CryptoFragment extends Fragment {
         bitcoinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(getDeviceInternetStatus(context) != null) {
+                if(CommonUtilities.getDeviceInternetStatus(context) != null) {
                     currentCryptoVal = -1;
                     etherText.setText("");
                     etherText.setHint("");
@@ -163,7 +162,7 @@ public class CryptoFragment extends Fragment {
         rippleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(getDeviceInternetStatus(context) != null) {
+                if(CommonUtilities.getDeviceInternetStatus(context) != null) {
                     currentCryptoVal = -1;
                     etherText.setText("");
                     etherText.setHint("");
@@ -316,7 +315,7 @@ public class CryptoFragment extends Fragment {
                     }
 
                     StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
-                    loadCurrentDate(month, day, year);
+                    CommonUtilities.loadCurrentDate(month, day, year);
 
                     StringBuilder retString = new StringBuilder();
                     retString.append("Last updated: ");
@@ -349,7 +348,7 @@ public class CryptoFragment extends Fragment {
         SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
         StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
-        loadCurrentDate(month, day, year);
+        CommonUtilities.loadCurrentDate(month, day, year);
         String date = month.toString()+':'+day.toString()+':'+year.toString();
 
         sEditor.putString("Date", date);

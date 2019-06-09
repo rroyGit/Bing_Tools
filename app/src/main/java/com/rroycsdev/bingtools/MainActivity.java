@@ -53,8 +53,6 @@ import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import static com.rroycsdev.bingtools.BingDiningMenu.getDeviceInternetStatus;
-import static com.rroycsdev.bingtools.CalculatorFragment.hideKeyboard;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public NavigationView nView;
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 if(dLayout.isDrawerOpen(GravityCompat.START)) {
-                    hideKeyboard(activity,dLayout);
+                    CommonUtilities.hideKeyboard(activity,dLayout);
                 }
             }
         };
@@ -658,7 +656,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void makeBingWallRequest(boolean storagePermission){
 
-        if(getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
+        if(CommonUtilities.getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
             bingImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
             return;
         }

@@ -60,15 +60,20 @@ public class BingDiningMenu {
         this.title = title;
         this.link = link;
         this.listItems = listItems;
-        this.diningDatabase = new DiningDatabase(context, title);
-        this.diningDatabase.createTable(title);
+
         this.showProgressDialog = showProgressDialog;
         this.diningMenuView = view;
     }
 
+    private void createDataTable () {
+        diningDatabase = new DiningDatabase(context, title);
+        diningDatabase.createTable(title);
+    }
+
     private void makeBingDiningRequest(){
+
         StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(), currentYear = new StringBuilder();
-        loadCurrentDate(currentMonth, currentDay, currentYear);
+        CommonUtilities.loadCurrentDate(currentMonth, currentDay, currentYear);
 
         DiningDataScrapper diningDataScrapper;
         StringTokenizer sT;
@@ -149,7 +154,7 @@ public class BingDiningMenu {
         }else { //nothing stored in database so make http request
 
             //load default image and toast when no internet
-            if(getDeviceInternetStatus(context) == null){
+            if(CommonUtilities.getDeviceInternetStatus(context) == null){
                 Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
                 diningMenuView.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
             }else {
@@ -336,7 +341,7 @@ public class BingDiningMenu {
                         }
 
                         StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(), currentYear = new StringBuilder();
-                        loadCurrentDate(currentMonth, currentDay, currentYear);
+                        CommonUtilities.loadCurrentDate(currentMonth, currentDay, currentYear);
 
                         // "1/10/2019 - 1/21/2019"
                         if (Integer.parseInt(startDay) < Integer.parseInt(endDay)) {
@@ -452,7 +457,7 @@ public class BingDiningMenu {
             }else {
                 bingDiningMenu.saveBingWeekData(weekString);
                 if (bingDiningMenu.getToolbar() != null) bingDiningMenu.getToolbar().setText(weekString);
-                
+
                 bingDiningMenu.loadSortedData();
                 bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
                 bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
@@ -470,6 +475,7 @@ public class BingDiningMenu {
     }
 
     public String getBingWeekDate(String title){
+        if (context == null) return "error";
         SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
         return sP.getString("weekDate", "noDate");
     }
@@ -492,11 +498,12 @@ public class BingDiningMenu {
    }
 
     public void makeRequest(){
+        createDataTable();
         makeBingDiningRequest();
     }
 
     public void refreshData(){
-        if(getDeviceInternetStatus(context) == null){
+        if(CommonUtilities.getDeviceInternetStatus(context) == null){
             Toast.makeText(context,"No Internet", Toast.LENGTH_SHORT).show();
         }else {
             Toast.makeText(context, "Refreshing " + title + " Menu", Toast.LENGTH_SHORT).show();
@@ -558,27 +565,5 @@ public class BingDiningMenu {
         }
         return index;
     }
-
-    public static void loadCurrentDate(StringBuilder... strings){
-        Date dateNow = new Date();
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.US);
-        dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT-5"));
-        StringTokenizer sT = new StringTokenizer(dateFormatter.format(dateNow), "-");
-
-        strings[0].append(sT.nextToken());
-        strings[1].append(sT.nextToken());
-        strings[2].append(sT.nextToken());
-    }
-
-    //No Internet access if returns null
-    public static NetworkInfo getDeviceInternetStatus(Context context){
-        //check if internet is enabled
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            return connectivityManager.getActiveNetworkInfo();
-        }
-        return null;
-    }
-
 
 }

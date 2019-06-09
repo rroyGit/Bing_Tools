@@ -1,18 +1,17 @@
 package com.rroycsdev.bingtools;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
+
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+
 import android.support.v4.view.ViewPager;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,11 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import java.io.Serializable;
 import java.util.Objects;
 
-import static com.rroycsdev.bingtools.BingDiningMenu.getDeviceInternetStatus;
+
 
 
 public class BingDiningFragment extends Fragment implements HinmanDining.OnFragmentInteractionListener, C4Dining.OnFragmentInteractionListener,
@@ -56,7 +53,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         if (id == R.id.action_settings) {
             return false;
         }else if(id == R.id.refresh_Bing){
-            if(getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null){
+            if(CommonUtilities.getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null){
                 Toast.makeText(getContext(),"No Internet", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -172,7 +169,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null) return;
+                if(CommonUtilities.getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null) return;
 
                 viewPager.setCurrentItem(tab.getPosition(), true);
                 Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
