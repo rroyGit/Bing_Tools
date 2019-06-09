@@ -3,7 +3,6 @@ package com.rroycsdev.bingtools;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
@@ -54,8 +53,8 @@ public class CIWDining extends Fragment {
 
         if(savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-            String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(fragmentName.compareTo("bing") != 0)  ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, false, view);
+            String fragmentName = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
+            if(fragmentName != null && fragmentName.compareTo("bing") != 0)  ciw_hall = new BingDiningMenu(ciwUrl, title, context, listItems, false, view);
             else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
         }else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
 
