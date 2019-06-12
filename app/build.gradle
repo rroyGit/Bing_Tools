@@ -6,10 +6,10 @@ android {
 
     defaultConfig {
         applicationId "com.rroycsdev.bingtools"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 28
-        versionCode 23
-        versionName "1.67-Zed"
+        versionCode 24
+        versionName "1.75-Zed"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 

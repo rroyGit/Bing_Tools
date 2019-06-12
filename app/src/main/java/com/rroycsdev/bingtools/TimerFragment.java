@@ -114,6 +114,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     private void animateFab(){
 
         if(isOpen){
+            addFab.getForeground().clearColorFilter();
             addFab.startAnimation(animForward);
             startFab.startAnimation(animClose);
             stopFab.startAnimation(animClose);
@@ -121,6 +122,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
             stopFab.setClickable(false);
             isOpen = false;
         }else{
+            addFab.getForeground().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
             addFab.startAnimation(animBackward);
             startFab.startAnimation(animOpen);
             stopFab.startAnimation(animOpen);
@@ -162,7 +164,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        getActivity().setTitle(R.string.auto_launch);
+        if (getActivity() != null) getActivity().setTitle(R.string.auto_launch);
     }
 
     @Override
@@ -173,7 +175,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden){
+        if(!hidden && getActivity() != null){
             getActivity().setTitle(R.string.auto_launch);
             if(menu != null){
                 menu.findItem(R.id.refresh_Bing).setVisible(false);
@@ -210,7 +212,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
 
                 if(scheduledExecutorService != null && !startFab.isClickable()){
                     timerStarted = false;
-                    startFab.clearColorFilter();
+                    startFab.getForeground().clearColorFilter();
                     startFab.setClickable(true);
                     Toast.makeText(getContext(), "Timer has been canceled", Toast.LENGTH_SHORT).show();
                     scheduledExecutorService.shutdownNow();
@@ -308,7 +310,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
     }
 
     private ScheduledExecutorService timer(final FloatingActionButton startFab, final TextView textView, final long minutes) {
-        startFab.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
+        startFab.getForeground().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         startFab.setClickable(false);
 
         final ScheduledExecutorService[][] scheduledExecutorService = {{Executors.newSingleThreadScheduledExecutor()}};
@@ -334,6 +336,7 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                 if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
 
                 chooseFragment = fragmentManager.findFragmentByTag("timer");
+                assert chooseFragment != null;
                 fragmentTransaction.show(chooseFragment);
                 fragmentTransaction.addToBackStack("timer").commitAllowingStateLoss();
 
@@ -341,12 +344,11 @@ public class TimerFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void run() {
                         startFab.setClickable(true);
-                        startFab.clearColorFilter();
+                        startFab.getForeground().clearColorFilter();
                         timerStarted = false;
                         Toast.makeText(getContext(), "It has been " + minutes + " minute(s)", Toast.LENGTH_SHORT).show();
                         MainActivity mainActivity = (MainActivity) getContext();
-                        mainActivity.nView.getMenu().getItem(1).setChecked(true);
-
+                        if (mainActivity != null) mainActivity.nView.getMenu().getItem(1).setChecked(true);
                     }
                 });
 

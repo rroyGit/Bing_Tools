@@ -246,7 +246,6 @@ public class CryptoFragment extends Fragment {
 
             }
         });
-
     }
 
     @Override
@@ -344,32 +343,40 @@ public class CryptoFragment extends Fragment {
         }
     }
 
-    private void saveCryptoData(String name, double value){
-        SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
-        SharedPreferences.Editor sEditor = sP.edit();
-        StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
-        CommonUtilities.loadCurrentDate(month, day, year);
-        String date = month.toString()+':'+day.toString()+':'+year.toString();
+    private void saveCryptoData(String name, double value) {
+        if (getContext() != null) {
+            SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
+            SharedPreferences.Editor sEditor = sP.edit();
+            StringBuilder month = new StringBuilder(), day = new StringBuilder(), year = new StringBuilder();
+            CommonUtilities.loadCurrentDate(month, day, year);
+            String date = month.toString() + ':' + day.toString() + ':' + year.toString();
 
-        sEditor.putString("Date", date);
-        sEditor.putString(name, String.valueOf(value));
-        sEditor.apply();
+            sEditor.putString("Date", date);
+            sEditor.putString(name, String.valueOf(value));
+            sEditor.apply();
+        } else Toast.makeText(context, "Failed to save crypto data", Toast.LENGTH_SHORT).show();
     }
 
-    private double getSavedEther(String type){
-        SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
-        return Double.parseDouble(sP.getString(type, "4.04"));
+    private double getSavedEther(String type) {
+        if (getContext() != null) {
+            SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
+            return Double.parseDouble(sP.getString(type, "4.04"));
+        } else Toast.makeText(context, "Failed to get saved Ether", Toast.LENGTH_SHORT).show();
+        return 4.04;
     }
 
-    private String getSavedDate(){
-        SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
-        return sP.getString("Date", "0.00");
+    private String getSavedDate() {
+        if (getContext() != null) {
+            SharedPreferences sP = getContext().getSharedPreferences("Crypto", MODE_PRIVATE);
+            return sP.getString("Date", "0.00");
+        } else Toast.makeText(context, "Failed to get saved date", Toast.LENGTH_SHORT).show();
+        return "0.00";
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if(!hidden){
+        if(!hidden && getActivity() != null){
             getActivity().setTitle(R.string.crypto);
             if(menu != null){
                 menu.findItem(R.id.refresh_Bing).setVisible(false);
@@ -387,7 +394,7 @@ public class CryptoFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        getActivity().setTitle(R.string.crypto);
+        if (getActivity() != null)getActivity().setTitle(R.string.crypto);
     }
 
     @Override
