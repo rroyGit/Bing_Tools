@@ -8,8 +8,8 @@ android {
         applicationId "com.rroycsdev.bingtools"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 24
-        versionName "1.75-Zed"
+        versionCode 25
+        versionName "1.85-Zed"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
