@@ -53,13 +53,14 @@ public class AppalachianDining extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             if(fragmentName.compareTo("bing") != 0)  appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, false, view);
             else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
-        }else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
+        } else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
 
+        setToolbarDate();
         appalachian_hall.setRecyclerView(recyclerView);
         appalachian_hall.setAdapter(listItems);
         appalachian_hall.makeRequest();

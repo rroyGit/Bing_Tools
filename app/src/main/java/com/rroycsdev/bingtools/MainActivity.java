@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             displaySelectedScreen(R.id.Bing_Dining_Nav, nView.getMenu().findItem(R.id.Bing_Dining_Nav), true);
         }else{
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-            String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
+            String fragmentName = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             switch (fragmentName){
                 case "timer":
                     setTitle(getResources().getString(R.string.auto_launch));

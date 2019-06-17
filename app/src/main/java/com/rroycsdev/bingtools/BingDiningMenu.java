@@ -12,6 +12,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.jsoup.Connection;
@@ -79,7 +80,7 @@ public class BingDiningMenu {
         StringTokenizer sT;
 
         //load data from SQLite database and check if a new menu is found, if yes then load new menu
-        if(diningDatabase.getDatabaseCount() > 0 && getBingWeekDate(title).compareTo(NO_DATE) !=0 && getBingWeekDate(title).compareTo(FAILED_MENU_DATE) !=0) {
+        if(diningDatabase.getDatabaseCount() > 0 && getBingWeekDate(title).compareTo(NO_DATE) != 0 && getBingWeekDate(title).compareTo(FAILED_MENU_DATE) != 0) {
 
             //saved start and end dates per dining menu
             String month2, date2, year2;
@@ -113,19 +114,13 @@ public class BingDiningMenu {
 
 
                     //if current currentDay does not fall in saved dates then make new request
-                    if(Integer.parseInt(currentMonth.toString()) > Integer.parseInt(month2)) {
-                        diningDataScrapper = new DiningDataScrapper(this);
-                        diningDataScrapper.execute(true);
+                    if ( (Integer.parseInt(currentMonth.toString()) > Integer.parseInt(month2))
+                        || ((currentMonth.toString().equals(month2)) && (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))
+                        || (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) ) {
 
-                    }else if (((currentMonth.toString().equals(month2)) && (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))) {
-                        diningDataScrapper = new DiningDataScrapper(this);
-                        diningDataScrapper.execute(true);
-
-                    }else if (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) {
-                        diningDataScrapper = new DiningDataScrapper(this);
-                        diningDataScrapper.execute(true);
-
-                    }else {
+                            diningDataScrapper = new DiningDataScrapper(this);
+                            diningDataScrapper.execute(true);
+                    } else {
                         Thread thread = new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -182,12 +177,13 @@ public class BingDiningMenu {
 
     public void setToolbar(AppCompatTextView toolbar) {
         String textToSet;
-        if(getBingWeekDate(title).compareTo(NO_DATE) == 0)
-            toolbar.setText("");
-        else if(getBingWeekDate(title).compareTo(FAILED_MENU_DATE) == 0){
+        if(getBingWeekDate(title).compareTo(NO_DATE) == 0) {
             textToSet = "No Menu Found";
             toolbar.setText(textToSet);
-        }else{
+        } else if(getBingWeekDate(title).compareTo(FAILED_MENU_DATE) == 0){
+            textToSet = "No Menu Found";
+            toolbar.setText(textToSet);
+        } else {
             toolbar.setText(getBingWeekDate(title));
         }
 
@@ -270,7 +266,7 @@ public class BingDiningMenu {
         protected void onPreExecute() {
             BingDiningMenu bingDiningMenu = activityReference.get();
 
-            if(bingDiningMenu.showProgressDialog) {
+            if(bingDiningMenu.showProgressDialog && bingDiningMenu.diningMenuView.getWindowToken() != null) {
                 pD = new ProgressDialog(bingDiningMenu.context);
                 pD.setCancelable(false);
                 pD.setMessage("Loading menu, please wait.");
@@ -284,156 +280,144 @@ public class BingDiningMenu {
             final BingDiningMenu bingDiningMenu = activityReference.get();
             if(params.length > 0) updateDatabase = params[0];
 
-            if(bingDiningMenu == null){
+            if(bingDiningMenu == null) {
+                loadEmptyMenu = true;
                 return null;
             }
 
-            final Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        // test for valid connection
-                        Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(5000).execute();
-                        if (response.statusCode() != 200) {
-                           loadEmptyMenu = true;
-                           return;
-                        }
+            try {
+                // test for valid connection
+                Connection.Response response = Jsoup.connect(bingDiningMenu.link).timeout(5000).execute();
+                if (response.statusCode() != 200) {
+                   loadEmptyMenu = true;
+                   return null;
+                }
 
-                        Document doc2 = Jsoup.connect(bingDiningMenu.link).get();
-                        Element body = doc2.body();
-                        Element menuDiv = body.getElementById("bite-menu");
-                        String menuActive = menuDiv.getElementById("bite-calc").select("p").text();
+                Document doc2 = Jsoup.connect(bingDiningMenu.link).get();
+                Element body = doc2.body();
+                Element menuDiv = body.getElementById("bite-menu");
+                String menuActive = menuDiv.getElementById("bite-calc").select("p").text();
 
-                        if(menuActive.equals("Sorry, no menu found")){
-                            loadEmptyMenu = true;
-                            errorMessage = "One or more dining halls are closed, no menu found";
-                            return;
-                        }
+                if(menuActive.equals("Sorry, no menu found")){
+                    loadEmptyMenu = true;
+                    errorMessage = "One or more dining halls are closed, no menu found";
+                    return null;
+                }
 
-                        Elements daysAll = menuDiv.select("li[id~=menuid-\\d+$]");
-                        Elements menuAll = menuDiv.select("div[id~=menuid-\\d+-day]");
+                Elements daysAll = menuDiv.select("li[id~=menuid-\\d+$]");
+                Elements menuAll = menuDiv.select("div[id~=menuid-\\d+-day]");
 
-                        List<String> dayNames = new ArrayList<>();
-                        String startDay = null, endDay = "";
+                List<String> dayNames = new ArrayList<>();
+                String startDay = null, endDay = "";
 
-                        for (Element e: daysAll) {
-                            String shortDay = e.text().substring(0, 3);
+                for (Element e: daysAll) {
+                    String shortDay = e.text().substring(0, 3);
 
-                            if (startDay == null) startDay = e.text().substring(4);
-                            endDay = e.text().substring(4);
+                    if (startDay == null) startDay = e.text().substring(4);
+                    endDay = e.text().substring(4);
 
-                            switch (shortDay) {
-                                case "Mon": dayNames.add("monday");
-                                    break;
-                                case "Tue": dayNames.add("tuesday");
-                                    break;
-                                case "Wed": dayNames.add("wednesday");
-                                    break;
-                                case "Thu": dayNames.add("thursday");
-                                    break;
-                                case "Fri": dayNames.add("friday");
-                                    break;
-                                case "Sat": dayNames.add("saturday");
-                                    break;
-                                case "Sun": dayNames.add("sunday");
-                                    break;
-                            }
-                        }
-
-                        StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(), currentYear = new StringBuilder();
-                        CommonUtilities.loadCurrentDate(currentMonth, currentDay, currentYear);
-
-                        // "1/10/2019 - 1/21/2019"
-                        if (Integer.parseInt(startDay) < Integer.parseInt(endDay)) {
-                            weekString = currentMonth.toString() + "/" + startDay + "/" + currentYear.toString() + " - " +
-                                    currentMonth.toString() + "/" + endDay + "/" + currentYear.toString();
-
-                        } else {
-                            String nextMonth = String.valueOf(Integer.parseInt(currentMonth.toString()) + 1);
-                            weekString = currentMonth.toString() + "/" + startDay + "/" + currentYear.toString() + " - " +
-                                    nextMonth + "/" + endDay + "/" + currentYear.toString();
-                        }
-
-                        // let's skip year check yo
-
-                        currentMonth.delete(0, currentMonth.length());
-                        currentDay.delete(0, currentDay.length());
-                        currentYear.delete(0, currentYear.length());
-
-                        String stringToAppend;
-                        int index, i;
-
-                        for(i = 0; i < daysAll.size(); i++) {
-                            Elements B = menuAll.get(i).select("div[class~=accordion-block breakfast]");
-                            Elements L = menuAll.get(i).select("div[class~=accordion-block lunch]");
-                            Elements D = menuAll.get(i).select("div[class~=accordion-block dinner]");
-                            index = 1;
-
-                            if (B.size() > 0) {
-                                for (Element e : B.get(0).select("a[data-fooditemname]")) {
-                                    stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
-                                    stringBuilderBreakfast.append(stringToAppend);
-                                    index++;
-                                }
-                            }
-                            index = 1;
-                            if (L.size() > 0) {
-                              for (Element e : L.get(0).select("a[data-fooditemname]")) {
-                                  stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
-                                  stringBuilderLunch.append(stringToAppend);
-                                  index++;
-                              }
-                            }
-                            index = 1;
-                            if(D.size() > 0) {
-                              for (Element e : D.get(0).select("a[data-fooditemname]")) {
-                                  stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
-                                  stringBuilderDinner.append(stringToAppend);
-                                  index++;
-                              }
-                            }
-
-                            stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
-                            stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
-                            stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
-
-                            if(updateDatabase) bingDiningMenu.diningDatabase.updateMenuItem(i+1,dayNames.get(i), stringBuilderBreakfast.toString(),
-                                    stringBuilderLunch.toString(), stringBuilderDinner.toString());
-                            else bingDiningMenu.diningDatabase.insertMenuItem(dayNames.get(i), stringBuilderBreakfast.toString(),
-                                    stringBuilderLunch.toString(), stringBuilderDinner.toString());
-
-                            stringBuilderBreakfast.delete(0, stringBuilderBreakfast.length());
-                            stringBuilderLunch.delete(0, stringBuilderLunch.length());
-                            stringBuilderDinner.delete(0, stringBuilderDinner.length());
-                        }
-                        dayNames.clear();
-                    } catch(IOException e){
-                        errorMessage = "Error occurred while processing data - most likely no data on server";
-                        e.printStackTrace();
-                        loadEmptyMenu = true;
-                    } catch (NumberFormatException e) {
-                        errorMessage = "Web data has changed on backend - dev will push an update soon";
-                        e.printStackTrace();
-                        loadEmptyMenu = true;
-                    } catch (Exception e) {
-                        errorMessage = "Unknown error has occurred - dev will push an update soon";
-                        e.printStackTrace();
-                        loadEmptyMenu = true;
+                    switch (shortDay) {
+                        case "Mon": dayNames.add("monday");
+                            break;
+                        case "Tue": dayNames.add("tuesday");
+                            break;
+                        case "Wed": dayNames.add("wednesday");
+                            break;
+                        case "Thu": dayNames.add("thursday");
+                            break;
+                        case "Fri": dayNames.add("friday");
+                            break;
+                        case "Sat": dayNames.add("saturday");
+                            break;
+                        case "Sun": dayNames.add("sunday");
+                            break;
                     }
                 }
-            });
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
+                StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(), currentYear = new StringBuilder();
+                CommonUtilities.loadCurrentDate(currentMonth, currentDay, currentYear);
+
+                // "1/10/2019 - 1/21/2019"
+                if (startDay != null && Integer.parseInt(startDay) < Integer.parseInt(endDay)) {
+                    weekString = currentMonth.toString() + "/" + startDay + "/" + currentYear.toString() + " - " +
+                            currentMonth.toString() + "/" + endDay + "/" + currentYear.toString();
+                } else {
+                    String nextMonth = String.valueOf(Integer.parseInt(currentMonth.toString()) + 1);
+                    weekString = currentMonth.toString() + "/" + startDay + "/" + currentYear.toString() + " - " +
+                            nextMonth + "/" + endDay + "/" + currentYear.toString();
+                }
+
+                // skipping year check
+                currentMonth.delete(0, currentMonth.length());
+                currentDay.delete(0, currentDay.length());
+                currentYear.delete(0, currentYear.length());
+
+                String stringToAppend;
+                int index, i;
+
+                for(i = 0; i < daysAll.size(); i++) {
+                    Elements B = menuAll.get(i).select("div[class~=accordion-block breakfast]");
+                    Elements L = menuAll.get(i).select("div[class~=accordion-block lunch]");
+                    Elements D = menuAll.get(i).select("div[class~=accordion-block dinner]");
+                    index = 1;
+
+                    if (B.size() > 0) {
+                        for (Element e : B.get(0).select("a[data-fooditemname]")) {
+                            stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
+                            stringBuilderBreakfast.append(stringToAppend);
+                            index++;
+                        }
+                    }
+                    index = 1;
+                    if (L.size() > 0) {
+                      for (Element e : L.get(0).select("a[data-fooditemname]")) {
+                          stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
+                          stringBuilderLunch.append(stringToAppend);
+                          index++;
+                      }
+                    }
+                    index = 1;
+                    if(D.size() > 0) {
+                      for (Element e : D.get(0).select("a[data-fooditemname]")) {
+                          stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
+                          stringBuilderDinner.append(stringToAppend);
+                          index++;
+                      }
+                    }
+
+                    stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+                    stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+                    stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+
+                    if(updateDatabase) bingDiningMenu.diningDatabase.updateMenuItem(i+1,dayNames.get(i), stringBuilderBreakfast.toString(),
+                            stringBuilderLunch.toString(), stringBuilderDinner.toString());
+                    else bingDiningMenu.diningDatabase.insertMenuItem(dayNames.get(i), stringBuilderBreakfast.toString(),
+                            stringBuilderLunch.toString(), stringBuilderDinner.toString());
+
+                    stringBuilderBreakfast.delete(0, stringBuilderBreakfast.length());
+                    stringBuilderLunch.delete(0, stringBuilderLunch.length());
+                    stringBuilderDinner.delete(0, stringBuilderDinner.length());
+                }
+                dayNames.clear();
+            } catch(IOException e){
+                errorMessage = "Error occurred while processing data - most likely no data on server";
+                e.printStackTrace();
+                loadEmptyMenu = true;
+            } catch (NumberFormatException e) {
+                errorMessage = "Web data has changed on backend - dev will push an update soon";
+                e.printStackTrace();
+                loadEmptyMenu = true;
+            } catch (Exception e) {
+                errorMessage = "Unknown error has occurred - dev will push an update soon";
+                e.printStackTrace();
+                loadEmptyMenu = true;
+            }
             return null;
         }
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
             if(pD != null) pD.dismiss();
 
             final BingDiningMenu bingDiningMenu = activityReference.get();
@@ -441,13 +425,14 @@ public class BingDiningMenu {
 
 
             if(loadEmptyMenu){
+                bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
+
+              if (bingDiningMenu.diningMenuView.isShown())
                 Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
 
                 bingDiningMenu.diningDatabase.deleteAllItems();
                 bingDiningMenu.recyclerView.setAdapter(null);
                 bingDiningMenu.adapter.notifyDataSetChanged();
-
-                bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
                 bingDiningMenu.saveBingWeekData(FAILED_MENU_DATE);
                 if (bingDiningMenu.getToolbar() != null) {
@@ -565,5 +550,4 @@ public class BingDiningMenu {
         }
         return index;
     }
-
 }

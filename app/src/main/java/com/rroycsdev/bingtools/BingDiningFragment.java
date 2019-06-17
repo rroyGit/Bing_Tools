@@ -61,8 +61,8 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
             switch (tabLayout.getSelectedTabPosition()) {
                 case 0:
                     if(pagerAdapter != null && pagerAdapter.getHinmanRefs() != null) {
-                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
                         pagerAdapter.getHinmanRefs().setToolbarDate();
+                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
                     }
                     else {
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
@@ -72,8 +72,8 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                             @Override
                             public void run() {
                                 if(pagerAdapter.getHinmanRefs() != null && pagerAdapter.getHinmanRefs().hinman_hall != null) {
-                                    pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
                                     pagerAdapter.getHinmanRefs().setToolbarDate();
+                                    pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
                                 }
                             }
                         },100);
@@ -82,8 +82,8 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                     return true;
                 case 1:
                     if(pagerAdapter != null && pagerAdapter.getC4Refs() != null) {
-                        pagerAdapter.getC4Refs().c4_hall.refreshData();
                         pagerAdapter.getC4Refs().setToolbarDate();
+                        pagerAdapter.getC4Refs().c4_hall.refreshData();
                     }
                     else {
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
@@ -93,8 +93,8 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                             @Override
                             public void run() {
                                 if(pagerAdapter.getC4Refs() != null && pagerAdapter.getC4Refs().c4_hall != null) {
-                                    pagerAdapter.getC4Refs().c4_hall.refreshData();
                                     pagerAdapter.getC4Refs().setToolbarDate();
+                                    pagerAdapter.getC4Refs().c4_hall.refreshData();
                                 }
                             }
                         },100);
@@ -103,8 +103,8 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                     return true;
                 case 2:
                     if(pagerAdapter != null && pagerAdapter.getAppRefs() != null) {
-                        pagerAdapter.getAppRefs().appalachian_hall.refreshData();
                         pagerAdapter.getAppRefs().setToolbarDate();
+                        pagerAdapter.getAppRefs().appalachian_hall.refreshData();
                     }
                     else {
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
@@ -114,8 +114,9 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                             @Override
                             public void run() {
                                 if(pagerAdapter.getAppRefs() != null && pagerAdapter.getAppRefs().appalachian_hall != null) {
-                                    pagerAdapter.getAppRefs().appalachian_hall.refreshData();
                                     pagerAdapter.getAppRefs().setToolbarDate();
+                                    pagerAdapter.getAppRefs().appalachian_hall.refreshData();
+
                                 }
                             }
                         }, 100);
@@ -124,8 +125,9 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                     return true;
                 case 3:
                     if(pagerAdapter != null && pagerAdapter.getCIWRefs() != null) {
-                        pagerAdapter.getCIWRefs().ciw_hall.refreshData();
                         pagerAdapter.getCIWRefs().setToolbarDate();
+                        pagerAdapter.getCIWRefs().ciw_hall.refreshData();
+
                     }
                     else {
                         pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
@@ -135,8 +137,9 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                             @Override
                             public void run() {
                                 if(pagerAdapter.getCIWRefs() != null && pagerAdapter.getCIWRefs().ciw_hall != null) {
-                                    pagerAdapter.getCIWRefs().ciw_hall.refreshData();
                                     pagerAdapter.getCIWRefs().setToolbarDate();
+                                    pagerAdapter.getCIWRefs().ciw_hall.refreshData();
+
                                 }
                             }
                         }, 100);
@@ -163,6 +166,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
 
         pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(pagerAdapter);
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
 
@@ -170,18 +174,8 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if(CommonUtilities.getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null) return;
-
                 viewPager.setCurrentItem(tab.getPosition(), true);
-                Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
-                if (fragment instanceof C4Dining) {
-                    ((C4Dining) fragment).setToolbarDate();
-                } else if (fragment instanceof HinmanDining) {
-                    ((HinmanDining) fragment).setToolbarDate();
-                } else if (fragment instanceof AppalachianDining) {
-                    ((AppalachianDining) fragment).setToolbarDate();
-                } else if (fragment instanceof CIWDining) {
-                    ((CIWDining) fragment).setToolbarDate();
-                }
+                updateToolbar(tab.getPosition());
             }
 
             @Override
@@ -194,6 +188,19 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
 
             }
         });
+    }
+
+    public void updateToolbar (int position) {
+        Fragment fragment = pagerAdapter.getFragmentInstance(position);
+        if (fragment instanceof C4Dining) {
+            ((C4Dining) fragment).setToolbarDate();
+        } else if (fragment instanceof HinmanDining) {
+            ((HinmanDining) fragment).setToolbarDate();
+        } else if (fragment instanceof AppalachianDining) {
+            ((AppalachianDining) fragment).setToolbarDate();
+        } else if (fragment instanceof CIWDining) {
+            ((CIWDining) fragment).setToolbarDate();
+        }
     }
 
     @Override

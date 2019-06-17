@@ -57,19 +57,16 @@ public class HinmanDining extends Fragment{
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             if(fragmentName.compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false, view);
             else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
-        }else {
-            hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
-            setToolbarDate();
-        }
+        } else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
 
+        setToolbarDate();
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
-
         hinman_hall.makeRequest();
 
         //set empty adapter due to waiting for data

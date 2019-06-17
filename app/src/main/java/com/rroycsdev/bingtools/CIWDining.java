@@ -51,13 +51,14 @@ public class CIWDining extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             if(fragmentName != null && fragmentName.compareTo("bing") != 0)  ciw_hall = new BingDiningMenu(ciwUrl, title, context, listItems, false, view);
             else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
-        }else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
+        } else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
 
+        setToolbarDate();
         ciw_hall.setRecyclerView(recyclerView);
         ciw_hall.setAdapter(listItems);
         ciw_hall.makeRequest();

@@ -53,13 +53,14 @@ public class C4Dining extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null){
             android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             if(fragmentName.compareTo("bing") != 0) c4_hall = new BingDiningMenu(c4Url, title, context, listItems, false, view);
             else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
-        }else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
+        } else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
 
+        setToolbarDate();
         c4_hall.setRecyclerView(recyclerView);
         c4_hall.setAdapter(listItems);
         c4_hall.makeRequest();
