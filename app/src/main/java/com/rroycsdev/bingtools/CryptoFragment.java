@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -85,8 +86,8 @@ public class CryptoFragment extends Fragment {
                 @Override
                 public void run() {
                     double res2;
-                    if(editT.getText().toString().compareTo("") == 0) res2 = res;
-                    else res2 = res * Integer.parseInt(editT.getText().toString());
+                    if (editT.getText().toString().compareTo("") == 0) res2 = res;
+                    else res2 = res * Double.parseDouble(editT.getText().toString());
                     NumberFormat.getInstance().format(res2);
                     final String result = String.format("%s%s", '$', String.format(Locale.US, "%.2f",res2));
                     etherText.setText(result);
@@ -398,7 +399,7 @@ public class CryptoFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putDouble("resultView", currentCryptoVal);
         outState.putString("selectCryptoView", selectedCryptoText.getText().toString());
