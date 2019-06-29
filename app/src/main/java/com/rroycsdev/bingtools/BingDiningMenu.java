@@ -278,9 +278,9 @@ public class BingDiningMenu {
         protected Void doInBackground(Boolean... params) {
 
             final BingDiningMenu bingDiningMenu = activityReference.get();
-            if(params.length > 0) updateDatabase = params[0];
+            if (params.length > 0) updateDatabase = params[0];
 
-            if(bingDiningMenu == null) {
+            if (bingDiningMenu == null) {
                 loadEmptyMenu = true;
                 return null;
             }
@@ -298,7 +298,8 @@ public class BingDiningMenu {
                 Element menuDiv = body.getElementById("bite-menu");
                 String menuActive = menuDiv.getElementById("bite-calc").select("p").text();
 
-                if(menuActive.equals("Sorry, no menu found")){
+                if (menuActive.equals("Sorry, no menu found") || menuActive.contains("not found")
+                    || menuActive.contains("no menu")) {
                     loadEmptyMenu = true;
                     errorMessage = "One or more dining halls are closed, no menu found";
                     return null;
