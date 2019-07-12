@@ -13,9 +13,9 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
-public class CommonUtilities {
+class CommonUtilities {
 
-    public static void loadCurrentDate(StringBuilder... strings){
+    static void loadCurrentDate(StringBuilder... strings){
         Date dateNow = new Date();
         SimpleDateFormat dateFormatter = new SimpleDateFormat("M-d-yyyy", Locale.US);
         dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT-5"));
@@ -27,7 +27,7 @@ public class CommonUtilities {
     }
 
     //No Internet access if returns null
-    public static NetworkInfo getDeviceInternetStatus(Context context){
+    static NetworkInfo getDeviceInternetStatus(Context context){
         //check if internet is enabled
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
@@ -36,7 +36,7 @@ public class CommonUtilities {
         return null;
     }
 
-    public static void hideKeyboard(Activity thisActivity, View view){
+    static void hideKeyboard(Activity thisActivity, View view){
         if(view != null) {
             InputMethodManager imm;
             imm = (InputMethodManager) thisActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
