@@ -1,22 +1,21 @@
 package com.rroycsdev.bingtools;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class HinmanDining extends Fragment{
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         if (savedInstanceState != null){
-            android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             if(fragmentName.compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false, view);
             else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);

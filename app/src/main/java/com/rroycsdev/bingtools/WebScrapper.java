@@ -2,7 +2,7 @@ package com.rroycsdev.bingtools;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.widget.Toast;
 
 import org.jsoup.Connection;

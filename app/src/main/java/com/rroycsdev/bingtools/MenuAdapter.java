@@ -8,8 +8,8 @@ import android.graphics.Color;
 import android.graphics.Rect;
 
 import android.os.Handler;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 
@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.ms.square.android.expandabletextview.ExpandableTextView;

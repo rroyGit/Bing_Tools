@@ -278,7 +278,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/stopFab"
             android:clickable="true"
             app:backgroundTint="@color/lightPinkish"
@@ -291,7 +291,7 @@
             android:focusable="true"
             android:visibility="invisible"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/startFab"
             android:clickable="true"
             app:backgroundTint="@color/lightPinkish"
@@ -304,7 +304,7 @@
             android:focusable="true"
             android:visibility="invisible"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addFab"
             android:clickable="true"
             app:backgroundTint="@color/lightPinkish"
