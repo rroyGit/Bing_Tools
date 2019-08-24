@@ -33,10 +33,10 @@
     <string name="resetSettings">Reset Settings</string>
     <string name="homeSettings">Home</string>
 
-    <string name="appalachianUrl">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=1202&amp;locationId=74015009&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/appalachian-collegiate-center</string>
-    <string name="c4Url">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=1204&amp;locationId=74015006&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/chenango-champlain-collegiate-center</string>
-    <string name="ciwUrl">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=1203&amp;locationId=74015005&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/woods-dinig-center</string>
-    <string name="hinmanUrl">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=1205&amp;locationId=74015007&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/hinman-dining-center</string>
+    <string name="appalachianUrl">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=17338&amp;locationId=74015009&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/appalachian-collegiate-center</string>
+    <string name="c4Url">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=18060&amp;locationId=74015006&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/chenango-champlain-collegiate-center</string>
+    <string name="ciwUrl">https://menus.sodexomyway.com/BiteMenu/Menu?menuId=17395&amp;locationId=74015005&amp;whereami=https://binghamton.sodexomyway.com/dining-near-me/woods-dinig-center</string>
+    <string name="hinmanUrl">https://binghamton.sodexomyway.com/dining-near-me/hinman-dining-center</string>
 
     <string name="easternTimeZone">America/New_York</string>
     <string name="customColor">Custom Color</string>

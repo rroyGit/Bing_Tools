@@ -13,6 +13,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
+
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +24,17 @@ import java.util.List;
 public class CIWDining extends Fragment {
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
+    public AppCompatTextView toolbarTitle;
 
-    public BingDiningMenu ciw_hall;
+    private BingDiningMenu ciw_hall;
     private String ciwUrl;
     private String title;
-    private AppCompatTextView toolbarTitle;
+    private TabLayout tabLayout;
+
     private View view;
 
-    public CIWDining() {
-        //empty constructor
+    public CIWDining(TabLayout tabLayout) {
+        this.tabLayout = tabLayout;
     }
 
     @Override
@@ -59,15 +65,30 @@ public class CIWDining extends Fragment {
             else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
         } else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
 
-        setToolbarDate();
         ciw_hall.setRecyclerView(recyclerView);
         ciw_hall.setAdapter(listItems);
+        ciw_hall.setToolbarTitle(toolbarTitle);
+        ciw_hall.setTabLayout(tabLayout);
         ciw_hall.makeRequest();
 
+        if (getUserVisibleHint()) ciw_hall.setView();
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
+    }
+
+    public void refresh () {
+        ciw_hall.refreshData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (ciw_hall != null && isVisibleToUser) {
+            ciw_hall.setView();
+        }
     }
 
     @Override
@@ -102,10 +123,6 @@ public class CIWDining extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-    }
-
-    public void setToolbarDate() {
-        ciw_hall.setToolbar(toolbarTitle);
     }
 
 }

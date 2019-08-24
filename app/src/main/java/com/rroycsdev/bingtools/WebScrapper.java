@@ -3,6 +3,8 @@ package com.rroycsdev.bingtools;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import androidx.core.content.ContextCompat;
+
+import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.Connection;
@@ -15,6 +17,9 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static android.content.ContentValues.TAG;
 
 public class WebScrapper implements BingCrawler {
 
@@ -202,7 +207,7 @@ public class WebScrapper implements BingCrawler {
                 e.printStackTrace();
                 loadEmptyMenu = true;
             } catch (Exception e) {
-                errorMessage = "Unknown error has occurred - dev will push an update soon";
+                errorMessage = "Either one or more dining halls closed, or unknown error";
                 e.printStackTrace();
                 loadEmptyMenu = true;
             }
@@ -215,34 +220,26 @@ public class WebScrapper implements BingCrawler {
             if(pD != null) pD.dismiss();
 
             final BingDiningMenu bingDiningMenu = activityReference.get();
-            if(bingDiningMenu == null) return;
-
 
             if(loadEmptyMenu){
-                bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
+                Objects.requireNonNull(bingDiningMenu).diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
                 if (bingDiningMenu.diningMenuView.isShown())
                     Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
 
                 bingDiningMenu.diningDatabase.deleteAllItems();
-                bingDiningMenu.recyclerView.setAdapter(null);
-                bingDiningMenu.adapter.notifyDataSetChanged();
-
                 bingDiningMenu.saveBingWeekData(BingDiningMenu.FAILED_MENU_DATE);
-                if (bingDiningMenu.getToolbar() != null) {
-                    String textToSet = "No Menu Found";
-                    bingDiningMenu.getToolbar().setText(textToSet);
-                }
             }else {
-                bingDiningMenu.saveBingWeekData(weekString);
-                if (bingDiningMenu.getToolbar() != null) bingDiningMenu.getToolbar().setText(weekString);
-
+                Objects.requireNonNull(bingDiningMenu).saveBingWeekData(weekString);
                 bingDiningMenu.loadSortedData();
-                bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
-                bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
-                bingDiningMenu.adapter.notifyDataSetChanged();
-                bingDiningMenu.diningDatabase.close();
             }
+
+            if (bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition()).
+                    getText().equals(bingDiningMenu.title)) {
+                bingDiningMenu.setView();
+            }
+
+            bingDiningMenu.diningDatabase.close();
         }
     }
 
@@ -277,22 +274,23 @@ public class WebScrapper implements BingCrawler {
         protected void onPostExecute(Boolean updatePassed) {
             super.onPostExecute(updatePassed);
             BingDiningMenu bingDiningMenu = weakReference.get();
-            if(updatePassed) {
+
+            if (updatePassed) {
                 if (weekString.compareTo("Sample Menu") != 0) {
                     BingCrawler bingCrawler = new WebScrapper(bingDiningMenu);
                     bingCrawler.getDiningMenuData(true);
                 } else {
                     Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
-                    bingDiningMenu.loadSortedData();
-                    bingDiningMenu.adapter = new MenuAdapter(bingDiningMenu.listItems, bingDiningMenu.context, bingDiningMenu.recyclerView);
-                    bingDiningMenu.recyclerView.setAdapter(bingDiningMenu.adapter);
+                    bingDiningMenu.setView();
                     bingDiningMenu.diningDatabase.close();
                 }
-            }else {
+            } else {
                 Toast.makeText(bingDiningMenu.context, "No data found on server", Toast.LENGTH_SHORT).show();
                 bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
                 bingDiningMenu.saveBingWeekData(BingDiningMenu.FAILED_MENU_DATE);
+                bingDiningMenu.diningDatabase.close();
             }
+
         }
     }
 

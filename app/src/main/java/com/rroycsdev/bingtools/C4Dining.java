@@ -12,24 +12,31 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class C4Dining extends Fragment {
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
-    private AppCompatTextView toolbarTitle;
+    public AppCompatTextView toolbarTitle;
 
-    public BingDiningMenu c4_hall;
+    private BingDiningMenu c4_hall;
     private String c4Url;
     private String title;
     private View view;
+    private TabLayout tabLayout;
 
-    public C4Dining() {
-        //empty constructor
+    public C4Dining(TabLayout tabLayout) {
+       this.tabLayout = tabLayout;
     }
 
     @Override
@@ -39,12 +46,12 @@ public class C4Dining extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view,Bundle savedInstanceState) {
-        super.onViewCreated(view,savedInstanceState);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "onViewCreated: C4");
 
         Context context = this.getContext();
         toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
 
         List<ListItem> listItems = new ArrayList<>();
 
@@ -54,22 +61,37 @@ public class C4Dining extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
             if(fragmentName.compareTo("bing") != 0) c4_hall = new BingDiningMenu(c4Url, title, context, listItems, false, view);
             else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
         } else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
 
-        setToolbarDate();
         c4_hall.setRecyclerView(recyclerView);
         c4_hall.setAdapter(listItems);
+        c4_hall.setToolbarTitle(toolbarTitle);
+        c4_hall.setTabLayout(tabLayout);
         c4_hall.makeRequest();
 
+        if (getUserVisibleHint()) c4_hall.setView();
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
+    }
+
+    public void refresh () {
+        c4_hall.refreshData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (c4_hall != null && isVisibleToUser) {
+            c4_hall.setView();
+        }
     }
 
     @Override
@@ -85,7 +107,6 @@ public class C4Dining extends Fragment {
         super.onResume();
         if(recyclerView != null && recyclerView.getAdapter() != null) recyclerView.getAdapter().notifyDataSetChanged();
     }
-    //--------------------------------------------------------------------------------------------//
 
     public void onButtonPressed(Uri uri) {
 
@@ -103,10 +124,6 @@ public class C4Dining extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-    }
-
-    public void setToolbarDate(){
-        c4_hall.setToolbar(toolbarTitle);
     }
 
     @Override

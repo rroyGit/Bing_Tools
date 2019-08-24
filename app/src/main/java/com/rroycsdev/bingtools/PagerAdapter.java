@@ -1,55 +1,60 @@
 package com.rroycsdev.bingtools;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+
+import com.google.android.material.tabs.TabLayout;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int numTabs;
     private FragmentManager fragmentManager;
-    private HinmanDining hinmanDining = null;
-    private C4Dining c4Dining = null;
-    private AppalachianDining appalachianDining = null;
-    private CIWDining ciwDining = null;
+    private SparseArray<Fragment> fragmentSparseArray = new SparseArray<>();
+    private TabLayout tabLayout;
 
-    SparseArray<Fragment> fragmentSparseArray = new SparseArray<>();
-
-    public PagerAdapter(FragmentManager fm, int numTabs) {
+    public PagerAdapter(FragmentManager fm, TabLayout tabLayout, int numTabs) {
         super(fm);
         fragmentManager = fm;
         this.numTabs = numTabs;
+        this.tabLayout = tabLayout;
     }
-
 
     @Override
     public Fragment getItem(int position) {
+        Fragment fragment = fragmentSparseArray.get(position);
 
-        switch (position){
-            case 0:
-                hinmanDining =  new HinmanDining();
-                return hinmanDining;
-            case 1:
-                c4Dining = new C4Dining();
-                return c4Dining;
-            case 2:
-                appalachianDining = new AppalachianDining();
-                return appalachianDining;
-            case 3:
-                ciwDining = new CIWDining();
-                return ciwDining;
-            default:
-                return  null;
+        if (fragment == null) {
+            switch (position) {
+                case 0:
+                    fragment = new C4Dining(tabLayout);
+                    break;
+                case 1:
+                    fragment = new AppalachianDining(tabLayout);
+                    break;
+                case 2:
+                    fragment = new CIWDining(tabLayout);
+                    break;
+                case 3:
+                    fragment = new HinmanDining(tabLayout);
+                    break;
+            }
+            fragmentSparseArray.put(position, fragment);
         }
+
+        return fragment;
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-       Fragment fragment =  (Fragment) super.instantiateItem(container, position);
-       fragmentSparseArray.put(position, fragment);
-       return fragment;
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        Log.d("jmp", "instantiateItem: " + position);
+        Fragment fragment =  (Fragment) super.instantiateItem(container, position);
+        return fragment;
     }
 
     @Override
@@ -58,21 +63,13 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
         super.destroyItem(container, position, object);
     }
 
-    public Fragment getFragmentInstance(int position){
-        return  fragmentSparseArray.get(position);
+    Fragment getFragmentInstance(int position){
+        return fragmentSparseArray.get(position);
     }
 
-    public HinmanDining getHinmanRefs(){
-        return hinmanDining;
-    }
-    public C4Dining getC4Refs(){
-        return c4Dining;
-    }
-    public CIWDining getCIWRefs(){
-        return ciwDining;
-    }
-    public AppalachianDining getAppRefs(){
-        return appalachianDining;
+    public void setCount (int numTabs) {
+        this.numTabs =  numTabs;
+        this.notifyDataSetChanged();
     }
 
     @Override

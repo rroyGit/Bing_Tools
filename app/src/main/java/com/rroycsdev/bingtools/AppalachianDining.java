@@ -11,26 +11,35 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 public class AppalachianDining extends Fragment {
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
+    public AppCompatTextView toolbarTitle;
 
-    public BingDiningMenu appalachian_hall;
+    private BingDiningMenu appalachian_hall;
     private String appalachianUrl;
     private String title;
-    private AppCompatTextView toolbarTitle;
+
     private View view;
+    private TabLayout tabLayout;
 
 
-    public AppalachianDining() {
-        //empty constructor
+    public AppalachianDining(TabLayout tabLayout) {
+        this.tabLayout = tabLayout;
     }
 
     @Override
@@ -45,6 +54,8 @@ public class AppalachianDining extends Fragment {
         Context context = getContext();
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+
+        Log.d(TAG, "onViewCreated: App");
 
         List<ListItem> listItems = new ArrayList<>();
 
@@ -61,15 +72,30 @@ public class AppalachianDining extends Fragment {
             else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
         } else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
 
-        setToolbarDate();
         appalachian_hall.setRecyclerView(recyclerView);
         appalachian_hall.setAdapter(listItems);
+        appalachian_hall.setToolbarTitle(toolbarTitle);
+        appalachian_hall.setTabLayout(tabLayout);
         appalachian_hall.makeRequest();
 
+        if (getUserVisibleHint()) appalachian_hall.setView();
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
+    }
+
+    public void refresh () {
+        appalachian_hall.refreshData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (appalachian_hall != null && isVisibleToUser) {
+            appalachian_hall.setView();
+        }
     }
 
     @Override
@@ -102,9 +128,5 @@ public class AppalachianDining extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-    }
-
-    public void setToolbarDate(){
-        appalachian_hall.setToolbar(toolbarTitle);
     }
 }

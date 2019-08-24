@@ -17,21 +17,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class HinmanDining extends Fragment{
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
-    public BingDiningMenu hinman_hall;
+
+    private BingDiningMenu hinman_hall;
     private AppCompatTextView toolbarTitle;
     private Context context;
     private String title;
     View view;
+    private TabLayout tabLayout;
 
 
-    public HinmanDining() {
-        //empty constructor
+    public HinmanDining(TabLayout tabLayout) {
+        this.tabLayout = tabLayout;
     }
 
     @Override
@@ -63,14 +67,30 @@ public class HinmanDining extends Fragment{
             else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
         } else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
 
-        setToolbarDate();
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
+        hinman_hall.setToolbarTitle(toolbarTitle);
+        hinman_hall.setTabLayout(tabLayout);
         hinman_hall.makeRequest();
+
+        if (getUserVisibleHint()) hinman_hall.setView();
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
+    }
+
+    public void refresh () {
+        hinman_hall.refreshData();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (hinman_hall != null && isVisibleToUser) {
+            hinman_hall.setView();
+        }
     }
 
     @Override
@@ -136,9 +156,6 @@ public class HinmanDining extends Fragment{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-    public void setToolbarDate(){
-        hinman_hall.setToolbar(toolbarTitle);
     }
 
     @Override

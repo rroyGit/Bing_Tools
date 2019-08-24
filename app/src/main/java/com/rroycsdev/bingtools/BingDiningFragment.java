@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import androidx.viewpager.widget.ViewPager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import java.util.Objects;
 
-
+import static android.content.ContentValues.TAG;
 
 
 public class BingDiningFragment extends Fragment implements HinmanDining.OnFragmentInteractionListener, C4Dining.OnFragmentInteractionListener,
@@ -31,6 +32,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     private ViewPager viewPager;
     private PagerAdapter pagerAdapter;
     private TabLayout tabLayout;
+    private final int[] TABS = {R.string.c4, R.string.appalachian, R.string.ciw, R.string.hinman};
 
     public BingDiningFragment() {
         // Required empty public constructor
@@ -52,104 +54,37 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
 
         if (id == R.id.action_settings) {
             return false;
-        }else if(id == R.id.refresh_Bing){
-            if(CommonUtilities.getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null){
-                Toast.makeText(getContext(),"No Internet", Toast.LENGTH_SHORT).show();
+        } else if(id == R.id.refresh_Bing) {
+            if (CommonUtilities.getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null) {
+                Toast.makeText(getContext(), "No Internet", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
-            switch (tabLayout.getSelectedTabPosition()) {
-                case 0:
-                    if(pagerAdapter != null && pagerAdapter.getHinmanRefs() != null) {
-                        pagerAdapter.getHinmanRefs().setToolbarDate();
-                        pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
+            if (pagerAdapter != null) {
+                Fragment fragment = pagerAdapter.getFragmentInstance(tabLayout.getSelectedTabPosition());
+                if (fragment != null) {
+                    switch (tabLayout.getSelectedTabPosition()) {
+                        case 0:
+                            ((C4Dining) fragment).refresh();
+                            break;
+                        case 1:
+                            ((AppalachianDining) fragment).refresh();
+                            break;
+                        case 2:
+                            ((CIWDining) fragment).refresh();
+                            break;
+                        case 3:
+                            ((HinmanDining) fragment).refresh();
+                            break;
+                        default:
+                            return false;
                     }
-                    else {
-                        pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
-                        viewPager.setAdapter(pagerAdapter);
-                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(pagerAdapter.getHinmanRefs() != null && pagerAdapter.getHinmanRefs().hinman_hall != null) {
-                                    pagerAdapter.getHinmanRefs().setToolbarDate();
-                                    pagerAdapter.getHinmanRefs().hinman_hall.refreshData();
-                                }
-                            }
-                        },100);
-
-                    }
-                    return true;
-                case 1:
-                    if(pagerAdapter != null && pagerAdapter.getC4Refs() != null) {
-                        pagerAdapter.getC4Refs().setToolbarDate();
-                        pagerAdapter.getC4Refs().c4_hall.refreshData();
-                    }
-                    else {
-                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
-                        viewPager.setAdapter(pagerAdapter);
-                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(pagerAdapter.getC4Refs() != null && pagerAdapter.getC4Refs().c4_hall != null) {
-                                    pagerAdapter.getC4Refs().setToolbarDate();
-                                    pagerAdapter.getC4Refs().c4_hall.refreshData();
-                                }
-                            }
-                        },100);
-
-                    }
-                    return true;
-                case 2:
-                    if(pagerAdapter != null && pagerAdapter.getAppRefs() != null) {
-                        pagerAdapter.getAppRefs().setToolbarDate();
-                        pagerAdapter.getAppRefs().appalachian_hall.refreshData();
-                    }
-                    else {
-                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
-                        viewPager.setAdapter(pagerAdapter);
-                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(pagerAdapter.getAppRefs() != null && pagerAdapter.getAppRefs().appalachian_hall != null) {
-                                    pagerAdapter.getAppRefs().setToolbarDate();
-                                    pagerAdapter.getAppRefs().appalachian_hall.refreshData();
-
-                                }
-                            }
-                        }, 100);
-
-                    }
-                    return true;
-                case 3:
-                    if(pagerAdapter != null && pagerAdapter.getCIWRefs() != null) {
-                        pagerAdapter.getCIWRefs().setToolbarDate();
-                        pagerAdapter.getCIWRefs().ciw_hall.refreshData();
-
-                    }
-                    else {
-                        pagerAdapter = new PagerAdapter(getChildFragmentManager(),tabLayout.getTabCount());
-                        viewPager.setAdapter(pagerAdapter);
-                        viewPager.setCurrentItem(tabLayout.getSelectedTabPosition(), true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(pagerAdapter.getCIWRefs() != null && pagerAdapter.getCIWRefs().ciw_hall != null) {
-                                    pagerAdapter.getCIWRefs().setToolbarDate();
-                                    pagerAdapter.getCIWRefs().ciw_hall.refreshData();
-
-                                }
-                            }
-                        }, 100);
-                    }
-                    return true;
-                    default: return false;
+                }
             }
         }
-        return false;
+        return true;
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -158,28 +93,24 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         tabLayout = (TabLayout) view.findViewById(R.id.tablayout);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
 
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.hinman));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.c4));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.appalachian));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.ciw));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(pagerAdapter);
-
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(CommonUtilities.getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null) return;
-                viewPager.setCurrentItem(tab.getPosition(), true);
-                updateToolbar(tab.getPosition());
+
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
+                Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
+
+                if (fragment != null) {
+                    if (fragment instanceof C4Dining)
+                    ((C4Dining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                    if (fragment instanceof AppalachianDining)
+                        ((AppalachianDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                    if (fragment instanceof CIWDining)
+                        ((CIWDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                }
 
             }
 
@@ -188,18 +119,16 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
 
             }
         });
-    }
 
-    public void updateToolbar (int position) {
-        Fragment fragment = pagerAdapter.getFragmentInstance(position);
-        if (fragment instanceof C4Dining) {
-            ((C4Dining) fragment).setToolbarDate();
-        } else if (fragment instanceof HinmanDining) {
-            ((HinmanDining) fragment).setToolbarDate();
-        } else if (fragment instanceof AppalachianDining) {
-            ((AppalachianDining) fragment).setToolbarDate();
-        } else if (fragment instanceof CIWDining) {
-            ((CIWDining) fragment).setToolbarDate();
+        pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout, TABS.length);
+
+        viewPager.setAdapter(pagerAdapter);
+
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        for (int i = 0; i < TABS.length; i++) {
+            Objects.requireNonNull(tabLayout.getTabAt(i)).setText(TABS[i]);
         }
     }
 
