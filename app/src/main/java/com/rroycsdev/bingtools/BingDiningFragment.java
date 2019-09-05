@@ -96,6 +96,18 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
+
+                if (fragment != null) {
+                    if (fragment instanceof C4Dining)
+                        ((C4Dining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).showDialog();
+                    if (fragment instanceof AppalachianDining)
+                        ((AppalachianDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).showDialog();
+                    if (fragment instanceof CIWDining)
+                        ((CIWDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).showDialog();
+                    if (fragment instanceof HinmanDining)
+                        ((HinmanDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).showDialog();
+                }
 
             }
 
@@ -110,8 +122,9 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
                         ((AppalachianDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
                     if (fragment instanceof CIWDining)
                         ((CIWDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                    if (fragment instanceof HinmanDining)
+                        ((HinmanDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
                 }
-
             }
 
             @Override

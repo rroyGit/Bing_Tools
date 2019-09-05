@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rroycsdev.bingtools.CryptoFragment"
+    tools:bingDiningMenu="com.rroycsdev.bingtools.CryptoFragment"
     android:background="@color/darkGray2">
 
     <LinearLayout

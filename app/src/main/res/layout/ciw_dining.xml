@@ -14,7 +14,7 @@
         android:paddingTop="0dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
-        tools:context="com.rroycsdev.bingtools.CIWDining">
+        tools:bingDiningMenu="com.rroycsdev.bingtools.CIWDining">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycleViewCIW"

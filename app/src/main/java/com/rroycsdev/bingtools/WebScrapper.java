@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import androidx.core.content.ContextCompat;
 
-import android.util.Log;
 import android.widget.Toast;
 
 import org.jsoup.Connection;
@@ -19,55 +18,57 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static android.content.ContentValues.TAG;
-
 public class WebScrapper implements BingCrawler {
 
-    private BingDiningMenu context;
+    private BingDiningMenu bingDiningMenu;
 
-    WebScrapper(BingDiningMenu context) {
-        this.context = context;
+
+    WebScrapper(BingDiningMenu bingDiningMenu) {
+        this.bingDiningMenu = bingDiningMenu;
     }
 
     @Override
-    public void getDiningMenuData(boolean insertUpdateDatabase) {
-        new DiningDataScrapper(context).execute(insertUpdateDatabase);
+    public DiningDataScrapper getDiningMenuData(boolean insertUpdateDatabase) {
+        DiningDataScrapper diningDataScrapper = new DiningDataScrapper(bingDiningMenu);
+        diningDataScrapper.execute(insertUpdateDatabase);
+        return diningDataScrapper;
     }
 
     @Override
     public void makeDailyRequest(String link) {
-        new NewMenuRequest(context).execute(link);
+        new NewMenuRequest(bingDiningMenu).execute(link);
     }
 
     //make async web request using JSOUP
     //first parameter (Boolean), if true update database - if false insert into database
-    private static class DiningDataScrapper extends AsyncTask<Boolean, Void, Void> {
+    static class DiningDataScrapper extends AsyncTask<Boolean, Void, Void> {
         private StringBuilder stringBuilderBreakfast = new StringBuilder();
         private StringBuilder stringBuilderLunch = new StringBuilder();
         private StringBuilder stringBuilderDinner = new StringBuilder();
 
         private String weekString;
-        private ProgressDialog pD;
         private Boolean updateDatabase = false;
         private Boolean loadEmptyMenu = false;
         private String errorMessage = "";
-
+        public ProgressDialog pD;
 
         //weak reference
         private WeakReference<BingDiningMenu> activityReference;
 
-        DiningDataScrapper(BingDiningMenu context){
-            activityReference = new WeakReference<>(context);
+        DiningDataScrapper(BingDiningMenu bingDiningMenu){
+            activityReference = new WeakReference<>(bingDiningMenu);
+            pD = new ProgressDialog(bingDiningMenu.context);
+            pD.setCancelable(false);
+            pD.setMessage("Loading " + bingDiningMenu.title + " menu, please wait.");
         }
 
         @Override
         protected void onPreExecute() {
             BingDiningMenu bingDiningMenu = activityReference.get();
 
-            if(bingDiningMenu.showProgressDialog && bingDiningMenu.diningMenuView.getWindowToken() != null) {
-                pD = new ProgressDialog(bingDiningMenu.context);
-                pD.setCancelable(false);
-                pD.setMessage("Loading menu, please wait.");
+            if(bingDiningMenu.isShowProgressDialog && bingDiningMenu.diningMenuView.getWindowToken() != null &&
+                    Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
+                            getText(), bingDiningMenu.title)) {
                 pD.show();
             }
         }
@@ -207,7 +208,7 @@ public class WebScrapper implements BingCrawler {
                 e.printStackTrace();
                 loadEmptyMenu = true;
             } catch (Exception e) {
-                errorMessage = "Either one or more dining halls closed, or unknown error";
+                errorMessage = "Dining hall closed, or unknown error";
                 e.printStackTrace();
                 loadEmptyMenu = true;
             }
@@ -220,22 +221,27 @@ public class WebScrapper implements BingCrawler {
             if(pD != null) pD.dismiss();
 
             final BingDiningMenu bingDiningMenu = activityReference.get();
+            bingDiningMenu.isShowProgressDialog = false;
 
             if(loadEmptyMenu){
                 Objects.requireNonNull(bingDiningMenu).diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
-                if (bingDiningMenu.diningMenuView.isShown())
+
+                if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
+                        getText(), bingDiningMenu.title) && bingDiningMenu.diningMenuView.isShown())
                     Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
 
+
+                bingDiningMenu.saveMenuMsg(errorMessage);
                 bingDiningMenu.diningDatabase.deleteAllItems();
-                bingDiningMenu.saveBingWeekData(BingDiningMenu.FAILED_MENU_DATE);
+                bingDiningMenu.saveMenuWeekDate(BingDiningMenu.FAILED_MENU_DATE);
             }else {
-                Objects.requireNonNull(bingDiningMenu).saveBingWeekData(weekString);
+                Objects.requireNonNull(bingDiningMenu).saveMenuWeekDate(weekString);
                 bingDiningMenu.loadSortedData();
             }
 
-            if (bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition()).
-                    getText().equals(bingDiningMenu.title)) {
+            if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
+                    getText(), bingDiningMenu.title)) {
                 bingDiningMenu.setView();
             }
 
@@ -287,11 +293,10 @@ public class WebScrapper implements BingCrawler {
             } else {
                 Toast.makeText(bingDiningMenu.context, "No data found on server", Toast.LENGTH_SHORT).show();
                 bingDiningMenu.diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
-                bingDiningMenu.saveBingWeekData(BingDiningMenu.FAILED_MENU_DATE);
+                bingDiningMenu.saveMenuWeekDate(BingDiningMenu.FAILED_MENU_DATE);
                 bingDiningMenu.diningDatabase.close();
             }
 
         }
     }
-
 }

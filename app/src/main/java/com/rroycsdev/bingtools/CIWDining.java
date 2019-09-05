@@ -82,6 +82,8 @@ public class CIWDining extends Fragment {
         ciw_hall.refreshData();
     }
 
+    public void showDialog () { ciw_hall.showDialog(); }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

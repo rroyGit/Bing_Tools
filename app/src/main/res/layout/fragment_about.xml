@@ -3,7 +3,7 @@
     android:id="@+id/aboutFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rroycsdev.bingtools.AboutFragment">
+    tools:bingDiningMenu="com.rroycsdev.bingtools.AboutFragment">
 
    <ListView
        android:background="@color/darkGray2"

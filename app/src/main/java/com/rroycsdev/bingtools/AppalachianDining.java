@@ -89,6 +89,8 @@ public class AppalachianDining extends Fragment {
         appalachian_hall.refreshData();
     }
 
+    public void showDialog () { appalachian_hall.showDialog(); }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

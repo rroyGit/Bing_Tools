@@ -25,9 +25,9 @@ import java.util.List;
 public class HinmanDining extends Fragment{
     public RecyclerView recyclerView;
     public RecyclerView.Adapter adapter;
+    public AppCompatTextView toolbarTitle;
 
     private BingDiningMenu hinman_hall;
-    private AppCompatTextView toolbarTitle;
     private Context context;
     private String title;
     View view;
@@ -83,6 +83,8 @@ public class HinmanDining extends Fragment{
     public void refresh () {
         hinman_hall.refreshData();
     }
+
+    public void showDialog () { hinman_hall.showDialog(); }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

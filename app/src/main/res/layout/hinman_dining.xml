@@ -15,7 +15,7 @@
         android:paddingTop="0dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
-        tools:context="com.rroycsdev.bingtools.HinmanDining">
+        tools:bingDiningMenu="com.rroycsdev.bingtools.HinmanDining">
 
         <androidx.recyclerview.widget.RecyclerView
             android:focusable="true"

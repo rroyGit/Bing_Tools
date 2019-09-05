@@ -85,6 +85,8 @@ public class C4Dining extends Fragment {
         c4_hall.refreshData();
     }
 
+    public void showDialog () { c4_hall.showDialog(); }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

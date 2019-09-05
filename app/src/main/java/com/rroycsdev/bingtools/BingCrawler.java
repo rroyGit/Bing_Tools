@@ -1,8 +1,9 @@
 package com.rroycsdev.bingtools;
+import com.rroycsdev.bingtools.WebScrapper.DiningDataScrapper;
 
 interface BingCrawler {
 
-    void getDiningMenuData(boolean insertUpdateDatabase);
+    DiningDataScrapper getDiningMenuData(boolean insertUpdateDatabase);
 
     void makeDailyRequest(String link);
 }

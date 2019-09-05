@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
-    tools:context="com.rroycsdev.bingtools.MainActivity">
+    tools:bingDiningMenu="com.rroycsdev.bingtools.MainActivity">
 
     <ImageView
         android:id="@+id/DailyImage"

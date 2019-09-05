@@ -23,7 +23,7 @@ public class BingDiningMenuTest {
 
         BingDiningMenu bingDiningMenu = new BingDiningMenu(link, title, context, listItems, showProgressDialog, view);
 
-        String output = bingDiningMenu.getBingWeekDate(title);
+        String output = bingDiningMenu.getMenuWeekDate(title);
         assertEquals("error", output);
     }
 }
