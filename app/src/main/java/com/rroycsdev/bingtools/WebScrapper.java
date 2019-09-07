@@ -167,6 +167,7 @@ public class WebScrapper implements BingCrawler {
                             stringBuilderBreakfast.append(stringToAppend);
                             index++;
                         }
+                        for (int j = index; j > 1 && j <= 4; j++) stringBuilderBreakfast.append("\n");
                     }
                     index = 1;
                     if (L.size() > 0) {
@@ -175,6 +176,7 @@ public class WebScrapper implements BingCrawler {
                             stringBuilderLunch.append(stringToAppend);
                             index++;
                         }
+                        for (int j = index; j > 1 && j <= 4; j++) stringBuilderLunch.append("\n");
                     }
                     index = 1;
                     if(D.size() > 0) {
@@ -183,13 +185,14 @@ public class WebScrapper implements BingCrawler {
                             stringBuilderDinner.append(stringToAppend);
                             index++;
                         }
+                        for (int j = index; j > 1 && j <= 4; j++) stringBuilderDinner.append("\n");
                     }
 
                     stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
                     stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
                     stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
 
-                    if(updateDatabase) bingDiningMenu.diningDatabase.updateMenuItem(i+1,dayNames.get(i), stringBuilderBreakfast.toString(),
+                    if (updateDatabase) bingDiningMenu.diningDatabase.updateMenuItem(i+1,dayNames.get(i), stringBuilderBreakfast.toString(),
                             stringBuilderLunch.toString(), stringBuilderDinner.toString());
                     else bingDiningMenu.diningDatabase.insertMenuItem(dayNames.get(i), stringBuilderBreakfast.toString(),
                             stringBuilderLunch.toString(), stringBuilderDinner.toString());

@@ -47,14 +47,13 @@ public class CIWDining extends Fragment {
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context = getContext();
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+        toolbarTitle = getActivity().findViewById(R.id.toolbarTitle);
 
         List<ListItem> listItems = new ArrayList<>();
 
         ciwUrl = getString(R.string.ciwUrl);
         title = getString(R.string.ciw);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewCIW);
+        recyclerView = view.findViewById(R.id.recycleViewCIW);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -96,7 +95,6 @@ public class CIWDining extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.ciw_dining, container, false);
         return view;

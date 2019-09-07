@@ -48,16 +48,15 @@ public class C4Dining extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "onViewCreated: C4");
 
         Context context = this.getContext();
-        toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+        toolbarTitle = getActivity().findViewById(R.id.toolbarTitle);
 
         List<ListItem> listItems = new ArrayList<>();
 
         c4Url = getString(R.string.c4Url);
         title =  getString(R.string.c4);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewC4);
+        recyclerView = view.findViewById(R.id.recycleViewC4);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 

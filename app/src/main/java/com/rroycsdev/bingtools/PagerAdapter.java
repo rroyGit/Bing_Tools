@@ -52,7 +52,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        Log.d("jmp", "instantiateItem: " + position);
         Fragment fragment =  (Fragment) super.instantiateItem(container, position);
         return fragment;
     }

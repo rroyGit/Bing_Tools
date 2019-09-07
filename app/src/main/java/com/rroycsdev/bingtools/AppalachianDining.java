@@ -52,16 +52,13 @@ public class AppalachianDining extends Fragment {
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context = getContext();
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
-
-        Log.d(TAG, "onViewCreated: App");
+        toolbarTitle = getActivity().findViewById(R.id.toolbarTitle);
 
         List<ListItem> listItems = new ArrayList<>();
 
         appalachianUrl = getString(R.string.appalachianUrl);
         title = getString(R.string.appalachian);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewAppalachian);
+        recyclerView = view.findViewById(R.id.recycleViewAppalachian);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 

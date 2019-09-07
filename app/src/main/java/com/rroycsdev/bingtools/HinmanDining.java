@@ -48,15 +48,13 @@ public class HinmanDining extends Fragment{
     public void onViewCreated(View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getContext();
-
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbarTitle = (AppCompatTextView) getActivity().findViewById(R.id.toolbarTitle);
+        toolbarTitle = getActivity().findViewById(R.id.toolbarTitle);
 
         List<ListItem> listItems = new ArrayList<>();
 
         String hinmanUrl = getString(R.string.hinmanUrl);
         title = getString(R.string.hinman);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycleViewHinman);
+        recyclerView = view.findViewById(R.id.recycleViewHinman);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -98,7 +96,6 @@ public class HinmanDining extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.hinman_dining, container, false);
         return view;
