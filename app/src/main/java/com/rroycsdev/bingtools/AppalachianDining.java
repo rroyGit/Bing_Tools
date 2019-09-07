@@ -30,6 +30,7 @@ public class AppalachianDining extends Fragment {
     public RecyclerView.Adapter adapter;
     public AppCompatTextView toolbarTitle;
 
+    private boolean firstLaunched = true;
     private BingDiningMenu appalachian_hall;
     private String appalachianUrl;
     private String title;
@@ -75,7 +76,7 @@ public class AppalachianDining extends Fragment {
         appalachian_hall.setTabLayout(tabLayout);
         appalachian_hall.makeRequest();
 
-        if (getUserVisibleHint()) appalachian_hall.setView();
+        if (getUserVisibleHint()) appalachian_hall.setView(false);
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -93,7 +94,7 @@ public class AppalachianDining extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
 
         if (appalachian_hall != null && isVisibleToUser) {
-            appalachian_hall.setView();
+            firstLaunched = firstLaunched ?  !appalachian_hall.setView(true) : !appalachian_hall.setView(false);
         }
     }
 

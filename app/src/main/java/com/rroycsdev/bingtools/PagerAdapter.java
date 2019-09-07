@@ -12,9 +12,10 @@ import android.view.ViewGroup;
 import com.google.android.material.tabs.TabLayout;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
+    private static final String TAG = "PagerAdapter" ;
     int numTabs;
     private FragmentManager fragmentManager;
-    private SparseArray<Fragment> fragmentSparseArray = new SparseArray<>();
+    private SparseArray<Fragment> fragmentSparseArray = new SparseArray<>(4);
     private TabLayout tabLayout;
 
     public PagerAdapter(FragmentManager fm, TabLayout tabLayout, int numTabs) {
@@ -27,6 +28,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = fragmentSparseArray.get(position);
+        Log.d(TAG, "getItem: pos" + position);
 
         if (fragment == null) {
             switch (position) {
@@ -44,6 +46,9 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
                     break;
             }
             fragmentSparseArray.put(position, fragment);
+
+
+            Log.d(TAG, "getItem: " + fragmentSparseArray.get(position).toString());
         }
 
         return fragment;
@@ -52,23 +57,18 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        Log.d(TAG, "instantiateItem: " + position);
         Fragment fragment =  (Fragment) super.instantiateItem(container, position);
         return fragment;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        fragmentSparseArray.remove(position);
         super.destroyItem(container, position, object);
     }
 
     Fragment getFragmentInstance(int position){
         return fragmentSparseArray.get(position);
-    }
-
-    public void setCount (int numTabs) {
-        this.numTabs =  numTabs;
-        this.notifyDataSetChanged();
     }
 
     @Override

@@ -245,7 +245,7 @@ public class WebScrapper implements BingCrawler {
 
             if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
                     getText(), bingDiningMenu.title)) {
-                bingDiningMenu.setView();
+                bingDiningMenu.setView(true);
             }
 
             bingDiningMenu.diningDatabase.close();
@@ -290,7 +290,7 @@ public class WebScrapper implements BingCrawler {
                     bingCrawler.getDiningMenuData(true);
                 } else {
                     Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
-                    bingDiningMenu.setView();
+                    bingDiningMenu.setView(true);
                     bingDiningMenu.diningDatabase.close();
                 }
             } else {

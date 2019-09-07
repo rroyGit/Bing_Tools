@@ -27,6 +27,7 @@ public class HinmanDining extends Fragment{
     public RecyclerView.Adapter adapter;
     public AppCompatTextView toolbarTitle;
 
+    private boolean firstLaunched = true;
     private BingDiningMenu hinman_hall;
     private Context context;
     private String title;
@@ -71,7 +72,7 @@ public class HinmanDining extends Fragment{
         hinman_hall.setTabLayout(tabLayout);
         hinman_hall.makeRequest();
 
-        if (getUserVisibleHint()) hinman_hall.setView();
+        if (getUserVisibleHint()) hinman_hall.setView(false);
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -89,7 +90,7 @@ public class HinmanDining extends Fragment{
         super.setUserVisibleHint(isVisibleToUser);
 
         if (hinman_hall != null && isVisibleToUser) {
-            hinman_hall.setView();
+            firstLaunched = firstLaunched ?  !hinman_hall.setView(true) : !hinman_hall.setView(false);
         }
     }
 

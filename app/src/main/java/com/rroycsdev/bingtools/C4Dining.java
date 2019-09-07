@@ -29,6 +29,7 @@ public class C4Dining extends Fragment {
     public RecyclerView.Adapter adapter;
     public AppCompatTextView toolbarTitle;
 
+    private boolean firstLaunched = true;
     private BingDiningMenu c4_hall;
     private String c4Url;
     private String title;
@@ -73,7 +74,7 @@ public class C4Dining extends Fragment {
         c4_hall.setTabLayout(tabLayout);
         c4_hall.makeRequest();
 
-        if (getUserVisibleHint()) c4_hall.setView();
+        if (getUserVisibleHint()) c4_hall.setView(false);
 
         //set empty adapter due to waiting for data
         adapter = new MenuAdapter(listItems, context, recyclerView);
@@ -91,7 +92,7 @@ public class C4Dining extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
 
         if (c4_hall != null && isVisibleToUser) {
-            c4_hall.setView();
+            firstLaunched = firstLaunched ?  !c4_hall.setView(true) : !c4_hall.setView(false);
         }
     }
 

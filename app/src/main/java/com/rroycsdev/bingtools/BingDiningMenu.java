@@ -152,15 +152,17 @@ public class BingDiningMenu {
         diningDatabase.close();
     }
 
-    public void setView() {
+    public boolean setView(boolean listUpdated) {
         setToolbarText();
         showErrorMsg();
 
-        if (!Objects.requireNonNull(listItems).isEmpty()) {
+        if (!Objects.requireNonNull(listItems).isEmpty() && listUpdated) {
             adapter = new MenuAdapter(listItems, context, recyclerView);
             recyclerView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
+
+        return true;
     }
 
     public void setToolbarTitle (AppCompatTextView toolbarTitle) {

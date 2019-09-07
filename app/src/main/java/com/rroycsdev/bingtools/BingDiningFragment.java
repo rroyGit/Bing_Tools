@@ -134,7 +134,6 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
         });
 
         pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout, TABS.length);
-
         viewPager.setAdapter(pagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
