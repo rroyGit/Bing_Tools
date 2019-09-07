@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bingImageView = (ImageView) headerView.findViewById(R.id.DailyImage);
         toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
 
-        if(context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             if(getShowStoragePermission()) {
                 ActivityCompat.requestPermissions(MainActivity.this,
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 makeBingWallRequest(false);
             }
-        }else{
+        } else {
             //storage permission granted manually from app settings or from dialog request
             createImageDir();
             makeBingWallRequest(true);
@@ -202,10 +203,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void createImageDir(){
-        String dataPath = "/storage/emulated/0/Android/data/";
+        String dataPath = getCacheDir().toString();
 
         String dirPath = dataPath + File.separator + getPackageName();
-        File packageDir = new File(dirPath);
+        File packageDir = new File(dataPath);
 
         boolean packageDirSuccess = true;
         if (!packageDir.exists()) packageDirSuccess = packageDir.mkdirs();
@@ -601,30 +602,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FileOutputStream fo = null;
         try {
             fo = new FileOutputStream(imageFile);
+            fo.write(bytes.toByteArray());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        try {
-            if (fo != null) {
-                fo.write(bytes.toByteArray());
-            }else{
-                setToast("Could not write to file", Toast.LENGTH_SHORT);
-            }
+            setToast("Could not find file", Toast.LENGTH_SHORT);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        //close file FileOutput
-        try {
-            if (fo != null) {
-                fo.close();
+            setToast("Could not write to file", Toast.LENGTH_SHORT);
+        } finally {
+            try {
+                if (fo != null) {
+                    fo.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
     private void loadBitmap(){
-        String path = "/storage/emulated/0/Android/data/" + getPackageName() + "/Image" + File.separator + "savedBingImage.jpg";
+        String path = saveImagePath + File.separator + "savedBingImage.jpg";
 
         File file = new File(path);
         if(!file.exists()){
@@ -633,18 +629,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return;
         }
 
-        int size  = (int)(int)file.length();
+        final int size  = (int)(int) file.length();
         byte[] b = new byte[size];
 
         try {
-            FileInputStream fileInputStream = new FileInputStream(file);
+            final FileInputStream fileInputStream = new FileInputStream(file);
             try {
-               int bytesRead =  fileInputStream.read(b);
+                int bytesRead =  fileInputStream.read(b);
                 if(BuildConfig.DEBUG && !(bytesRead>0)){
                     throw new AssertionError();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             Bitmap bitMap = BitmapFactory.decodeByteArray(b, 0, b.length);
@@ -652,7 +654,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     private void makeBingWallRequest(boolean storagePermission){
