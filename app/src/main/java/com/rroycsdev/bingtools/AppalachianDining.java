@@ -4,15 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,65 +20,58 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
+import java.util.Objects;
 
 
 public class AppalachianDining extends Fragment {
-    public RecyclerView recyclerView;
-    public RecyclerView.Adapter adapter;
-    public AppCompatTextView toolbarTitle;
-
     private boolean firstLaunched = true;
+    private RecyclerView recyclerView;
     private BingDiningMenu appalachian_hall;
     private String appalachianUrl;
     private String title;
+    private AppCompatTextView toolbarTextView;
 
-    private View view;
-    private TabLayout tabLayout;
-
-
-    public AppalachianDining(TabLayout tabLayout) {
-        this.tabLayout = tabLayout;
+    public AppalachianDining() {
+        //empty constructor
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        appalachianUrl = getString(R.string.appalachianUrl);
+        title = getString(R.string.appalachian);
     }
 
     @Override
-    public void onViewCreated(View view,Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context = getContext();
-        toolbarTitle = getActivity().findViewById(R.id.toolbarTitle);
-
         List<ListItem> listItems = new ArrayList<>();
 
-        appalachianUrl = getString(R.string.appalachianUrl);
-        title = getString(R.string.appalachian);
+        TabLayout tabLayout = view.getRootView().findViewById(R.id.tabLayout);
+        toolbarTextView = view.getRootView().findViewById(R.id.toolbarTextView);
+
         recyclerView = view.findViewById(R.id.recycleViewAppalachian);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        if (savedInstanceState != null){
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        if (savedInstanceState != null) {
+            FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(fragmentName.compareTo("bing") != 0)  appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, false, view);
+            if(Objects.requireNonNull(fragmentName).compareTo("bing") != 0)  appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, false, view);
             else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
         } else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
 
         appalachian_hall.setRecyclerView(recyclerView);
         appalachian_hall.setAdapter(listItems);
-        appalachian_hall.setToolbarTitle(toolbarTitle);
+        appalachian_hall.setToolbarTitle(toolbarTextView);
         appalachian_hall.setTabLayout(tabLayout);
         appalachian_hall.makeRequest();
 
         if (getUserVisibleHint()) appalachian_hall.setView(false);
 
         //set empty adapter due to waiting for data
-        adapter = new MenuAdapter(listItems, context, recyclerView);
+        RecyclerView.Adapter adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
     }
 
@@ -88,6 +80,10 @@ public class AppalachianDining extends Fragment {
     }
 
     public void showDialog () { appalachian_hall.showDialog(); }
+
+    public void clearToolbarTextView () {
+        toolbarTextView.setText("");
+    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -102,8 +98,7 @@ public class AppalachianDining extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.appalachian_dining, container, false);
-        return view;
+        return inflater.inflate(R.layout.appalachian_dining, container, false);
     }
 
     @Override

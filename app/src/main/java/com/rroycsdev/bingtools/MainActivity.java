@@ -97,13 +97,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.setStatusBarColor(ContextCompat.getColor(context, R.color.darkGray2));
-        nView = (NavigationView) findViewById(R.id.nav_menu_view);
+        nView = findViewById(R.id.nav_menu_view);
         nView.getLayoutParams().width = (int)(width/1.45);
 
         View headerView = nView.getHeaderView(0);
         headerView.getLayoutParams().height = (int)(height/3.2);
-        bingImageView = (ImageView) headerView.findViewById(R.id.DailyImage);
-        toolBar = (Toolbar) findViewById(R.id.nav_action_toolbar);
+        bingImageView = headerView.findViewById(R.id.DailyImage);
+        toolBar = findViewById(R.id.nav_action_toolbar);
 
         if (context.checkCallingOrSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -144,11 +144,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nView.setNavigationItemSelectedListener(this);
 
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             displaySelectedScreen(R.id.Bing_Dining_Nav, nView.getMenu().findItem(R.id.Bing_Dining_Nav), true);
-        }else{
+        } else {
             FragmentManager fragmentManager = getSupportFragmentManager();
             String fragmentName = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
+
             switch (fragmentName){
                 case "timer":
                     setTitle(getResources().getString(R.string.auto_launch));
@@ -416,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(GravityCompat.START);
         }
 
-        switch(tag){
+        switch (tag) {
             case "bing":
                 chooseFragment = fragmentManager.findFragmentByTag("calc");
                 if(chooseFragment != null) fragmentTransaction.hide(chooseFragment);
@@ -471,11 +472,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         chooseFragment = fragmentManager.findFragmentByTag(tag);
-        if(chooseFragment != null) {
+        if (chooseFragment != null) {
             fragmentTransaction.show(chooseFragment);
             fragmentTransaction.addToBackStack(tag).commit();
-        }else{
-            switch (id){
+        } else {
+            switch (id) {
                 case R.id.Bing_Dining_Nav:
                     chooseFragment = new BingDiningFragment();
                     break;
@@ -658,28 +659,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void makeBingWallRequest(boolean storagePermission){
 
-        if(CommonUtilities.getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
+        if (CommonUtilities.getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
             bingImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
             return;
         }
-        if(!storagePermission){
+
+        if (!storagePermission){
            new BingWallpaper(MainActivity.this).execute(false);
-        }else {
+        } else {
             Calendar now = Calendar.getInstance();
             now.setTimeZone(TimeZone.getTimeZone(getResources().getString(R.string.easternTimeZone)));
             int day = now.get(Calendar.DAY_OF_MONTH);
 
-            if(getBingWallDay() == FIRST_RUN_BING_IMAGE){
+            if (getBingWallDay() == FIRST_RUN_BING_IMAGE){
                 saveBingWallDay();
                 new BingWallpaper(MainActivity.this).execute(true);
                 //every other run
-            }else if (day != getBingWallDay()) {
+            } else if (day != getBingWallDay()) {
                 //Microsoft Bing image resets at specific time of day (around 4AM EST - 4 in 24hour)
                 //make new image request if current time does NOT fall between 12AM and 4AM EST
                 int hourIn24 = now.get(Calendar.HOUR_OF_DAY);
                 int am0_1PM = now.get(Calendar.AM_PM);
 
-                if((am0_1PM == 0 && hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24) || (am0_1PM == 1)){
+                if ((am0_1PM == 0 && hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24) || (am0_1PM == 1)){
                     saveBingWallDay();
                     new BingWallpaper(MainActivity.this).execute(true);
                 } else loadBitmap();

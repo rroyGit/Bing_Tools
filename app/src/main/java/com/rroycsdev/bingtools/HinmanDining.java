@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
@@ -21,61 +22,57 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class HinmanDining extends Fragment{
-    public RecyclerView recyclerView;
-    public RecyclerView.Adapter adapter;
-    public AppCompatTextView toolbarTitle;
-
+public class HinmanDining extends Fragment {
     private boolean firstLaunched = true;
+    private RecyclerView recyclerView;
     private BingDiningMenu hinman_hall;
-    private Context context;
     private String title;
-    View view;
-    private TabLayout tabLayout;
+    private String hinmanUrl;
+    private AppCompatTextView toolbarTextView;
 
-
-    public HinmanDining(TabLayout tabLayout) {
-        this.tabLayout = tabLayout;
+    public HinmanDining() {
+        //empty constructor
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        hinmanUrl = getString(R.string.hinmanUrl);
+        title = getString(R.string.hinman);
     }
 
     @Override
-    public void onViewCreated(View view,Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        context = getContext();
-        toolbarTitle = getActivity().findViewById(R.id.toolbarTitle);
-
+        Context context = getContext();
         List<ListItem> listItems = new ArrayList<>();
 
-        String hinmanUrl = getString(R.string.hinmanUrl);
-        title = getString(R.string.hinman);
+        TabLayout tabLayout = view.getRootView().findViewById(R.id.tabLayout);
+        toolbarTextView = view.getRootView().findViewById(R.id.toolbarTextView);
+
         recyclerView = view.findViewById(R.id.recycleViewHinman);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         if (savedInstanceState != null){
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(fragmentName.compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false, view);
+            if(Objects.requireNonNull(fragmentName).compareTo("bing") != 0)  hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, false, view);
             else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
         } else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
 
         hinman_hall.setRecyclerView(recyclerView);
         hinman_hall.setAdapter(listItems);
-        hinman_hall.setToolbarTitle(toolbarTitle);
+        hinman_hall.setToolbarTitle(toolbarTextView);
         hinman_hall.setTabLayout(tabLayout);
         hinman_hall.makeRequest();
 
         if (getUserVisibleHint()) hinman_hall.setView(false);
 
         //set empty adapter due to waiting for data
-        adapter = new MenuAdapter(listItems, context, recyclerView);
+        RecyclerView.Adapter adapter = new MenuAdapter(listItems, context, recyclerView);
         recyclerView.setAdapter(adapter);
     }
 
@@ -84,6 +81,8 @@ public class HinmanDining extends Fragment{
     }
 
     public void showDialog () { hinman_hall.showDialog(); }
+
+    public void clearToolbarTextView () { toolbarTextView.setText(""); }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -98,8 +97,7 @@ public class HinmanDining extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.hinman_dining, container, false);
-        return view;
+        return inflater.inflate(R.layout.hinman_dining, container, false);
     }
 
     @Override

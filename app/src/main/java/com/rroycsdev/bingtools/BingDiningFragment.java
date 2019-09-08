@@ -1,19 +1,14 @@
 package com.rroycsdev.bingtools;
 
-
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.Fragment;
-
 import androidx.viewpager.widget.ViewPager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,15 +18,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import java.util.Objects;
 
-import static android.content.ContentValues.TAG;
-
 
 public class BingDiningFragment extends Fragment implements HinmanDining.OnFragmentInteractionListener, C4Dining.OnFragmentInteractionListener,
 AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteractionListener {
 
-    private ViewPager viewPager;
-    private PagerAdapter pagerAdapter;
     private TabLayout tabLayout;
+    private PagerAdapter pagerAdapter;
     private final int[] TABS = {R.string.c4, R.string.appalachian, R.string.ciw, R.string.hinman};
 
     public BingDiningFragment() {
@@ -90,8 +82,8 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tabLayout = (TabLayout) view.findViewById(R.id.tablayout);
-        viewPager = (ViewPager) view.findViewById(R.id.pager);
+        tabLayout = view.findViewById(R.id.tabLayout);
+        ViewPager viewPager = view.findViewById(R.id.pager);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -117,13 +109,13 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
 
                 if (fragment != null) {
                     if (fragment instanceof C4Dining)
-                    ((C4Dining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                    ((C4Dining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).clearToolbarTextView();
                     if (fragment instanceof AppalachianDining)
-                        ((AppalachianDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                        ((AppalachianDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).clearToolbarTextView();
                     if (fragment instanceof CIWDining)
-                        ((CIWDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                        ((CIWDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).clearToolbarTextView();
                     if (fragment instanceof HinmanDining)
-                        ((HinmanDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).toolbarTitle.setText("");
+                        ((HinmanDining)(pagerAdapter.getFragmentInstance(tab.getPosition()))).clearToolbarTextView();
                 }
             }
 
@@ -133,7 +125,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
             }
         });
 
-        pagerAdapter = new PagerAdapter(getChildFragmentManager(), tabLayout, TABS.length);
+        pagerAdapter = new PagerAdapter(getChildFragmentManager(), TABS.length);
         viewPager.setAdapter(pagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);

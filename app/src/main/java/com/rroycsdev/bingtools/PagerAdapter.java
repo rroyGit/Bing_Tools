@@ -13,42 +13,35 @@ import com.google.android.material.tabs.TabLayout;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = "PagerAdapter" ;
-    int numTabs;
-    private FragmentManager fragmentManager;
-    private SparseArray<Fragment> fragmentSparseArray = new SparseArray<>(4);
-    private TabLayout tabLayout;
+    private SparseArray<Fragment> fragmentSparseArray;
+    private int numTabs;
 
-    public PagerAdapter(FragmentManager fm, TabLayout tabLayout, int numTabs) {
+    public PagerAdapter(FragmentManager fm, int numTabs) {
         super(fm);
-        fragmentManager = fm;
+        fragmentSparseArray = new SparseArray<>(numTabs);
         this.numTabs = numTabs;
-        this.tabLayout = tabLayout;
     }
 
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = fragmentSparseArray.get(position);
-        Log.d(TAG, "getItem: pos" + position);
 
         if (fragment == null) {
             switch (position) {
                 case 0:
-                    fragment = new C4Dining(tabLayout);
+                    fragment = new C4Dining();
                     break;
                 case 1:
-                    fragment = new AppalachianDining(tabLayout);
+                    fragment = new AppalachianDining();
                     break;
                 case 2:
-                    fragment = new CIWDining(tabLayout);
+                    fragment = new CIWDining();
                     break;
                 case 3:
-                    fragment = new HinmanDining(tabLayout);
+                    fragment = new HinmanDining();
                     break;
             }
             fragmentSparseArray.put(position, fragment);
-
-
-            Log.d(TAG, "getItem: " + fragmentSparseArray.get(position).toString());
         }
 
         return fragment;
@@ -57,7 +50,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        Log.d(TAG, "instantiateItem: " + position);
         Fragment fragment =  (Fragment) super.instantiateItem(container, position);
         return fragment;
     }

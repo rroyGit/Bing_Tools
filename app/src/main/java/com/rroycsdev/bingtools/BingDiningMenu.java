@@ -26,7 +26,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 
 public class BingDiningMenu {
-
     private static final String[] days = {"monday", "tuesday", "wednesday", "thursday", "friday",
             "saturday", "sunday"};
 
@@ -35,25 +34,22 @@ public class BingDiningMenu {
 
     private static final String SAMPLE_MENU = "Sample Menu";
     private static final String NO_DATE = "noDate";
-    static final String FAILED_MENU_DATE = "failedMenuDate";
     private static final int MENU_CHECK_ERROR_CODE = 404;
+    static final String FAILED_MENU_DATE = "failedMenuDate";
 
     private DiningDataScrapper diningDataScrapper = null;
-
-    String title;
-    TabLayout tabLayout;
-    String link;
-    List<ListItem> listItems;
-
-    Context context;
-    RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
-
-    DiningDatabase diningDatabase;
+    private List<ListItem> listItems;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
 
     boolean isShowProgressDialog;
     private AppCompatTextView toolbarTitle;
+    DiningDatabase diningDatabase;
     View diningMenuView;
+    TabLayout tabLayout;
+    Context context;
+    String title;
+    String link;
 
     BingDiningMenu(String link, String title, Context context, List<ListItem> listItems,
                    boolean isShowProgressDialog, View view) {
@@ -152,7 +148,7 @@ public class BingDiningMenu {
         diningDatabase.close();
     }
 
-    public boolean setView(boolean listUpdated) {
+    boolean setView(boolean listUpdated) {
         setToolbarText();
         showErrorMsg();
 
@@ -165,11 +161,11 @@ public class BingDiningMenu {
         return true;
     }
 
-    public void setToolbarTitle (AppCompatTextView toolbarTitle) {
+    void setToolbarTitle (AppCompatTextView toolbarTitle) {
         this.toolbarTitle = toolbarTitle;
     }
 
-    public void setTabLayout (TabLayout tabLayout) {
+    void setTabLayout (TabLayout tabLayout) {
         this.tabLayout = tabLayout;
     }
 
@@ -177,7 +173,7 @@ public class BingDiningMenu {
         String msg = getMenuMsg();
 
         if (!msg.equals("noMsg")) {
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            if (diningMenuView.isShown()) Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -213,13 +209,13 @@ public class BingDiningMenu {
         sEditor.apply();
     }
 
-    String getMenuMsg () {
+    private String getMenuMsg () {
         if (context == null) return "error";
         SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
         return sP.getString("msg", "noMsg");
     }
 
-    String getMenuWeekDate(String title) {
+    private String getMenuWeekDate(String title) {
         if (context == null) return "error";
         SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
         return sP.getString("weekDate", "noDate");
@@ -258,7 +254,6 @@ public class BingDiningMenu {
     }
 
     void loadSortedData() {
-
         String breakfast, lunch, dinner;
         //clear all previous remnants
         assert listItems != null;
@@ -313,8 +308,9 @@ public class BingDiningMenu {
         return index;
     }
 
-    public void showDialog() {
-        if (diningDataScrapper != null && diningDataScrapper.pD !=  null && isShowProgressDialog)
+    void showDialog() {
+        if (diningDataScrapper != null && diningDataScrapper.pD !=  null && isShowProgressDialog
+                && diningMenuView.isShown())
             diningDataScrapper.pD.show();
     }
 }
