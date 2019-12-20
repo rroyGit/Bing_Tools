@@ -64,7 +64,6 @@ public class HinmanDining extends Fragment {
         } else hinman_hall = new BingDiningMenu(hinmanUrl, title, context, listItems, true, view);
 
         hinman_hall.setRecyclerView(recyclerView);
-        hinman_hall.setAdapter(listItems);
         hinman_hall.setToolbarTitle(toolbarTextView);
         hinman_hall.setTabLayout(tabLayout);
         hinman_hall.makeRequest();

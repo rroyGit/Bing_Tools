@@ -63,7 +63,6 @@ public class AppalachianDining extends Fragment {
         } else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
 
         appalachian_hall.setRecyclerView(recyclerView);
-        appalachian_hall.setAdapter(listItems);
         appalachian_hall.setToolbarTitle(toolbarTextView);
         appalachian_hall.setTabLayout(tabLayout);
         appalachian_hall.makeRequest();

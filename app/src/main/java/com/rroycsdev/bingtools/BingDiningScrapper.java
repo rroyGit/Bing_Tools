@@ -18,19 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class WebScrapper implements BingCrawler {
+public class BingDiningScrapper implements WebCrawler {
 
     private BingDiningMenu bingDiningMenu;
 
 
-    WebScrapper(BingDiningMenu bingDiningMenu) {
+    BingDiningScrapper(BingDiningMenu bingDiningMenu) {
         this.bingDiningMenu = bingDiningMenu;
     }
 
     @Override
-    public DiningDataScrapper getDiningMenuData(boolean insertUpdateDatabase) {
+    public DiningDataScrapper getDiningMenuData(boolean isInsertDatabase) {
         DiningDataScrapper diningDataScrapper = new DiningDataScrapper(bingDiningMenu);
-        diningDataScrapper.execute(insertUpdateDatabase);
+        diningDataScrapper.execute(isInsertDatabase);
         return diningDataScrapper;
     }
 
@@ -44,13 +44,14 @@ public class WebScrapper implements BingCrawler {
     static class DiningDataScrapper extends AsyncTask<Boolean, Void, Void> {
         private StringBuilder stringBuilderBreakfast = new StringBuilder();
         private StringBuilder stringBuilderLunch = new StringBuilder();
+        private StringBuilder stringBuilderAfternoonSnack = new StringBuilder();
         private StringBuilder stringBuilderDinner = new StringBuilder();
 
         private String weekString;
-        private Boolean updateDatabase = false;
+        private Boolean isInsertDatabase = false;
         private Boolean loadEmptyMenu = false;
         private String errorMessage = "";
-        public ProgressDialog pD;
+        ProgressDialog pD;
 
         //weak reference
         private WeakReference<BingDiningMenu> activityReference;
@@ -66,7 +67,7 @@ public class WebScrapper implements BingCrawler {
         protected void onPreExecute() {
             BingDiningMenu bingDiningMenu = activityReference.get();
 
-            if(bingDiningMenu.isShowProgressDialog && bingDiningMenu.diningMenuView.getWindowToken() != null &&
+            if (bingDiningMenu.isShowProgressDialog && bingDiningMenu.diningMenuView.getWindowToken() != null &&
                     Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
                             getText(), bingDiningMenu.title)) {
                 pD.show();
@@ -75,14 +76,15 @@ public class WebScrapper implements BingCrawler {
 
         @Override
         protected Void doInBackground(Boolean... params) {
-
             final BingDiningMenu bingDiningMenu = activityReference.get();
-            if (params.length > 0) updateDatabase = params[0];
+            if (params.length > 0) isInsertDatabase = params[0];
 
             if (bingDiningMenu == null) {
                 loadEmptyMenu = true;
                 return null;
             }
+
+            if (isInsertDatabase) bingDiningMenu.diningDatabase.deleteAllItems();
 
             try {
                 // test for valid connection
@@ -94,14 +96,22 @@ public class WebScrapper implements BingCrawler {
 
                 Document doc2 = Jsoup.connect(bingDiningMenu.link).get();
                 Element body = doc2.body();
-                Element menuDiv = body.getElementById("bite-menu");
-                String menuActive = menuDiv.getElementById("bite-calc").select("p").text();
-
-                if (menuActive.equals("Sorry, no menu found") || menuActive.contains("not found")
-                        || menuActive.contains("no menu")) {
+                if (body == null) {
                     loadEmptyMenu = true;
                     errorMessage = "One or more dining halls are closed, no menu found";
                     return null;
+                }
+
+                Element menuDiv = body.getElementById("bite-menu");
+
+                if (menuDiv != null) {
+                    String menuActive = menuDiv.getElementById("bite-calc").select("p").text();
+                    if (menuActive.equals("Sorry, no menu found") || menuActive.contains("not found")
+                            || menuActive.contains("no menu")) {
+                        loadEmptyMenu = true;
+                        errorMessage = "One or more dining halls are closed, no menu found";
+                        return null;
+                    }
                 }
 
                 Elements daysAll = menuDiv.select("li[id~=menuid-\\d+$]");
@@ -158,7 +168,9 @@ public class WebScrapper implements BingCrawler {
                 for(i = 0; i < daysAll.size(); i++) {
                     Elements B = menuAll.get(i).select("div[class~=accordion-block breakfast]");
                     Elements L = menuAll.get(i).select("div[class~=accordion-block lunch]");
+                    Elements AS = menuAll.get(i).select("div[class~=accordion-block afternoon snack]");
                     Elements D = menuAll.get(i).select("div[class~=accordion-block dinner]");
+
                     index = 1;
 
                     if (B.size() > 0) {
@@ -179,6 +191,15 @@ public class WebScrapper implements BingCrawler {
                         for (int j = index; j > 1 && j <= 4; j++) stringBuilderLunch.append("\n");
                     }
                     index = 1;
+                    if(AS.size() > 0) {
+                        for (Element e : AS.get(0).select("a[data-fooditemname]")) {
+                            stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
+                            stringBuilderAfternoonSnack.append(stringToAppend);
+                            index++;
+                        }
+                        for (int j = index; j > 1 && j <= 4; j++) stringBuilderDinner.append("\n");
+                    }
+                    index = 1;
                     if(D.size() > 0) {
                         for (Element e : D.get(0).select("a[data-fooditemname]")) {
                             stringToAppend = ((index < 10) ? "0" + index : index) + ". " + e.text() + '\n';
@@ -190,19 +211,29 @@ public class WebScrapper implements BingCrawler {
 
                     stringBuilderBreakfast.append((stringBuilderBreakfast.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
                     stringBuilderLunch.append((stringBuilderLunch.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
+                    stringBuilderAfternoonSnack.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
                     stringBuilderDinner.append((stringBuilderDinner.toString().length() == 0)? "01. Time to visit Marketplace\n\n\n": "");
 
-                    if (updateDatabase) bingDiningMenu.diningDatabase.updateMenuItem(i+1,dayNames.get(i), stringBuilderBreakfast.toString(),
-                            stringBuilderLunch.toString(), stringBuilderDinner.toString());
-                    else bingDiningMenu.diningDatabase.insertMenuItem(dayNames.get(i), stringBuilderBreakfast.toString(),
-                            stringBuilderLunch.toString(), stringBuilderDinner.toString());
+                    if (isInsertDatabase) {
+                        bingDiningMenu.diningDatabase.insertMenuItem(dayNames.get(i), stringBuilderBreakfast.toString(),
+                                stringBuilderLunch.toString(), stringBuilderAfternoonSnack.toString(), stringBuilderDinner.toString());
+                    } else {
+                        bingDiningMenu.diningDatabase.updateMenuItem(i + 1, dayNames.get(i), stringBuilderBreakfast.toString(),
+                                stringBuilderLunch.toString(), stringBuilderAfternoonSnack.toString(), stringBuilderDinner.toString());
+                    }
+
 
                     stringBuilderBreakfast.delete(0, stringBuilderBreakfast.length());
                     stringBuilderLunch.delete(0, stringBuilderLunch.length());
+                    stringBuilderAfternoonSnack.delete(0, stringBuilderAfternoonSnack.length());
                     stringBuilderDinner.delete(0, stringBuilderDinner.length());
                 }
+
                 dayNames.clear();
-            } catch(IOException e){
+                bingDiningMenu.loadSortedData();
+                Objects.requireNonNull(bingDiningMenu).saveMenuWeekDate(weekString);
+
+            } catch (IOException e) {
                 errorMessage = "Error occurred while processing data - most likely no data on server";
                 e.printStackTrace();
                 loadEmptyMenu = true;
@@ -221,26 +252,22 @@ public class WebScrapper implements BingCrawler {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            if(pD != null) pD.dismiss();
+            if (pD != null && pD.isShowing()) pD.dismiss();
 
             final BingDiningMenu bingDiningMenu = activityReference.get();
             bingDiningMenu.isShowProgressDialog = false;
 
-            if(loadEmptyMenu){
+            if (loadEmptyMenu) {
                 Objects.requireNonNull(bingDiningMenu).diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
-
                 if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
-                        getText(), bingDiningMenu.title) && bingDiningMenu.diningMenuView.isShown())
+                        getText(), bingDiningMenu.title) && bingDiningMenu.diningMenuView.isShown() && !errorMessage.isEmpty())
                     Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
 
-
                 bingDiningMenu.saveMenuMsg(errorMessage);
-                bingDiningMenu.diningDatabase.deleteAllItems();
                 bingDiningMenu.saveMenuWeekDate(BingDiningMenu.FAILED_MENU_DATE);
-            }else {
-                Objects.requireNonNull(bingDiningMenu).saveMenuWeekDate(weekString);
-                bingDiningMenu.loadSortedData();
+                bingDiningMenu.diningDatabase.deleteAllItems();
+                bingDiningMenu.clearView();
             }
 
             if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
@@ -249,6 +276,7 @@ public class WebScrapper implements BingCrawler {
             }
 
             bingDiningMenu.diningDatabase.close();
+
         }
     }
 
@@ -286,8 +314,8 @@ public class WebScrapper implements BingCrawler {
 
             if (updatePassed) {
                 if (weekString.compareTo("Sample Menu") != 0) {
-                    BingCrawler bingCrawler = new WebScrapper(bingDiningMenu);
-                    bingCrawler.getDiningMenuData(true);
+                    WebCrawler webCrawler = new BingDiningScrapper(bingDiningMenu);
+                    webCrawler.getDiningMenuData(true);
                 } else {
                     Toast.makeText(bingDiningMenu.context, "No new menu yet", Toast.LENGTH_SHORT).show();
                     bingDiningMenu.setView(true);

@@ -1,6 +1,6 @@
 package com.rroycsdev.bingtools;
 
-import com.rroycsdev.bingtools.WebScrapper.DiningDataScrapper;
+import com.rroycsdev.bingtools.BingDiningScrapper.DiningDataScrapper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -11,19 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.widget.Toast;
-
 import com.google.android.material.tabs.TabLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 
 import static android.content.Context.MODE_PRIVATE;
-
 
 public class BingDiningMenu {
     private static final String[] days = {"monday", "tuesday", "wednesday", "thursday", "friday",
@@ -40,7 +37,6 @@ public class BingDiningMenu {
     private DiningDataScrapper diningDataScrapper = null;
     private List<ListItem> listItems;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
 
     boolean isShowProgressDialog;
     private AppCompatTextView toolbarTitle;
@@ -63,23 +59,25 @@ public class BingDiningMenu {
     }
 
     private void createDataTable() {
-        diningDatabase = new DiningDatabase(context, title);
+        diningDatabase = new DiningDatabase(context);
         diningDatabase.createTable(title);
     }
 
     private void makeBingDiningRequest() {
-
         StringBuilder currentMonth = new StringBuilder(), currentDay = new StringBuilder(),
                 currentYear = new StringBuilder();
         CommonUtilities.loadCurrentDate(currentMonth, currentDay, currentYear);
 
-        BingCrawler bingCrawler;
+        WebCrawler webCrawler;
         StringTokenizer sT;
 
         final int dayInt = Integer.parseInt(currentDay.toString());
 
+        //TODO - alternate getMenuUpdateStatus() result to reset database on a pushed update
+
         //load data from SQLite database and check if a new menu is found, if yes then load new menu
-        if(diningDatabase.getDatabaseCount() > 0 && getMenuWeekDate(title).compareTo(NO_DATE) != 0
+        if (!getMenuUpdateStatus() && diningDatabase.getDatabaseCount() > 0
+                && getMenuWeekDate(title).compareTo(NO_DATE) != 0
                 && getMenuWeekDate(title).compareTo(FAILED_MENU_DATE) != 0) {
 
             //saved start and end dates per dining menu
@@ -88,12 +86,12 @@ public class BingDiningMenu {
             try {
 
                 //sample menu check
-                if(getMenuWeekDate(title).compareTo(SAMPLE_MENU) == 0) {
+                if (getMenuWeekDate(title).compareTo(SAMPLE_MENU) == 0) {
 
                     //if daily menu check is empty, make a new request else record the currentDay checked
                     //if saved currentDay does not equal current currentDay, make new request
                     if (getDayMenuCheck() == MENU_CHECK_ERROR_CODE || dayInt != getDayMenuCheck()) {
-                        new WebScrapper(BingDiningMenu.this).makeDailyRequest(link);
+                        new BingDiningScrapper(BingDiningMenu.this).makeDailyRequest(link);
                         setDayMenuCheck(dayInt);
                     } else {
                         loadSortedData();
@@ -115,8 +113,8 @@ public class BingDiningMenu {
                             (Integer.parseInt(currentDay.toString()) > Integer.parseInt(date2)))
                         || (Integer.parseInt(currentYear.toString()) > Integer.parseInt(year2)) ) {
 
-                            bingCrawler = new WebScrapper(this);
-                            diningDataScrapper = bingCrawler.getDiningMenuData(true);
+                            webCrawler = new BingDiningScrapper(this);
+                            diningDataScrapper = webCrawler.getDiningMenuData(false);
 
                     } else {
                         loadSortedData();
@@ -137,10 +135,10 @@ public class BingDiningMenu {
                     diningMenuView.setBackground(ContextCompat.getDrawable(context, R.drawable.cloud_2));
                 } else {
                     //make a new http request to grab data from web
-                    bingCrawler = new WebScrapper(this);
-                    diningDataScrapper = bingCrawler.getDiningMenuData(false);
-
+                    webCrawler = new BingDiningScrapper(this);
+                    diningDataScrapper = webCrawler.getDiningMenuData(true);
                 }
+                saveMenuUpdateStatus(!getMenuUpdateStatus());
                 setDayMenuCheck(dayInt);
             }
         }
@@ -152,13 +150,21 @@ public class BingDiningMenu {
         setToolbarText();
         showErrorMsg();
 
-        if (!Objects.requireNonNull(listItems).isEmpty() && listUpdated) {
-            adapter = new MenuAdapter(listItems, context, recyclerView);
-            recyclerView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+        if (listUpdated) {
+            if (recyclerView.getAdapter() != null) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+                recyclerView.requestLayout();
+            } else {
+                recyclerView.setAdapter(new MenuAdapter(listItems, context, recyclerView));
+                recyclerView.requestLayout();
+            }
         }
-
         return true;
+    }
+
+    void clearView () {
+        listItems.clear();
+        recyclerView.setAdapter(null);
     }
 
     void setToolbarTitle (AppCompatTextView toolbarTitle) {
@@ -172,7 +178,7 @@ public class BingDiningMenu {
     private void showErrorMsg () {
         String msg = getMenuMsg();
 
-        if (!msg.equals("noMsg")) {
+        if (!msg.isEmpty() && !msg.equals("noMsg")) {
             if (diningMenuView.isShown()) Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         }
     }
@@ -195,48 +201,57 @@ public class BingDiningMenu {
         }
     }
 
-    void saveMenuMsg(String msg) {
-        SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
+    private void saveMenuUpdateStatus(boolean isUpdate) {
+        SharedPreferences sP = context.getSharedPreferences("updateStatus", MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
-        sEditor.putString("msg", msg);
+        sEditor.putBoolean(title, isUpdate);
         sEditor.apply();
     }
 
-    void saveMenuWeekDate(String date) {
-        SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
+    private boolean getMenuUpdateStatus () {
+        if (context == null) return false;
+        SharedPreferences sP = context.getSharedPreferences("updateStatus", MODE_PRIVATE);
+        return sP.getBoolean(title, false);
+    }
+
+    void saveMenuMsg(String msg) {
+        SharedPreferences sP = context.getSharedPreferences("menuMsg", MODE_PRIVATE);
         SharedPreferences.Editor sEditor = sP.edit();
-        sEditor.putString("weekDate", date);
+        sEditor.putString(title, msg);
         sEditor.apply();
     }
 
     private String getMenuMsg () {
         if (context == null) return "error";
-        SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
-        return sP.getString("msg", "noMsg");
+        SharedPreferences sP = context.getSharedPreferences("menuMsg", MODE_PRIVATE);
+        return sP.getString(title, "noMsg");
+    }
+
+    void saveMenuWeekDate(String date) {
+        SharedPreferences sP = context.getSharedPreferences("menuWeekDate", MODE_PRIVATE);
+        SharedPreferences.Editor sEditor = sP.edit();
+        sEditor.putString(title, date);
+        sEditor.apply();
     }
 
     private String getMenuWeekDate(String title) {
         if (context == null) return "error";
-        SharedPreferences sP = context.getSharedPreferences("BingDiningFragment"+title, MODE_PRIVATE);
-        return sP.getString("weekDate", "noDate");
+        SharedPreferences sP = context.getSharedPreferences("menuWeekDate", MODE_PRIVATE);
+        return sP.getString(title, "noDate");
     }
 
     private void setDayMenuCheck(int day) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("menuCounter", MODE_PRIVATE);
-        sharedPreferences.edit().putInt("day", day).apply();
+        sharedPreferences.edit().putInt(title, day).apply();
     }
 
     private int getDayMenuCheck() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("menuCounter", MODE_PRIVATE);
-        return sharedPreferences.getInt("day", MENU_CHECK_ERROR_CODE);
+        return sharedPreferences.getInt(title, MENU_CHECK_ERROR_CODE);
     }
 
     void setRecyclerView(RecyclerView recyclerView){
         this.recyclerView = recyclerView;
-    }
-
-    void setAdapter(List<ListItem> listItems) {
-       adapter = new MenuAdapter(listItems, context, recyclerView);
     }
 
     void makeRequest() {
@@ -249,12 +264,13 @@ public class BingDiningMenu {
             Toast.makeText(context,"No Internet", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "Refreshing " + title + " Menu", Toast.LENGTH_SHORT).show();
-            new WebScrapper(this).getDiningMenuData(true);
+            isShowProgressDialog = true;
+            new BingDiningScrapper(this).getDiningMenuData(true);
         }
     }
 
     void loadSortedData() {
-        String breakfast, lunch, dinner;
+        String breakfast, lunch, afternoon, dinner;
         //clear all previous remnants
         assert listItems != null;
         listItems.clear();
@@ -267,8 +283,9 @@ public class BingDiningMenu {
             if (cursor.moveToFirst()) {
                 breakfast = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_BREAKFAST));
                 lunch = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_LUNCH));
+                afternoon = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_AFTERNOON_SNACK));
                 dinner = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_DINNER));
-                ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[id-1]);
+                ListItem listItem = new ListItem(breakfast, lunch, afternoon, dinner, resImg[id-1]);
                 listItems.add(listItem);
             }
             cursor.close();
@@ -279,8 +296,9 @@ public class BingDiningMenu {
             if (cursor.moveToFirst()) {
                 breakfast = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_BREAKFAST));
                 lunch = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_LUNCH));
+                afternoon = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_AFTERNOON_SNACK));
                 dinner = cursor.getString(cursor.getColumnIndex(DiningDatabase.MENU_COLUMN_DINNER));
-                ListItem listItem = new ListItem(breakfast, lunch, dinner, resImg[id-1]);
+                ListItem listItem = new ListItem(breakfast, lunch, afternoon, dinner, resImg[id-1]);
                 listItems.add(listItem);
             }
             cursor.close();

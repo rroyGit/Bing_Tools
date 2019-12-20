@@ -54,24 +54,26 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder{
         ExpandableTextView mealB;
         ExpandableTextView mealL;
+        ExpandableTextView mealA;
         ExpandableTextView mealD;
         ImageView weekdayImage;
         LinearLayout linearLayout;
 
-
         ViewHolder(final View itemView, final MenuAdapter adapter) {
             super(itemView);
-            mealB = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view);
-            mealL = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view2);
-            mealD = (ExpandableTextView) itemView.findViewById(R.id.expand_text_view3);
-            weekdayImage = (ImageView) itemView.findViewById(R.id.dayImage);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.cardLayout);
+            mealB = itemView.findViewById(R.id.expand_text_view);
+            mealL = itemView.findViewById(R.id.expand_text_view2);
+            mealA = itemView.findViewById(R.id.expand_text_view3);
+            mealD = itemView.findViewById(R.id.expand_text_view4);
+
+            weekdayImage = itemView.findViewById(R.id.dayImage);
+            linearLayout = itemView.findViewById(R.id.cardLayout);
 
             mealB.setOnExpandStateChangeListener(new ExpandableTextView.OnExpandStateChangeListener() {
                 @Override
                 public void onExpandStateChanged(TextView textView, boolean isExpanded) {
                     final int currentPosition = getAdapterPosition();
-                    if(isExpanded){
+                    if (isExpanded) {
                         adapter.collapseBreakfast.put(currentPosition, false);
                         //auto-position textView
                         if(getAutoPostionStatus()) {
@@ -85,7 +87,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                                 recyclerView.smoothScrollToPosition(getAdapterPosition());
                             }
                         }
-                    }else{
+                    } else {
                         adapter.collapseBreakfast.put(currentPosition, true);
                     }
                 }
@@ -95,10 +97,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                 @Override
                 public void onExpandStateChanged(TextView textView, boolean isExpanded) {
                     final int currentPosition = getAdapterPosition();
-                    if(isExpanded){
+                    if (isExpanded) {
                         adapter.collapseLunch.put(currentPosition, false);
                         //auto-position textView
-                        if(getAutoPostionStatus()) {
+                        if (getAutoPostionStatus()) {
                             Rect rect = new Rect();
                             if (mealL.getGlobalVisibleRect(rect)
                                     && mealL.getHeight() == rect.height()
@@ -109,7 +111,31 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                                 recyclerView.smoothScrollToPosition(getAdapterPosition());
                             }
                         }
-                    }else{
+                    } else {
+                        adapter.collapseLunch.put(currentPosition, true);
+                    }
+                }
+            });
+
+            mealA.setOnExpandStateChangeListener(new ExpandableTextView.OnExpandStateChangeListener() {
+                @Override
+                public void onExpandStateChanged(TextView textView, boolean isExpanded) {
+                    final int currentPosition = getAdapterPosition();
+                    if (isExpanded) {
+                        adapter.collapseLunch.put(currentPosition, false);
+                        //auto-position textView
+                        if (getAutoPostionStatus()) {
+                            Rect rect = new Rect();
+                            if (mealA.getGlobalVisibleRect(rect)
+                                    && mealA.getHeight() == rect.height()
+                                    && mealA.getWidth() == rect.width()) {
+                                //fully visible
+                            } else {
+                                //not fully visible
+                                recyclerView.smoothScrollToPosition(getAdapterPosition());
+                            }
+                        }
+                    } else {
                         adapter.collapseLunch.put(currentPosition, true);
                     }
                 }
@@ -119,10 +145,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                 @Override
                 public void onExpandStateChanged(TextView textView, boolean isExpanded) {
                     final int currentPosition = getAdapterPosition();
-                    if(isExpanded){
+                    if (isExpanded) {
                         adapter.collapseDinner.put(currentPosition, false);
                         //auto-position textView
-                        if(getAutoPostionStatus()) {
+                        if (getAutoPostionStatus()) {
                             Rect rect = new Rect();
                             if (mealD.findViewById(R.id.expandable_text).getGlobalVisibleRect(rect)
                                     && mealD.findViewById(R.id.expandable_text).getHeight() == rect.height()
@@ -147,7 +173,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
                                 }, 500);
                             }
                         }
-                    }else{
+                    } else {
                         adapter.collapseDinner.put(currentPosition, true);
                     }
                 }
@@ -164,6 +190,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         holder.weekdayImage.setImageResource(listItem.getResInt());
         holder.mealB.setText(listItem.getMealB(), collapseBreakfast, position);
         holder.mealL.setText(listItem.getMealL(), collapseLunch, position);
+        holder.mealA.setText(listItem.getMealA(), collapseLunch, position);
         holder.mealD.setText(listItem.getMealD(), collapseDinner, position);
 
         //default colors
@@ -180,23 +207,21 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         //ColorSpace 3 --> Color copy of switch button
         //switch saves ColorSpace 2 and 3
 
-
         color = getSavedColors("ColorSpace3", context);
-        if(!color.equals("error")){
+        if (!color.equals("error")) {
             holder.linearLayout.setBackgroundColor(Integer.parseInt(color));
             holder.weekdayImage.setBackgroundColor(Integer.parseInt(color));
-            if(isColorDark(Integer.parseInt(color))) {
+            if (isColorDark(Integer.parseInt(color))) {
                 holder.weekdayImage.setColorFilter(Color.WHITE);
-            }else holder.weekdayImage.setColorFilter(Color.BLACK);
+            } else holder.weekdayImage.setColorFilter(Color.BLACK);
             changeHeaderColors(holder, Integer.parseInt(color));
             changeExpandViewColors(holder, Integer.parseInt(color), true);
         }
 
+        if (getSavedColors("ColorSpace0", context).compareTo("error") != 0 &&
+                getSavedColors("ColorSpace1", context).compareTo("error") != 0) {
 
-        if(getSavedColors("ColorSpace0", context).compareTo("error") != 0 &&
-                getSavedColors("ColorSpace1", context).compareTo("error") != 0){
-
-            if(getSavedColors("ColorSpace2", context).compareTo("error") !=0 ) {
+            if (getSavedColors("ColorSpace2", context).compareTo("error") !=0 ) {
                 holder.linearLayout.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
                 holder.weekdayImage.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
                 if (isColorDark(Integer.parseInt(getSavedColors("ColorSpace2", context)))) {
@@ -206,8 +231,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
 
             changeHeaderColors(holder, Integer.parseInt(getSavedColors("ColorSpace0", context)));
             changeExpandViewColors(holder, Integer.parseInt(getSavedColors("ColorSpace1", context)), true);
-        }else{
-            if(getSavedColors("ColorSpace2", context).compareTo("error") !=0 ) {
+        } else {
+            if (getSavedColors("ColorSpace2", context).compareTo("error") !=0 ) {
                 holder.linearLayout.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
                 holder.weekdayImage.setBackgroundColor(Integer.parseInt(getSavedColors("ColorSpace2", context)));
 
@@ -243,55 +268,54 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
     }
 
 
-    public static String getSavedColors(String key, Context context){
+    public static String getSavedColors(String key, Context context) {
         SharedPreferences sP = context.getSharedPreferences("Colors", MODE_PRIVATE);
         return sP.getString(key, "error");
     }
 
-    public boolean getAutoPostionStatus(){
+    public boolean getAutoPostionStatus() {
         SharedPreferences sP = context.getSharedPreferences("switch", MODE_PRIVATE);
         return sP.getBoolean(AUTO_POSITION_SWITCH, true);
     }
 
-    private void changeExpandViewColors(ViewHolder v, int color, boolean changeArrowColor){
+    private void changeExpandViewColors(ViewHolder v, int color, boolean changeArrowColor) {
         ExpandableTextView expandableTextView = v.mealB;
         ExpandableTextView expandableTextView2 = v.mealL;
-        ExpandableTextView expandableTextView3 = v.mealD;
+        ExpandableTextView expandableTextView3 = v.mealA;
+        ExpandableTextView expandableTextView4 = v.mealD;
 
         expandableTextView.setBackgroundColor(color);
         expandableTextView2.setBackgroundColor(color);
         expandableTextView3.setBackgroundColor(color);
+        expandableTextView4.setBackgroundColor(color);
 
-        TextView textView = (TextView) expandableTextView.findViewById(R.id.expandable_text);
-        TextView textView2 = (TextView) expandableTextView2.findViewById(R.id.expandable_text);
-        TextView textView3 = (TextView) expandableTextView3.findViewById(R.id.expandable_text);
+        TextView textView = expandableTextView.findViewById(R.id.expandable_text);
+        TextView textView2 = expandableTextView2.findViewById(R.id.expandable_text);
+        TextView textView3 = expandableTextView3.findViewById(R.id.expandable_text);
+        TextView textView4 = expandableTextView4.findViewById(R.id.expandable_text);
+
         ImageButton imageButton = expandableTextView.findViewById(R.id.expand_collapse);
         ImageButton imageButton1 = expandableTextView2.findViewById(R.id.expand_collapse);
         ImageButton imageButton2 = expandableTextView3.findViewById(R.id.expand_collapse);
 
-        int[][] states = new int[][] {
-                new int[] { android.R.attr.state_focused},
-        };
-        int[] colors = new int[] {
-                Color.BLACK,
-        };
-        ColorStateList myList = new ColorStateList(states, colors);
-
-        if(isColorDark(color)){
+        if (isColorDark(color)) {
             textView.setTextColor(Color.WHITE);
             textView2.setTextColor(Color.WHITE);
             textView3.setTextColor(Color.WHITE);
-            if(changeArrowColor) {
+            textView4.setTextColor(Color.WHITE);
+
+            if (changeArrowColor) {
                 imageButton.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
                 imageButton1.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
                 imageButton2.setColorFilter(Color.argb(255, 255, 255, 255)); // White Tint
             }
-
-        }else{
+        } else {
             textView.setTextColor(Color.BLACK);
             textView2.setTextColor(Color.BLACK);
             textView3.setTextColor(Color.BLACK);
-            if(changeArrowColor) {
+            textView4.setTextColor(Color.BLACK);
+
+            if (changeArrowColor) {
                 imageButton.setColorFilter(Color.argb(255, 0, 0, 1)); // Black? Tint
                 imageButton1.setColorFilter(Color.argb(255, 0, 0, 1)); // Black? Tint
                 imageButton2.setColorFilter(Color.argb(255, 0, 0, 1)); // Black? Tint
@@ -299,28 +323,32 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder> {
         }
     }
 
-    private void changeHeaderColors(ViewHolder v, int color){
-        TextView textView = (TextView) v.itemView.findViewById(R.id.mealTime);
-        TextView textView2 = (TextView) v.itemView.findViewById(R.id.mealTime2);
-        TextView textView3 = (TextView) v.itemView.findViewById(R.id.mealTime3);
+    private void changeHeaderColors(ViewHolder v, int color) {
+        TextView textView = v.itemView.findViewById(R.id.mealTime);
+        TextView textView2 = v.itemView.findViewById(R.id.mealTime2);
+        TextView textView3 = v.itemView.findViewById(R.id.mealTime3);
+        TextView textView4 = v.itemView.findViewById(R.id.mealTime4);
 
         textView.setBackgroundColor(color);
         textView2.setBackgroundColor(color);
         textView3.setBackgroundColor(color);
+        textView4.setBackgroundColor(color);
 
-        if(isColorDark(color)){
+        if (isColorDark(color)) {
             textView.setTextColor(Color.WHITE);
             textView2.setTextColor(Color.WHITE);
             textView3.setTextColor(Color.WHITE);
-        }else{
+            textView4.setTextColor(Color.WHITE);
+        } else {
             textView.setTextColor(Color.BLACK);
             textView2.setTextColor(Color.BLACK);
             textView3.setTextColor(Color.BLACK);
+            textView4.setTextColor(Color.BLACK);
         }
     }
 
     //credit: adboco from StackOverflow
-    private boolean isColorDark(int color){
+    private boolean isColorDark(int color) {
         double darkness = 1-(0.299*Color.red(color) + 0.587*Color.green(color) + 0.114*Color.blue(color))/255;
         return !(darkness < 0.5);
     }

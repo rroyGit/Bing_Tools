@@ -68,7 +68,6 @@ public class C4Dining extends Fragment {
         } else c4_hall = new BingDiningMenu(c4Url, title, context, listItems, true, view);
 
         c4_hall.setRecyclerView(recyclerView);
-        c4_hall.setAdapter(listItems);
         c4_hall.setToolbarTitle(toolbarTextView);
         c4_hall.setTabLayout(tabLayout);
         c4_hall.makeRequest();

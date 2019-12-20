@@ -63,7 +63,6 @@ public class CIWDining extends Fragment {
         } else ciw_hall = new BingDiningMenu(ciwUrl,title,context, listItems, true, view);
 
         ciw_hall.setRecyclerView(recyclerView);
-        ciw_hall.setAdapter(listItems);
         ciw_hall.setToolbarTitle(toolbarTextView);
         ciw_hall.setTabLayout(tabLayout);
         ciw_hall.makeRequest();

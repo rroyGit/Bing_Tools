@@ -46,7 +46,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
 
         if (id == R.id.action_settings) {
             return false;
-        } else if(id == R.id.refresh_Bing) {
+        } else if (id == R.id.refresh_Bing) {
             if (CommonUtilities.getDeviceInternetStatus(Objects.requireNonNull(getContext())) == null) {
                 Toast.makeText(getContext(), "No Internet", Toast.LENGTH_SHORT).show();
                 return false;

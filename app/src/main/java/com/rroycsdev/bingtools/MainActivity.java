@@ -657,7 +657,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void makeBingWallRequest(boolean storagePermission){
+    private void makeBingWallRequest(boolean storagePermission) {
+
+        //Update only
+            if (getUpdateStatus()) {
+                saveBingWallDay(FIRST_RUN_BING_IMAGE);
+                saveUpdateStatus(false);
+            }
+        //Update only
 
         if (CommonUtilities.getDeviceInternetStatus(context) == null && getBingWallDay() == 0){
             bingImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.bearcats));
@@ -671,8 +678,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             now.setTimeZone(TimeZone.getTimeZone(getResources().getString(R.string.easternTimeZone)));
             int day = now.get(Calendar.DAY_OF_MONTH);
 
-            if (getBingWallDay() == FIRST_RUN_BING_IMAGE){
-                saveBingWallDay();
+            if (getBingWallDay() == FIRST_RUN_BING_IMAGE) {
+                saveBingWallDay(day);
                 new BingWallpaper(MainActivity.this).execute(true);
                 //every other run
             } else if (day != getBingWallDay()) {
@@ -681,8 +688,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 int hourIn24 = now.get(Calendar.HOUR_OF_DAY);
                 int am0_1PM = now.get(Calendar.AM_PM);
 
-                if ((am0_1PM == 0 && hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24) || (am0_1PM == 1)){
-                    saveBingWallDay();
+                if ((am0_1PM == 0 && hourIn24 >= BING_IMAGE_RESET_HOUR_IN_24) || (am0_1PM == 1)) {
+                    saveBingWallDay(day);
                     new BingWallpaper(MainActivity.this).execute(true);
                 } else loadBitmap();
             } else loadBitmap();
@@ -690,11 +697,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    private void saveBingWallDay(){
+    private void saveBingWallDay(int day) {
         SharedPreferences sharedPreferences = getSharedPreferences("bingWall", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Calendar now = Calendar.getInstance(TimeZone.getDefault());
-        int day = now.get(Calendar.DAY_OF_MONTH);
         editor.putInt("dayInt", day);
         editor.apply();
     }
@@ -704,6 +709,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return sharedPreferences.getInt("dayInt", 0);
     }
 
+    private void saveUpdateStatus(boolean isUpdate){
+        SharedPreferences sharedPreferences = getSharedPreferences("bingWall", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("status", isUpdate);
+        editor.apply();
+    }
+
+    private boolean getUpdateStatus(){
+        SharedPreferences sharedPreferences = getSharedPreferences("bingWall", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("status", true);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {

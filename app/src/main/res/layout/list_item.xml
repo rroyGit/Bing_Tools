@@ -119,7 +119,7 @@
                         android:id="@+id/mealTime3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Dinner"
+                        android:text="Afternoon Snack"
                         android:gravity="center_horizontal"
                         android:textColor="@color/white"
                         android:background="@color/default_card"
@@ -158,6 +158,49 @@
                             android:background="@android:color/transparent"
                             />
                     </com.ms.square.android.expandabletextview.ExpandableTextView>
+                <TextView
+                    android:id="@+id/mealTime4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Dinner"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/white"
+                    android:background="@color/default_card"
+                    android:padding="6dp"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1" />
+                <com.ms.square.android.expandabletextview.ExpandableTextView
+                    android:background="@color/default_card"
+                    xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/expand_text_view4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    expandableTextView:maxCollapsedLines="3"
+                    expandableTextView:animDuration="300">
+
+                    <TextView
+                        android:id="@id/expandable_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/slight_white"  />
+                    <ImageButton
+                        android:id="@id/expand_collapse"
+                        android:tint="@color/slight_white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:layout_gravity="end|bottom"
+                        android:layout_weight="1"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:background="@android:color/transparent"
+                        />
+                </com.ms.square.android.expandabletextview.ExpandableTextView>
             </LinearLayout>
         </ScrollView>
 
