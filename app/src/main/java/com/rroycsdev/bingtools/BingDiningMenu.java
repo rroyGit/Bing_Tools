@@ -37,6 +37,7 @@ public class BingDiningMenu {
     private DiningDataScrapper diningDataScrapper = null;
     private List<ListItem> listItems;
     private RecyclerView recyclerView;
+    protected boolean showSavedMsg = true;
 
     boolean isShowProgressDialog;
     private AppCompatTextView toolbarTitle;
@@ -150,14 +151,12 @@ public class BingDiningMenu {
         setToolbarText();
         showErrorMsg();
 
-        if (listUpdated) {
-            if (recyclerView.getAdapter() != null) {
-                recyclerView.getAdapter().notifyDataSetChanged();
-                recyclerView.requestLayout();
-            } else {
-                recyclerView.setAdapter(new MenuAdapter(listItems, context, recyclerView));
-                recyclerView.requestLayout();
-            }
+        if (listUpdated) if (recyclerView.getAdapter() != null) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+            recyclerView.requestLayout();
+        } else {
+            recyclerView.setAdapter(new MenuAdapter(listItems, context, recyclerView));
+            recyclerView.requestLayout();
         }
         return true;
     }
@@ -176,10 +175,12 @@ public class BingDiningMenu {
     }
 
     private void showErrorMsg () {
-        String msg = getMenuMsg();
-
-        if (!msg.isEmpty() && !msg.equals("noMsg")) {
-            if (diningMenuView.isShown()) Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+        if (showSavedMsg) {
+            String msg = getMenuMsg();
+            if (!msg.isEmpty() && !msg.equals("noMsg")) {
+                if (diningMenuView.isShown())
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

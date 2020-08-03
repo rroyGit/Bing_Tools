@@ -89,6 +89,7 @@ AppalachianDining.OnFragmentInteractionListener, CIWDining.OnFragmentInteraction
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Fragment fragment = pagerAdapter.getFragmentInstance(tab.getPosition());
+                ((View) Objects.requireNonNull(tabLayout.getTabAt(tabLayout.getSelectedTabPosition())).view).setSelected(true);
 
                 if (fragment != null) {
                     if (fragment instanceof C4Dining)

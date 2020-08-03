@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,6 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class C4Dining extends Fragment {
     private boolean firstLaunched = true;
@@ -57,8 +54,6 @@ public class C4Dining extends Fragment {
         recyclerView = view.findViewById(R.id.recycleViewC4);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        if (toolbarTextView == null) Log.d(TAG, "onViewCreated: c4 toolbarText null");
 
         if (savedInstanceState != null) {
             FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();

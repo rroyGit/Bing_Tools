@@ -66,6 +66,7 @@ public class BingDiningScrapper implements WebCrawler {
         @Override
         protected void onPreExecute() {
             BingDiningMenu bingDiningMenu = activityReference.get();
+            bingDiningMenu.showSavedMsg = false;
 
             if (bingDiningMenu.isShowProgressDialog && bingDiningMenu.diningMenuView.getWindowToken() != null &&
                     Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
@@ -255,13 +256,14 @@ public class BingDiningScrapper implements WebCrawler {
             if (pD != null && pD.isShowing()) pD.dismiss();
 
             final BingDiningMenu bingDiningMenu = activityReference.get();
+            bingDiningMenu.showSavedMsg = true;
             bingDiningMenu.isShowProgressDialog = false;
 
             if (loadEmptyMenu) {
                 Objects.requireNonNull(bingDiningMenu).diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
                 if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
-                        getText(), bingDiningMenu.title) && bingDiningMenu.diningMenuView.isShown() && !errorMessage.isEmpty())
+                        getText(), bingDiningMenu.title) && bingDiningMenu.diningMenuView.isSelected() && !errorMessage.isEmpty())
                     Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
 
                 bingDiningMenu.saveMenuMsg(errorMessage);
@@ -276,7 +278,6 @@ public class BingDiningScrapper implements WebCrawler {
             }
 
             bingDiningMenu.diningDatabase.close();
-
         }
     }
 
@@ -327,7 +328,6 @@ public class BingDiningScrapper implements WebCrawler {
                 bingDiningMenu.saveMenuWeekDate(BingDiningMenu.FAILED_MENU_DATE);
                 bingDiningMenu.diningDatabase.close();
             }
-
         }
     }
 }

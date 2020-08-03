@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
 public class AppalachianDining extends Fragment {
     private boolean firstLaunched = true;
     private RecyclerView recyclerView;
