@@ -254,12 +254,11 @@ public class BingDiningScrapper implements WebCrawler {
             super.onPostExecute(aVoid);
 
             if (pD != null && pD.isShowing()) pD.dismiss();
-
             final BingDiningMenu bingDiningMenu = activityReference.get();
-            bingDiningMenu.showSavedMsg = true;
             bingDiningMenu.isShowProgressDialog = false;
 
             if (loadEmptyMenu) {
+                bingDiningMenu.showSavedMsg = true;
                 Objects.requireNonNull(bingDiningMenu).diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
 
                 if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).

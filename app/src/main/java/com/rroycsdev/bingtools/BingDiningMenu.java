@@ -77,7 +77,7 @@ public class BingDiningMenu {
         //TODO - alternate getMenuUpdateStatus() result to reset database on a pushed update
 
         //load data from SQLite database and check if a new menu is found, if yes then load new menu
-        if (!getMenuUpdateStatus() && diningDatabase.getDatabaseCount() > 0
+        if (getMenuUpdateStatus() && diningDatabase.getDatabaseCount() > 0
                 && getMenuWeekDate(title).compareTo(NO_DATE) != 0
                 && getMenuWeekDate(title).compareTo(FAILED_MENU_DATE) != 0) {
 
@@ -85,7 +85,6 @@ public class BingDiningMenu {
             String month2, date2, year2;
 
             try {
-
                 //sample menu check
                 if (getMenuWeekDate(title).compareTo(SAMPLE_MENU) == 0) {
 
@@ -151,13 +150,12 @@ public class BingDiningMenu {
         setToolbarText();
         showErrorMsg();
 
-        if (listUpdated) if (recyclerView.getAdapter() != null) {
+        if (listUpdated && recyclerView.getAdapter() != null) {
             recyclerView.getAdapter().notifyDataSetChanged();
-            recyclerView.requestLayout();
         } else {
             recyclerView.setAdapter(new MenuAdapter(listItems, context, recyclerView));
-            recyclerView.requestLayout();
         }
+        recyclerView.requestLayout();
         return true;
     }
 

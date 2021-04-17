@@ -57,7 +57,7 @@ public class AppalachianDining extends Fragment {
         if (savedInstanceState != null) {
             FragmentManager fragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
             String fragmentName  = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount()-1).getName();
-            if(Objects.requireNonNull(fragmentName).compareTo("bing") != 0)  appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, false, view);
+            if (Objects.requireNonNull(fragmentName).compareTo("bing") != 0)  appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, false, view);
             else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
         } else appalachian_hall = new BingDiningMenu(appalachianUrl,title,context, listItems, true, view);
 
