@@ -23,11 +23,11 @@ import java.util.TimeZone;
 import static android.content.Context.MODE_PRIVATE;
 
 public class BingDiningMenu {
-    private static final String[] days = {"monday", "tuesday", "wednesday", "thursday", "friday",
-            "saturday", "sunday"};
+    private static final String[] days = {"sunday", "monday", "tuesday", "wednesday", "thursday", "friday",
+            "saturday"};
 
-    private static final int[] resImg = {R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday,
-            R.drawable.thursday, R.drawable.friday, R.drawable.saturday, R.drawable.sunday};
+    private static final int[] resImg = {R.drawable.sunday, R.drawable.monday, R.drawable.tuesday, R.drawable.wednesday,
+            R.drawable.thursday, R.drawable.friday, R.drawable.saturday};
 
     private static final String SAMPLE_MENU = "Sample Menu";
     private static final String NO_DATE = "noDate";
@@ -77,7 +77,7 @@ public class BingDiningMenu {
         //TODO - alternate getMenuUpdateStatus() result to reset database on a pushed update
 
         //load data from SQLite database and check if a new menu is found, if yes then load new menu
-        if (getMenuUpdateStatus() && diningDatabase.getDatabaseCount() > 0
+        if (!getMenuUpdateStatus() && diningDatabase.getDatabaseCount() > 0
                 && getMenuWeekDate(title).compareTo(NO_DATE) != 0
                 && getMenuWeekDate(title).compareTo(FAILED_MENU_DATE) != 0) {
 

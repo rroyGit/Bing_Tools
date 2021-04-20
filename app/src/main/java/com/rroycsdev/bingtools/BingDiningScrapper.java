@@ -167,10 +167,10 @@ public class BingDiningScrapper implements WebCrawler {
                 int index, i;
 
                 for(i = 0; i < daysAll.size(); i++) {
-                    Elements B = menuAll.get(i).select("div[class~=accordion-block breakfast]");
-                    Elements L = menuAll.get(i).select("div[class~=accordion-block lunch]");
-                    Elements AS = menuAll.get(i).select("div[class~=accordion-block afternoon snack]");
-                    Elements D = menuAll.get(i).select("div[class~=accordion-block dinner]");
+                    Elements B = menuAll.get(i).select("div[class~=breakfast]");
+                    Elements L = menuAll.get(i).select("div[class~=lunch]");
+                    Elements AS = menuAll.get(i).select("div[class~=afternoon]");
+                    Elements D = menuAll.get(i).select("div[class~=dinner]");
 
                     index = 1;
 
@@ -255,17 +255,16 @@ public class BingDiningScrapper implements WebCrawler {
 
             if (pD != null && pD.isShowing()) pD.dismiss();
             final BingDiningMenu bingDiningMenu = activityReference.get();
+            bingDiningMenu.saveMenuMsg(errorMessage);
             bingDiningMenu.isShowProgressDialog = false;
 
             if (loadEmptyMenu) {
                 bingDiningMenu.showSavedMsg = true;
                 Objects.requireNonNull(bingDiningMenu).diningMenuView.setBackground(ContextCompat.getDrawable(bingDiningMenu.context, R.drawable.cloud_2));
-
                 if (Objects.equals(Objects.requireNonNull(bingDiningMenu.tabLayout.getTabAt(bingDiningMenu.tabLayout.getSelectedTabPosition())).
                         getText(), bingDiningMenu.title) && bingDiningMenu.diningMenuView.isSelected() && !errorMessage.isEmpty())
                     Toast.makeText(activityReference.get().context, errorMessage, Toast.LENGTH_SHORT).show();
 
-                bingDiningMenu.saveMenuMsg(errorMessage);
                 bingDiningMenu.saveMenuWeekDate(BingDiningMenu.FAILED_MENU_DATE);
                 bingDiningMenu.diningDatabase.deleteAllItems();
                 bingDiningMenu.clearView();
