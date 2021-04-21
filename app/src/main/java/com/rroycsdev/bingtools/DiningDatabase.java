@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
+
+import java.io.File;
 
 /**
  * Created by Rated on 12/25/2017.
@@ -21,9 +24,7 @@ public class DiningDatabase extends SQLiteOpenHelper {
     static final String MENU_COLUMN_LUNCH = "lunch";
     static final String MENU_COLUMN_AFTERNOON_SNACK = "afternoon_snack";
     static final String MENU_COLUMN_DINNER = "dinner";
-    private SQLiteDatabase sqLiteDatabaseAllItems = null;
-    private SQLiteDatabase sqLiteDatabaseItem = null;
-    private Context context = null;
+    private Context context;
 
 
     public DiningDatabase(Context context) {
@@ -36,7 +37,6 @@ public class DiningDatabase extends SQLiteOpenHelper {
         super.onOpen(db);
     }
 
-
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         //empty, must call createTable(String tableName)
@@ -48,12 +48,8 @@ public class DiningDatabase extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public void setTableName(String tableName) {
-        MENU_TABLE_NAME = tableName;
-    }
-
     public void createTable(String tableName) {
-        SQLiteDatabase sqLiteDatabase = getDBHelper().getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = getDBHelper(this.getWritableDatabase());
         MENU_TABLE_NAME = tableName;
 
         String query = "CREATE TABLE IF NOT EXISTS " + MENU_TABLE_NAME + "(" +
@@ -66,7 +62,7 @@ public class DiningDatabase extends SQLiteOpenHelper {
     }
 
     public boolean insertMenuItem(String day, String breakfast, String lunch, String afternoon, String dinner) {
-        SQLiteDatabase sqLiteDatabase = getDBHelper().getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = getDBHelper(this.getWritableDatabase());
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(MENU_COLUMN_DAY, day);
@@ -81,7 +77,7 @@ public class DiningDatabase extends SQLiteOpenHelper {
     }
 
     public boolean updateMenuItem(Integer id, String day, String breakfast, String lunch, String afternoon, String dinner) {
-        SQLiteDatabase sqLiteDatabase = getDBHelper().getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = getDBHelper(this.getWritableDatabase());
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(MENU_COLUMN_DAY, day);
@@ -96,23 +92,17 @@ public class DiningDatabase extends SQLiteOpenHelper {
     }
 
     public Cursor getMenuItem(Integer id) {
-        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        SQLiteDatabase sqLiteDatabase = getDBHelper(this.getReadableDatabase());
         String query = "SELECT * FROM " + MENU_TABLE_NAME + " WHERE " + MENU_COLUMN_ID + "= ?";
         return sqLiteDatabase.rawQuery(query, new String[] {Integer.toString(id)});
     }
 
-    public SQLiteDatabase getSqLiteDatabaseItemRef(){
-        return sqLiteDatabaseItem;
-    }
-
     public Cursor getAllItems() {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        sqLiteDatabaseAllItems = sqLiteDatabase;
         String query = "SELECT * FROM " + MENU_TABLE_NAME;
         Cursor cursor = sqLiteDatabase.rawQuery(query, null);
         return cursor;
     }
-
 
     public Integer deleteItem(Integer id) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
@@ -123,21 +113,27 @@ public class DiningDatabase extends SQLiteOpenHelper {
     }
 
     public int deleteAllItems() {
-        SQLiteDatabase sqLiteDatabase = getDBHelper().getWritableDatabase();
-        int numItems = sqLiteDatabase.delete(MENU_TABLE_NAME, null, null);
-        sqLiteDatabase.close();
-        return numItems;
+        SQLiteDatabase sqLiteDatabase = getDBHelper(this.getWritableDatabase());
+        int numItems = -1;
+        try {
+             numItems = sqLiteDatabase.delete(MENU_TABLE_NAME, null, null);
+        } catch (IllegalStateException exception) {
+            Toast.makeText(context, "Delete All - " + exception.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            sqLiteDatabase.close();
+            return numItems;
+        }
     }
 
     public int getDatabaseCount() {
-        SQLiteDatabase sqLiteDatabase = getDBHelper().getReadableDatabase();
+        SQLiteDatabase sqLiteDatabase = getDBHelper(this.getReadableDatabase());
         String query = "SELECT * FROM " + MENU_TABLE_NAME;
 
         int ret;
         //cursor operations are NOT protected by reference counting
         //https://stackoverflow.com/questions/23293572/android-
         //cannot-perform-this-operation-because-the-connection-pool-has-been-clos
-        synchronized (sqLiteDatabase) {
+        synchronized (DATABASE_NAME) {
             Cursor cursor = sqLiteDatabase.rawQuery(query, null);
             ret = cursor.getCount();
             cursor.close();
@@ -147,14 +143,16 @@ public class DiningDatabase extends SQLiteOpenHelper {
         return ret;
     }
 
-    private DiningDatabase getDBHelper() {
-        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+    private SQLiteDatabase getDBHelper(SQLiteDatabase sqLiteDatabase) {
         if (!sqLiteDatabase.isOpen()) {
-            DiningDatabase a = new DiningDatabase(context);
-            a.setTableName(MENU_TABLE_NAME);
-            return a;
+            Toast.makeText(context, "SQL database not open, waiting for database to open", Toast.LENGTH_SHORT).show();
+            try {
+                this.wait(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        return this;
+        return sqLiteDatabase;
     }
 
 }

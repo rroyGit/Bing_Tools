@@ -60,8 +60,15 @@ public class BingDiningMenu {
     }
 
     private void createDataTable() {
-        diningDatabase = new DiningDatabase(context);
+        diningDatabase = getDiningDatabase();
         diningDatabase.createTable(title);
+    }
+
+    private DiningDatabase getDiningDatabase() {
+        if (diningDatabase == null) {
+            diningDatabase = new DiningDatabase(context);
+        }
+        return diningDatabase;
     }
 
     private void makeBingDiningRequest() {

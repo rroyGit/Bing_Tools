@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
@@ -115,7 +116,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         positionEditText();
     }
 
-    private void multiplyNumbers(){
+    private void multiplyNumbers() throws NumberFormatException {
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
@@ -145,7 +146,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         resultView.setText(NumberFormat.getInstance().format(res_num));
     }
 
-    private void divideNumbers(){
+    private void divideNumbers() throws NumberFormatException {
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
@@ -173,7 +174,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         resultView.setText(NumberFormat.getInstance().format(res_num));
     }
 
-    private void addNumbers(){
+    private void addNumbers() throws NumberFormatException {
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
@@ -198,7 +199,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         resultView.setText(NumberFormat.getInstance().format(res_num));
     }
 
-    private void subtractNumbers(){
+    private void subtractNumbers() throws NumberFormatException {
         if (num1EditView.getText().toString().trim().isEmpty() ||
                 num2EditView.getText().toString().trim().isEmpty()) {
             resultView.setText(getString(R.string.error));
@@ -265,7 +266,7 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
         num2EditView.requestFocus();
     }
 
-    private void doMod(){
+    private void doMod() throws NumberFormatException {
 
         if(num1EditView.getText().toString().compareTo("") != 0 && num2EditView.getText().toString().compareTo("") != 0) {
             n1 = Double.parseDouble(num1EditView.getText().toString());
@@ -277,34 +278,41 @@ public class CalculatorFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View view){
-        switch(view.getId()){
-            case R.id.clear:
-                clearNumbers();
-                break;
-            case R.id.mulB:
-                multiplyNumbers();
-                break;
-            case R.id.divB:
-                divideNumbers();
-                break;
-            case R.id.addB:
-                addNumbers();
-                break;
-            case R.id.minusB:
-                subtractNumbers();
-                break;
-            case R.id.leftCopy:
-                leftCopyPaste();
-                break;
-            case R.id.rightCopy:
-                rightCopyPaste();
-                break;
-            case R.id.mod:
-                doMod();
-                break;
-            default:
+        try {
+            switch (view.getId()) {
+                case R.id.clear:
+                    clearNumbers();
+                    break;
+                case R.id.mulB:
+                    multiplyNumbers();
+                    break;
+                case R.id.divB:
+                    divideNumbers();
+                    break;
+                case R.id.addB:
+                    addNumbers();
+                    break;
+                case R.id.minusB:
+                    subtractNumbers();
+                    break;
+                case R.id.leftCopy:
+                    leftCopyPaste();
+                    break;
+                case R.id.rightCopy:
+                    rightCopyPaste();
+                    break;
+                case R.id.mod:
+                    doMod();
+                    break;
+                default:
+            }
+        } catch (NumberFormatException exception) {
+            Toast.makeText(view.getContext(), "Error converting input into a number!", Toast.LENGTH_SHORT).show();
+        } catch (Exception exception) {
+            Toast.makeText(view.getContext(), "Unknown error " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+        } finally {
+            CommonUtilities.hideKeyboard(getActivity(), getView());
         }
-        CommonUtilities.hideKeyboard(getActivity(), getView());
     }
 
     @Override
